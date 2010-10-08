@@ -1,8 +1,8 @@
 /*
 HTTP Host: connect.facebook.net
-Generated: September 29th 2010 10:10:31 PM PDT
-Machine: 10.27.184.126
-Location: JIT Construction: v295879
+Generated: October 5th 2010 11:17:54 PM PDT
+Machine: 10.27.118.127
+Location: JIT Construction: v297979
 Locale: fr_FR
 */
 
@@ -1433,6 +1433,12 @@ FB.provide('UIServer.Methods', {
         loggedOutIframe: true,
         transform: function (a) {
             return a;
+        }
+    },
+    'games.creatematch': {
+        size: {
+            width: 575,
+            height: 240
         }
     }
 });
@@ -2897,7 +2903,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         var a = this.getOriginalHTML();
         if (a === '') {
             if (FB.getSession() && this.autologoutlink) {
-                return FB.Intl._tx("D\u00e9connexion de Facebook");
+                return FB.Intl._tx("Se d\u00e9connecter de Facebook");
             } else return this.length == 'short' ? FB.Intl._tx("Se connecter") : FB.Intl._tx("Se connecter avec Facebook");
         } else return a;
     },
