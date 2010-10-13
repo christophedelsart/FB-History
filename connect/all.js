@@ -1,8 +1,8 @@
 /*
 HTTP Host: connect.facebook.net
-Generated: October 5th 2010 11:17:54 PM PDT
-Machine: 10.27.118.127
-Location: JIT Construction: v297979
+Generated: October 7th 2010 5:52:57 PM PDT
+Machine: 10.32.252.110
+Location: JIT Construction: v299252
 Locale: fr_FR
 */
 
@@ -1546,7 +1546,7 @@ FB.provide('XFBML', {
                 var docNamespaces = document.namespaces;
                 if (docNamespaces && docNamespaces[e]) {
                     var nodes = a.getElementsByTagName(d);
-                    if (nodes.length > 0) return nodes;
+                    if (!document.addEventListener || nodes.length > 0) return nodes;
                 }
             } catch (b) {}
             return a.getElementsByTagName(c);
