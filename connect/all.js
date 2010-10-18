@@ -1,8 +1,8 @@
 /*
 HTTP Host: connect.facebook.net
-Generated: October 7th 2010 5:52:57 PM PDT
-Machine: 10.32.252.110
-Location: JIT Construction: v299252
+Generated: October 13th 2010 4:12:49 PM PDT
+Machine: 10.32.163.111
+Location: JIT Construction: v301564
 Locale: fr_FR
 */
 
@@ -951,20 +951,34 @@ FB.provide('XD', {
 });
 FB.XD.Fragment.checkAndDispatch();
 FB.provide('Arbiter', {
-    inform: function (a, b) {
-        var d = FB._domain.staticfb + 'connect/canvas_proxy.php#' + FB.QS.encode({
-            method: a,
-            params: FB.JSON.stringify(b || {})
-        });
-        var c = FB.Content.appendHidden('');
+    inform: function (b, d, e) {
+        if (window.name.indexOf('app_runner_') === 0) {
+            var c = FB.JSON.stringify({
+                method: b,
+                params: d
+            });
+            if (window.postMessage) {
+                FB.XD.resolveRelation(e || 'parent').postMessage(c, '*');
+                return;
+            } else try {
+                window.opener.postMessage(c);
+                return;
+            } catch (a) {}
+        }
+        var g = (FB._domain.staticfb + 'connect/canvas_proxy.php#' + FB.QS.encode({
+            method: b,
+            params: FB.JSON.stringify(d || {}),
+            relation: e
+        }));
+        var f = FB.Content.appendHidden('');
         FB.Content.insertIframe({
-            url: d,
-            root: c,
+            url: g,
+            root: f,
             width: 1,
             height: 1,
             onload: function () {
                 setTimeout(function () {
-                    c.parentNode.removeChild(c);
+                    f.parentNode.removeChild(f);
                 }, 10);
             }
         });
@@ -1159,6 +1173,7 @@ FB.provide('UIServer', {
             if (c.type == 'resize') {
                 if (c.height) d.style.height = c.height + 'px';
                 if (c.width) d.style.width = c.width + 'px';
+                FB.Arbiter.inform('resize.ack', {}, 'parent.frames[' + d.name + ']');
                 FB.Dialog.show(d);
             }
         }, b, true);
@@ -1617,6 +1632,10 @@ FB.provide('XFBML', {
     {
         localName: 'recommendations',
         className: 'FB.XFBML.Recommendations'
+    },
+    {
+        localName: 'registration',
+        className: 'FB.XFBML.Registration'
     },
     {
         localName: 'send',
@@ -3141,6 +3160,32 @@ FB.subclass('XFBML.Recommendations', 'XFBML.IframeWidget', null, {
     getUrlBits: function () {
         return {
             name: 'recommendations',
+            params: this._attr
+        };
+    }
+});
+FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
+    _visibleAfter: 'immediate',
+    setupAndValidate: function () {
+        this._attr = {
+            channel_url: this.getChannelUrl(),
+            client_id: FB._apiKey,
+            height: this._getPxAttribute('height', 500),
+            width: this._getPxAttribute('width', 600),
+            redirect_uri: this.getAttribute('redirect-uri', window.location.href),
+            fields: this.getAttribute('fields')
+        };
+        return true;
+    },
+    getSize: function () {
+        return {
+            width: this._attr.width,
+            height: this._attr.height
+        };
+    },
+    getUrlBits: function () {
+        return {
+            name: 'registration',
             params: this._attr
         };
     }
