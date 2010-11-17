@@ -1,8 +1,8 @@
 /*
 HTTP Host: connect.facebook.net
-Generated: November 2nd 2010 5:00:35 PM PDT
-Machine: 10.27.231.129
-Location: JIT Construction: v309286
+Generated: November 16th 2010 9:33:57 PM PDT
+Machine: 10.27.16.114
+Location: JIT Construction: v315335
 Locale: fr_FR
 */
 
@@ -832,7 +832,7 @@ FB.provide('Dialog', {
         if (e.content) FB.Content.append(e.content, c);
         d.className = a;
         var f = parseInt(e.width, 10);
-        if (f !== false) d.style.width = f + 'px';
+        if (!isNaN(f)) d.style.width = f + 'px';
         c.className = 'fb_dialog_content';
         d.appendChild(c);
         FB.Content.append(d);
@@ -1072,25 +1072,26 @@ FB.provide('UIServer', {
         if (a === 'dialog' || a === 'iframe') return 'parent';
         if (a === 'async') return 'parent.frames[' + window.name + ']';
     },
-    popup: function (a) {
-        var g = typeof window.screenX != 'undefined' ? window.screenX : window.screenLeft,
-            h = typeof window.screenY != 'undefined' ? window.screenY : window.screenTop,
-            f = typeof window.outerWidth != 'undefined' ? window.outerWidth : document.documentElement.clientWidth,
-            e = typeof window.outerHeight != 'undefined' ? window.outerHeight : (document.documentElement.clientHeight - 22),
-            j = a.size.width,
-            c = a.size.height,
-            d = parseInt(g + ((f - j) / 2), 10),
-            i = parseInt(h + ((e - c) / 2.5), 10),
-            b = ('width=' + j + ',height=' + c + ',left=' + d + ',top=' + i);
-        if (a.post) {
-            FB.UIServer._active[a.id] = window.open('about:blank', a.id, b);
+    popup: function (b) {
+        var a = typeof window.screenX != 'undefined' ? window.screenX : window.screenLeft,
+            i = typeof window.screenY != 'undefined' ? window.screenY : window.screenTop,
+            g = typeof window.outerWidth != 'undefined' ? window.outerWidth : document.documentElement.clientWidth,
+            f = typeof window.outerHeight != 'undefined' ? window.outerHeight : (document.documentElement.clientHeight - 22),
+            k = b.size.width,
+            d = b.size.height,
+            h = (a < 0) ? window.screen.width + a : a,
+            e = parseInt(h + ((g - k) / 2), 10),
+            j = parseInt(i + ((f - d) / 2.5), 10),
+            c = ('width=' + k + ',height=' + d + ',left=' + e + ',top=' + j);
+        if (b.post) {
+            FB.UIServer._active[b.id] = window.open('about:blank', b.id, c);
             FB.Content.postTarget({
-                url: a.url,
-                target: a.id,
-                params: a.params
+                url: b.url,
+                target: b.id,
+                params: b.params
             });
-        } else FB.UIServer._active[a.id] = window.open(a.url, a.id, b);
-        if (a.id in FB.UIServer._defaultCb) FB.UIServer._popupMonitor();
+        } else FB.UIServer._active[b.id] = window.open(b.url, b.id, c);
+        if (b.id in FB.UIServer._defaultCb) FB.UIServer._popupMonitor();
     },
     hidden: function (a) {
         a.className = 'FB_UI_Hidden';
@@ -1466,6 +1467,17 @@ FB.provide('UIServer.Methods', {
         size: {
             width: 575,
             height: 240
+        }
+    },
+    'auth.logintofacebook': {
+        size: {
+            width: 530,
+            height: 287
+        },
+        url: 'login.php',
+        transform: function (a) {
+            a.skip_api_login = 1;
+            return a;
         }
     }
 });
@@ -2035,6 +2047,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     _showLoader: true,
     _refreshOnAuthChange: false,
     _allowReProcess: false,
+    _fetchPreCachedLoader: false,
     _visibleAfter: 'load',
     getUrlBits: function () {
         throw new Error('Inheriting class needs to implement getUrlBits().');
@@ -2074,7 +2087,8 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
             FB.Dom.addCss(this.dom, 'fb_hide_iframes');
         } else this.subscribe('iframe.onload', FB.bind(this.fire, this, 'render'));
         var c = this.getSize() || {};
-        var d = this._getURL() + '?' + FB.QS.encode(this._getQS());
+        var d = this._getURL();
+        if (!this._fetchPreCachedLoader) d += '?' + FB.QS.encode(this._getQS());
         if (d.length > 2000) {
             d = 'about:blank';
             var b = FB.bind(function () {
@@ -2152,7 +2166,13 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
         }, this.getUrlBits().params);
     },
     _getURL: function () {
-        return FB._domain.www + 'plugins/' + this.getUrlBits().name + '.php';
+        var a = 'www',
+            b = '';
+        if (this._fetchPreCachedLoader) {
+            a = 'cdn';
+            b = 'static/';
+        }
+        return FB._domain[a] + 'plugins/' + b + this.getUrlBits().name + '.php';
     },
     _postRequest: function () {
         FB.Content.postTarget({
@@ -2556,9 +2576,11 @@ FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
     _extraParams: {},
     setupAndValidate: function () {
         this._attr = {
+            href: this.getAttribute('href'),
             channel: this.getChannelUrl(),
             max_rows: this.getAttribute('max-rows'),
-            width: this._getPxAttribute('width', 200)
+            width: this._getPxAttribute('width', 200),
+            ref: this.getAttribute('ref')
         };
         for (var a in this._extraParams) this._attr[a] = this._extraParams[a];
         return true;
@@ -2927,31 +2949,76 @@ FB.subclass('XFBML.Login', 'XFBML.Facepile', null, {
 });
 FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
     setupAndValidate: function () {
-        this.autologoutlink = this._getBoolAttribute('auto-logout-link');
-        this.onlogin = this.getAttribute('on-login');
-        this.perms = this.getAttribute('perms');
-        this.length = this._getAttributeFromList('length', 'short', ['long', 'short']);
-        this.iframe = this._getBoolAttribute('iframe');
-        if (this.autologoutlink) FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));
+        if (this._alreadySetup) return true;
+        this._alreadySetup = true;
+        this._attr = {
+            autologoutlink: this._getBoolAttribute('auto-logout-link'),
+            length: this._getAttributeFromList('length', 'short', ['long', 'short']),
+            onlogin: this.getAttribute('on-login'),
+            perms: this.getAttribute('perms'),
+            registration_url: this.getAttribute('registration-url'),
+            status: 'unknown'
+        };
+        if (this._attr.registration_url) FB.getLoginStatus(this.bind(function (a) {
+            this._attr.status = a.status;
+        }));
+        if (this._attr.autologoutlink) FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));
+        if (this._attr.registration_url) {
+            FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));
+            FB.Event.subscribe('FB.loginStatus', FB.bind(this.process, this));
+        }
         return true;
     },
     getButtonMarkup: function () {
         var a = this.getOriginalHTML();
-        if (a === '') {
-            if (FB.getSession() && this.autologoutlink) {
+        if (a) return a;
+        if (!this._attr.registration_url) {
+            if (FB.getSession() && this._attr.autologoutlink) {
                 return FB.Intl._tx("Se d\u00e9connecter de Facebook");
-            } else return this.length == 'short' ? FB.Intl._tx("Se connecter") : FB.Intl._tx("Se connecter avec Facebook");
-        } else return a;
+            } else return this._getLoginText();
+        } else switch (this._attr.status) {
+        case 'unknown':
+            return this._getLoginText();
+        case 'notConnected':
+            return FB.Intl._tx("Inscription");
+        case 'connected':
+            if (FB.getSession() && this._attr.autologoutlink) return FB.Intl._tx("Se d\u00e9connecter de Facebook");
+            return this._getLoginText();
+        default:
+            FB.log('Unknown status: ' + this.status);
+            return FB.Intl._tx("Se connecter");
+        }
+    },
+    _getLoginText: function () {
+        return this._attr.length == 'short' ? FB.Intl._tx("Se connecter") : FB.Intl._tx("Se connecter avec Facebook");
     },
     onClick: function () {
-        if (!FB.getSession() || !this.autologoutlink) {
-            FB.login(FB.bind(this._authCallback, this), {
-                perms: this.perms
-            });
-        } else FB.logout(FB.bind(this._authCallback, this));
+        if (!this._attr.registration_url) {
+            if (!FB.getSession() || !this._attr.autologoutlink) {
+                FB.login(FB.bind(this._authCallback, this), {
+                    perms: this._attr.perms
+                });
+            } else FB.logout(FB.bind(this._authCallback, this));
+        } else switch (this._attr.status) {
+        case 'unknown':
+            FB.ui({
+                method: 'auth.loginToFacebook'
+            }, this.bind(function (a) {
+                window.top.location = this._attr.registration_url;
+            }));
+            break;
+        case 'notConnected':
+            window.top.location = this._attr.registration_url;
+            break;
+        case 'connected':
+            this._authCallback();
+            break;
+        default:
+            FB.log('Unknown status: ' + this.status);
+        }
     },
     _authCallback: function (a) {
-        FB.Helper.invokeHandler(this.onlogin, this, [a]);
+        FB.Helper.invokeHandler(this._attr.onlogin, this, [a]);
     }
 });
 FB.subclass('XFBML.Name', 'XFBML.Element', null, {
@@ -3213,6 +3280,7 @@ FB.subclass('XFBML.SendButtonFormWidget', 'XFBML.EdgeCommentWidget', function (a
     this._attr.nodeImageURL = a.nodeImageURL;
     this._attr.nodeTitle = a.nodeTitle;
     this._attr.nodeURL = a.nodeURL;
+    this._attr.nodeSummary = a.nodeSummary;
     this._attr.channel = this.getChannelUrl();
     this._attr.controllerID = a.controllerID;
     this._attr.colorscheme = a.colorscheme;
@@ -3250,6 +3318,7 @@ FB.subclass('XFBML.Send', 'XFBML.EdgeWidget', null, {
             nodeImageURL: b.nodeImageURL,
             nodeTitle: b.nodeTitle,
             nodeURL: b.nodeURL,
+            nodeSummary: b.nodeSummary,
             width: 400,
             height: 300,
             relativeHeightOffset: this._getHeightOffset(),
