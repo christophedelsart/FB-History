@@ -1,4 +1,4 @@
-/*1293579327,169594742,JIT Construction: v328157,fr_FR*/
+/*1294797454,169900139,JIT Construction: v331761,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -2276,6 +2276,11 @@ FB.provide('Helper', {
             eval(handler);
         } else if (handler.apply) handler.apply(scope, args || []);
     },
+    fireEvent: function (a, b) {
+        var c = b._attr.href;
+        b.fire(a, c);
+        FB.Event.fire(a, c, b);
+    },
     executeFunctionByName: function (d) {
         var a = Array.prototype.slice.call(arguments, 1);
         var f = d.split(".");
@@ -2723,7 +2728,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
         return true;
     },
     oneTimeSetup: function () {
-        this.subscribe('xd.presentEdgeCommentDialog', FB.bind(this._onEdgeCreate, this));
+        this.subscribe('xd.edgeCreated', FB.bind(this._onEdgeCreate, this));
+        this.subscribe('xd.edgeRemoved', FB.bind(this._onEdgeRemove, this));
         this.subscribe('xd.presentEdgeCommentDialog', FB.bind(this._handleEdgeCommentDialogPresentation, this));
         this.subscribe('xd.dismissEdgeCommentDialog', FB.bind(this._handleEdgeCommentDialogDismissal, this));
         this.subscribe('xd.hideEdgeCommentDialog', FB.bind(this._handleEdgeCommentDialogHide, this));
@@ -2852,10 +2858,15 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     _handleEdgeCommentDialogShow: function () {
         if (this._commentWidgetNode) this._commentWidgetNode.style.display = "block";
     },
+    _fireEventAndInvokeHandler: function (b, a) {
+        FB.Helper.fireEvent(b, this);
+        FB.Helper.invokeHandler(this.getAttribute(a), this, [this._attr.href]);
+    },
     _onEdgeCreate: function () {
-        this.fire('edge.create', this._attr.href);
-        FB.Event.fire('edge.create', this._attr.href, this);
-        FB.Helper.invokeHandler(this.getAttribute('on-create'), this, [this._attr.href]);
+        this._fireEventAndInvokeHandler('edge.create', 'on-create');
+    },
+    _onEdgeRemove: function () {
+        this._fireEventAndInvokeHandler('edge.remove', 'on-remove');
     }
 });
 FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
@@ -2905,6 +2916,7 @@ FB.subclass('XFBML.LikeBox', 'XFBML.IframeWidget', null, {
         }
         this._attr.height = a;
         this.subscribe('xd.likeboxLiked', FB.bind(this._onLiked, this));
+        this.subscribe('xd.likeboxUnliked', FB.bind(this._onUnliked, this));
         return true;
     },
     getSize: function () {
@@ -2920,8 +2932,10 @@ FB.subclass('XFBML.LikeBox', 'XFBML.IframeWidget', null, {
         };
     },
     _onLiked: function () {
-        this.fire('edge.create', this._attr.href);
-        FB.Event.fire('edge.create', this._attr.href, this);
+        FB.Helper.fireEvent('edge.create', this);
+    },
+    _onUnliked: function () {
+        FB.Helper.fireEvent('edge.remove', this);
     }
 });
 FB.subclass('XFBML.LiveStream', 'XFBML.IframeWidget', null, {
@@ -3281,13 +3295,18 @@ FB.subclass('XFBML.Recommendations', 'XFBML.IframeWidget', null, {
 });
 FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
     _visibleAfter: 'immediate',
+    _baseHeight: 167,
+    _fieldHeight: 28,
+    _skinnyWidth: 520,
+    _skinnyBaseHeight: 173,
+    _skinnyFieldHeight: 52,
     setupAndValidate: function () {
         this._attr = {
             channel_url: this.getChannelUrl(),
             client_id: FB._apiKey,
             fb_only: this._getBoolAttribute('fb-only', false),
             fields: this.getAttribute('fields'),
-            height: this._getPxAttribute('height', 500),
+            height: this._getPxAttribute('height'),
             redirect_uri: this.getAttribute('redirect-uri', window.location.href),
             onvalidate: this.getAttribute('onvalidate'),
             width: this._getPxAttribute('width', 600)
@@ -3308,8 +3327,24 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
     getSize: function () {
         return {
             width: this._attr.width,
-            height: this._attr.height
+            height: this._getHeight()
         };
+    },
+    _getHeight: function () {
+        if (this._attr.height) return this._attr.height;
+        var b;
+        if (!this._attr.fields) {
+            b = ['name'];
+        } else
+        try {
+            b = FB.JSON.parse(this._attr.fields);
+        } catch (a) {
+            b = this._attr.fields.split(/,/);
+        }
+        if (this._attr.width < this._skinnyWidth) {
+            return this._skinnyBaseHeight + b.length * this._skinnyFieldHeight;
+        } else
+        return this._baseHeight + b.length * this._fieldHeight;
     },
     getUrlBits: function () {
         return {
