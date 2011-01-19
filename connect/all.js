@@ -1,4 +1,4 @@
-/*1294797454,169900139,JIT Construction: v331761,fr_FR*/
+/*1295410834,169585005,JIT Construction: v333435,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -2494,7 +2494,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         document.body.appendChild(c);
         this._container = c;
         this._initialHeight = Math.round(parseFloat(FB.Dom.getStyle(c, 'height')) + parseFloat(FB.Dom.getStyle(c, 'borderBottomWidth')));
-        b.innerHTML = FB.String.format('<div class="fb_buttons">' + '<a href="#" class="fb_bar_close">' + '<img src="{1}" alt="{2}" title="{2}"/>' + '</a>' + '</div>' + '<a href="{7}" class="fb_profile" target="_blank">' + '<img src="{3}" alt="{4}" title="{4}"/>' + '</a>' + '{5}' + ' <span>' + '<a href="{8}" class="fb_learn_more" target="_blank">{6}</a> &ndash; ' + '<a href="#" class="fb_no_thanks">{0}</a>' + '</span>', FB.Intl._tx("Non merci"), FB.getDomain('cdn') + FB.XFBML.ConnectBar.imgs.buttonUrl, FB.Intl._tx("Fermer"), d[this._picFieldName] || FB.getDomain('cdn') + FB.XFBML.ConnectBar.imgs.missingProfileUrl, FB.String.escapeHTML(d.first_name), FB.Intl._tx("Bonjour {firstName}. <strong>{siteName}<\/strong> utilise Facebook pour personnaliser votre navigation.", {
+        b.innerHTML = FB.String.format('<div class="fb_buttons">' + '<a href="#" class="fb_bar_close">' + '<img src="{1}" alt="{2}" title="{2}"/>' + '</a>' + '</div>' + '<a href="{7}" class="fb_profile" target="_blank">' + '<img src="{3}" alt="{4}" title="{4}"/>' + '</a>' + '{5}' + ' <span>' + '<a href="{8}" class="fb_learn_more" target="_blank">{6}</a> &ndash; ' + '<a href="#" class="fb_no_thanks">{0}</a>' + '</span>', FB.Intl._tx("Non merci"), FB.getDomain('cdn') + FB.XFBML.ConnectBar.imgs.buttonUrl, FB.Intl._tx("Fermer"), d[this._picFieldName] || FB.getDomain('cdn') + FB.XFBML.ConnectBar.imgs.missingProfileUrl, FB.String.escapeHTML(d.first_name), FB.Intl._tx("Bonjour {firstName}. \u003cstrong>{siteName}\u003c\/strong> utilise Facebook pour personnaliser votre navigation.", {
             firstName: FB.String.escapeHTML(d.first_name),
             siteName: FB.String.escapeHTML(d.site_name)
         }), FB.Intl._tx("En savoir plus"), d.profile_url, FB.getDomain('www') + 'sitetour/connect.php');
