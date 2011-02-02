@@ -1,4 +1,4 @@
-/*1295995916,169554025,JIT Construction: v336001,fr_FR*/
+/*1296600416,169554038,JIT Construction: v338579,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -1996,7 +1996,10 @@ window.setTimeout(function () {
             }
         }
     });
-    if (window.fbAsyncInit) fbAsyncInit();
+    if (window.fbAsyncInit && !window.fbAsyncInit.hasRun) {
+        window.fbAsyncInit.hasRun = true;
+        fbAsyncInit();
+    }
 }, 0);
 FB.provide('UIServer.Methods', {
     'pay.prompt': {
@@ -2316,7 +2319,7 @@ FB.subclass('XFBML.AddProfileTab', 'XFBML.ButtonElement', null, {
 });
 FB.subclass('XFBML.Bookmark', 'XFBML.ButtonElement', null, {
     getButtonMarkup: function () {
-        return FB.Intl._tx("Marquer sur Facebook");
+        return FB.Intl._tx("Ajouter un signet sur Facebook");
     },
     onClick: function () {
         FB.ui({
@@ -2327,7 +2330,7 @@ FB.subclass('XFBML.Bookmark', 'XFBML.ButtonElement', null, {
     }
 });
 FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
-    _visibleAfter: 'resize',
+    _visibleAfter: 'load',
     _refreshOnAuthChange: true,
     setupAndValidate: function () {
         var a = {
@@ -3323,6 +3326,8 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
             fields: this.getAttribute('fields'),
             height: this._getPxAttribute('height'),
             redirect_uri: this.getAttribute('redirect-uri', window.location.href),
+            no_footer: this._getBoolAttribute('no-footer'),
+            no_header: this._getBoolAttribute('no-header'),
             onvalidate: this.getAttribute('onvalidate'),
             width: this._getPxAttribute('width', 600)
         };
@@ -3424,7 +3429,7 @@ FB.subclass('XFBML.Send', 'XFBML.EdgeWidget', null, {
         return '25px';
     },
     _getWidthOffset: function () {
-        return '-5px;';
+        return '-5px';
     },
     getSize: function () {
         return {
