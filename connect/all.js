@@ -1,4 +1,4 @@
-/*1297469083,169907569,JIT Construction: v342630,fr_FR*/
+/*1297823327,169921638,JIT Construction: v343797,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -720,7 +720,7 @@ FB.provide('Canvas', {
         });
         if (FB.Canvas._lastSize[b.frame]) {
             var a = FB.Canvas._lastSize[b.frame].height;
-            if (FB.Canvas._lastSize[b.frame].width == b.width && (b.height <= a && (a - b.height <= 16))) return false;
+            if (FB.Canvas._lastSize[b.frame].width == b.width && (b.height <= a && (Math.abs(a - b.height) <= 16))) return false;
         }
         FB.Canvas._lastSize[b.frame] = b;
         FB.Arbiter.inform('setSize', b);
@@ -2310,7 +2310,7 @@ FB.provide('Helper', {
 });
 FB.subclass('XFBML.AddProfileTab', 'XFBML.ButtonElement', null, {
     getButtonMarkup: function () {
-        return FB.Intl._tx("Ajouter un onglet de profil sur Facebook");
+        return FB.Intl._tx("Add Profile Tab on Facebook");
     },
     onClick: function () {
         FB.ui({
@@ -2349,7 +2349,8 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
             width: this._getPxAttribute('width', 550),
             xid: this.getAttribute('xid'),
             href: this.getAttribute('href'),
-            migrated: this.getAttribute('migrated')
+            migrated: this.getAttribute('migrated'),
+            publish_feed: this.getAttribute('publish_feed')
         };
         if (!a.xid) {
             var b = document.URL.indexOf('#');
@@ -2363,6 +2364,8 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
     },
     oneTimeSetup: function () {
         this.subscribe('xd.addComment', FB.bind(this._handleCommentMsg, this));
+        this.subscribe('xd.commentCreated', FB.bind(this._handleCommentCreatedMsg, this));
+        this.subscribe('xd.commentRemoved', FB.bind(this._handleCommentRemovedMsg, this));
     },
     getSize: function () {
         return {
@@ -2383,6 +2386,25 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
             user: a.user,
             widget: this
         });
+    },
+    _handleCommentCreatedMsg: function (b) {
+        if (!this.isValid()) return;
+        var a = {
+            href: b.href,
+            commentID: b.commentID,
+            text: b.text,
+            timestamp: b.timestamp,
+            parentCommentID: b.parentCommentID
+        };
+        FB.Event.fire('comment.create', a);
+    },
+    _handleCommentRemovedMsg: function (b) {
+        if (!this.isValid()) return;
+        var a = {
+            href: b.href,
+            commentID: b.commentID
+        };
+        FB.Event.fire('comment.remove', a);
     }
 });
 FB.provide('Anim', {
@@ -3124,7 +3146,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         }
     },
     _getLoginText: function () {
-        return this._attr.length == 'short' ? FB.Intl._tx("Se connecter") : FB.Intl._tx("Se connecter avec Facebook");
+        return this._attr.length == 'short' ? FB.Intl._tx("Se connecter") : FB.Intl._tx("Login with Facebook");
     },
     onClick: function () {
         if (!this._attr.registration_url) {
@@ -3428,6 +3450,8 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
             var c = FB.Helper.executeFunctionByName(this._attr.onvalidate, d, a);
             if (c) a(c);
         }));
+        this.subscribe('xd.authLogin', FB.bind(this._onAuthLogin, this));
+        this.subscribe('xd.authLogout', FB.bind(this._onAuthLogout, this));
         return true;
     },
     getSize: function () {
@@ -3457,6 +3481,14 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
             name: 'registration',
             params: this._attr
         };
+    },
+    _onAuthLogin: function () {
+        if (!FB.getSession()) FB.getLoginStatus();
+        FB.Helper.fireEvent('auth.login', this);
+    },
+    _onAuthLogout: function () {
+        if (!FB.getSession()) FB.getLoginStatus();
+        FB.Helper.fireEvent('auth.logout', this);
     }
 });
 FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
@@ -3879,20 +3911,20 @@ FB.provide("Flash", {
 }, true);
 FB.provide("XFBML.ConnectBar", {
     "imgs": {
-        "buttonUrl": "rsrc.php\/yY\/r\/h_Y6u1wrZPW.png",
-        "missingProfileUrl": "rsrc.php\/yo\/r\/UlIqmHJn-SK.gif"
+        "buttonUrl": "rsrc.php\/v1\/yY\/r\/h_Y6u1wrZPW.png",
+        "missingProfileUrl": "rsrc.php\/v1\/yo\/r\/UlIqmHJn-SK.gif"
     }
 }, true);
 FB.provide("XFBML.ProfilePic", {
     "_defPicMap": {
-        "pic": "rsrc.php\/yh\/r\/C5yt7Cqf3zU.jpg",
-        "pic_big": "rsrc.php\/yL\/r\/HsTZSDw4avx.gif",
-        "pic_big_with_logo": "rsrc.php\/y5\/r\/SRDCaeCL7hM.gif",
-        "pic_small": "rsrc.php\/yi\/r\/odA9sNLrE86.jpg",
-        "pic_small_with_logo": "rsrc.php\/yD\/r\/k1xiRXKnlGd.gif",
-        "pic_square": "rsrc.php\/yo\/r\/UlIqmHJn-SK.gif",
-        "pic_square_with_logo": "rsrc.php\/yX\/r\/9dYJBPDHXwZ.gif",
-        "pic_with_logo": "rsrc.php\/yu\/r\/fPPR9f2FJ3t.gif"
+        "pic": "rsrc.php\/v1\/yh\/r\/C5yt7Cqf3zU.jpg",
+        "pic_big": "rsrc.php\/v1\/yL\/r\/HsTZSDw4avx.gif",
+        "pic_big_with_logo": "rsrc.php\/v1\/y5\/r\/SRDCaeCL7hM.gif",
+        "pic_small": "rsrc.php\/v1\/yi\/r\/odA9sNLrE86.jpg",
+        "pic_small_with_logo": "rsrc.php\/v1\/yD\/r\/k1xiRXKnlGd.gif",
+        "pic_square": "rsrc.php\/v1\/yo\/r\/UlIqmHJn-SK.gif",
+        "pic_square_with_logo": "rsrc.php\/v1\/yX\/r\/9dYJBPDHXwZ.gif",
+        "pic_with_logo": "rsrc.php\/v1\/yu\/r\/fPPR9f2FJ3t.gif"
     }
 }, true);
 if (FB.Dom && FB.Dom.addCssRules) {
