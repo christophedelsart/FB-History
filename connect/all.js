@@ -1,4 +1,4 @@
-/*1297823327,169921638,JIT Construction: v343797,fr_FR*/
+/*1297924803,169544812,JIT Construction: v344534,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -2392,8 +2392,6 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
         var a = {
             href: b.href,
             commentID: b.commentID,
-            text: b.text,
-            timestamp: b.timestamp,
             parentCommentID: b.parentCommentID
         };
         FB.Event.fire('comment.create', a);
