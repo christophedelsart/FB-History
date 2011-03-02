@@ -1,11 +1,11 @@
-/*1297924803,169544812,JIT Construction: v344534,fr_FR*/
+/*1298683618,169932419,JIT Construction: v347484,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
     _userStatus: 'unknown',
     _logging: true,
-    _inCanvas: ((window.location.search.indexOf('fb_sig_in_iframe=1') > -1) || (window.location.search.indexOf('session=') > -1) || (window.location.search.indexOf('signed_request=') > -1)),
+    _inCanvas: ((window.location.search.indexOf('fb_sig_in_iframe=1') > -1) || (window.location.search.indexOf('session=') > -1) || (window.location.search.indexOf('signed_request=') > -1) || (window.name.indexOf('iframe_canvas') > -1) || (window.name.indexOf('app_runner') > -1)),
     _https: (window.name.indexOf('_fb_https') > -1),
     _domain: {
         api: 'https://api.facebook.com/',
@@ -586,6 +586,7 @@ FB.provide('XD', {
     _transport: null,
     _callbacks: {},
     _forever: {},
+    _xdProxyUrl: 'connect/xd_proxy.php',
     init: function (a) {
         if (FB.XD._origin) return;
         if (window.addEventListener && !window.attachEvent && window.postMessage) {
@@ -617,7 +618,7 @@ FB.provide('XD', {
     },
     handler: function (a, e, b) {
         if (window.location.toString().indexOf(FB.XD.Fragment._magic) > 0) return 'javascript:false;//';
-        var f = FB.getDomain('cdn') + 'connect/xd_proxy.php#',
+        var f = FB.getDomain('cdn') + FB.XD._xdProxyUrl + '#',
             c = FB.guid();
         if (FB.XD._transport == 'fragment') {
             f = FB.XD.Fragment._channelUrl;
@@ -675,6 +676,7 @@ FB.provide('XD', {
 });
 FB.XD.Fragment.checkAndDispatch();
 FB.provide('Arbiter', {
+    _canvasProxyUrl: 'connect/canvas_proxy.php',
     inform: function (c, e, f, b) {
         if (FB.Canvas.isTabIframe()) {
             var d = FB.JSON.stringify({
@@ -690,7 +692,7 @@ FB.provide('Arbiter', {
                 return;
             } catch (a) {}
         }
-        var h = (FB.getDomain((b ? 'https_' : '') + 'staticfb') + 'connect/canvas_proxy.php#' + FB.QS.encode({
+        var h = (FB.getDomain((b ? 'https_' : '') + 'staticfb') + FB.Arbiter._canvasProxyUrl + '#' + FB.QS.encode({
             method: c,
             params: FB.JSON.stringify(e || {}),
             relation: f
@@ -1106,7 +1108,7 @@ FB.provide('UIServer', {
                 }
             },
             e = FB.guid(),
-            d = FB._https || (g !== 'auth.status');
+            d = (f.noHttps !== true) && (FB._https || (g !== 'auth.status'));
         FB.copy(h, {
             api_key: FB._apiKey,
             app_id: FB._apiKey,
@@ -1148,6 +1150,7 @@ FB.provide('UIServer', {
             FB.log('"dialog" mode can only be used when the user is connected.');
             return 'popup';
         }
+        if (a.connectDisplay && !FB._inCanvas) return a.connectDisplay;
         return b.display || (FB._session ? 'dialog' : 'popup');
     },
     getXdRelation: function (a) {
@@ -2018,7 +2021,14 @@ FB.provide('UIServer.Methods', {
 });
 FB.provide('UIServer.Methods', {
     pay: {
+        size: {
+            width: 555,
+            height: 120
+        },
+        noHttps: true,
+        connectDisplay: 'popup',
         transform: function (a) {
+            if (!FB._inCanvas) return a;
             var b = FB.XD.handler(function (c) {
                 a.cb(FB.JSON.parse(c.response));
             }, 'parent.frames[' + (window.name || 'iframe_canvas') + ']');
@@ -3906,6 +3916,12 @@ FB.provide("Flash", {
         [10, 0, 22, 87]
     ],
     "_swfPath": "rsrc.php\/v1\/yF\/r\/Y7YCBKX-HZn.swf"
+}, true);
+FB.provide("XD", {
+    "_xdProxyUrl": "connect\/xd_proxy.php?version=0"
+}, true);
+FB.provide("Arbiter", {
+    "_canvasProxyUrl": "connect\/canvas_proxy.php?version=0"
 }, true);
 FB.provide("XFBML.ConnectBar", {
     "imgs": {
