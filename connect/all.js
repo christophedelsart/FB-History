@@ -1,4 +1,4 @@
-/*1300231762,169900392,JIT Construction: v353909,fr_FR*/
+/*1300834378,169601143,JIT Construction: v356553,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -735,7 +735,7 @@ FB.provide('Canvas', {
         FB.Canvas._pageInfo.clientHeight = d.height;
         var c = 'top.frames[' + window.name + ']';
         var a = FB.XD.handler(function (e) {
-            if (e.type == 'canvasPage.update') {
+            if (e.type == 'pageInfo.update') {
                 FB.Canvas._pageInfo.clientWidth = e.clientWidth;
                 FB.Canvas._pageInfo.clientHeight = e.clientHeight;
                 FB.Canvas._pageInfo.scrollLeft = e.scrollLeft;
@@ -747,9 +747,10 @@ FB.provide('Canvas', {
         }, c, true);
         var b = {
             channelUrl: a,
+            frame: window.name,
             updateInterval: FB.Canvas._pageInfoPollInterval
         };
-        FB.Arbiter.inform('canvasPage.poll', b, 'top');
+        FB.Arbiter.inform('pollPageInfo', b, 'top');
     },
     setSize: function (b) {
         if (typeof b != "object") b = {};
@@ -764,6 +765,13 @@ FB.provide('Canvas', {
         FB.Canvas._lastSize[b.frame] = b;
         FB.Arbiter.inform('setSize', b);
         return true;
+    },
+    scrollTo: function (a, b) {
+        FB.Arbiter.inform('scrollTo', {
+            frame: window.name || 'iframe_canvas',
+            x: a,
+            y: b
+        });
     },
     setAutoResize: function (b, a) {
         if (a === undefined && typeof b == "number") {
@@ -1545,7 +1553,7 @@ FB.provide('', {
             FB.Auth.setSession(a.session, a.session ? 'connected' : 'unknown');
             if (a.status) FB.getLoginStatus();
         }
-        FB.Canvas.init();
+        if (FB._inCanvas) FB.Canvas.init();
         if (a.xfbml) window.setTimeout(function () {
             if (FB.XFBML) if (FB.initSitevars.parseXFBMLBeforeDomReady) {
                 FB.XFBML.parse();
@@ -2920,6 +2928,10 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
             button_count: {
                 show: 21,
                 hide: 21
+            },
+            simple: {
+                show: 20,
+                hide: 20
             }
         };
         return b[a][c];
@@ -2929,6 +2941,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
         var g = this._shouldShowFaces() ? 'show' : 'hide';
         var c = this.getAttribute('action') === 'recommend' ? 130 : 90;
         var b = this.getAttribute('action') === 'recommend' ? 100 : 55;
+        var h = this.getAttribute('action') === 'recommend' ? 90 : 50;
         var f = {
             standard: {
                 show: 450,
@@ -2941,10 +2954,14 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
             button_count: {
                 show: c,
                 hide: c
+            },
+            simple: {
+                show: h,
+                hide: h
             }
         };
         var d = f[e][g];
-        var h = this._getPxAttribute('width', d);
+        var i = this._getPxAttribute('width', d);
         var a = {
             standard: {
                 min: 225,
@@ -2957,15 +2974,19 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
             button_count: {
                 min: c,
                 max: 900
+            },
+            simple: {
+                min: 49,
+                max: 900
             }
         };
-        if (h < a[e].min) {
-            h = a[e].min;
-        } else if (h > a[e].max) h = a[e].max;
-        return h;
+        if (i < a[e].min) {
+            i = a[e].min;
+        } else if (i > a[e].max) i = a[e].max;
+        return i;
     },
     _getLayout: function () {
-        return this._getAttributeFromList('layout', 'standard', ['standard', 'button_count', 'box_count']);
+        return this._getAttributeFromList('layout', 'standard', ['standard', 'button_count', 'box_count', 'simple']);
     },
     _shouldShowFaces: function () {
         return this._getLayout() === 'standard' && this._getBoolAttribute('show-faces', true);
@@ -2996,7 +3017,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
         var b = {
             standard: '20px',
             button_count: '17px',
-            box_count: '-5px'
+            box_count: '-5px',
+            simple: '17px'
         };
         return b[a];
     },
@@ -3021,7 +3043,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
         var b = {
             standard: '17px',
             box_count: '0px',
-            button_count: '0px'
+            button_count: '0px',
+            simple: '0px'
         };
         return b[a];
     },
@@ -3249,7 +3272,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         if (a) return a;
         if (!this._attr.registration_url) {
             if (FB.getSession() && this._attr.autologoutlink) {
-                return FB.Intl._tx("Se d\u00e9connecter de Facebook");
+                return FB.Intl._tx("D\u00e9connexion de Facebook");
             } else
             return this._getLoginText();
         } else
@@ -3259,7 +3282,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         case 'notConnected':
             return FB.Intl._tx("Inscription");
         case 'connected':
-            if (FB.getSession() && this._attr.autologoutlink) return FB.Intl._tx("Se d\u00e9connecter de Facebook");
+            if (FB.getSession() && this._attr.autologoutlink) return FB.Intl._tx("D\u00e9connexion de Facebook");
             return this._getLoginText();
         default:
             FB.log('Unknown status: ' + this.status);
@@ -3566,7 +3589,7 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
                 FB.Arbiter.inform('Registration.Validation', {
                     errors: e,
                     id: b.id
-                }, 'parent.frames["' + this.getIframeNode().name + '"]');
+                }, 'parent.frames["' + this.getIframeNode().name + '"]', window.location.protocol == 'https:');
             });
             var c = FB.Helper.executeFunctionByName(this._attr.onvalidate, d, a);
             if (c) a(c);
