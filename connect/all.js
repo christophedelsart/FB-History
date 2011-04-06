@@ -1,4 +1,4 @@
-/*1301445307,169600117,JIT Construction: v359566,fr_FR*/
+/*1302048247,169554548,JIT Construction: v362372,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -15,7 +15,7 @@ if (!window.FB) window.FB = {
         graph: 'https://graph.facebook.com/',
         staticfb: 'http://static.ak.facebook.com/',
         https_staticfb: 'https://s-static.ak.facebook.com/',
-        www: 'http://www.facebook.com/',
+        www: window.location.protocol + '//www.facebook.com/',
         https_www: 'https://www.facebook.com/'
     },
     _locale: null,
@@ -31,11 +31,11 @@ if (!window.FB) window.FB = {
         case 'graph':
             return FB._domain.graph;
         case 'staticfb':
-            return (window.location.protocol == 'https:' || FB._https) ? FB._domain.https_staticfb : FB._domain.staticfb;
+            return FB._https ? FB._domain.https_staticfb : FB._domain.staticfb;
         case 'https_staticfb':
             return FB._domain.https_staticfb;
         case 'www':
-            return (window.location.protocol == 'https:' || FB._https) ? FB._domain.https_www : FB._domain.www;
+            return FB._https ? FB._domain.https_www : FB._domain.www;
         case 'https_www':
             return FB._domain.https_www;
         }
@@ -597,7 +597,9 @@ FB.provide('XD', {
             FB.XD._transport = 'postmessage';
         } else if (!a && FB.Flash.hasMinVersion()) {
             if (document.getElementById('fb-root')) {
-                FB.XD._origin = (window.location.protocol + '//' + document.domain + '/' + FB.guid());
+                var b = document.domain;
+                if (b == 'facebook.com') b = window.location.host;
+                FB.XD._origin = (window.location.protocol + '//' + b + '/' + FB.guid());
                 FB.XD.Flash.init();
                 FB.XD._transport = 'flash';
             } else {
@@ -879,6 +881,60 @@ FB.provide('String', {
         }) + '"' : '"' + c + '"';
     }
 });
+FB.provide('UA', {
+    ie: function () {
+        return FB.UA._populate() || this._ie;
+    },
+    firefox: function () {
+        return FB.UA._populate() || this._firefox;
+    },
+    opera: function () {
+        return FB.UA._populate() || this._opera;
+    },
+    safari: function () {
+        return FB.UA._populate() || this._safari;
+    },
+    chrome: function () {
+        return FB.UA._populate() || this._chrome;
+    },
+    windows: function () {
+        return FB.UA._populate() || this._windows;
+    },
+    osx: function () {
+        return FB.UA._populate() || this._osx;
+    },
+    linux: function () {
+        return FB.UA._populate() || this._linux;
+    },
+    iphone: function () {
+        return FB.UA._populate() || this._iphone;
+    },
+    _populated: false,
+    _populate: function () {
+        if (FB.UA._populated) return;
+        FB.UA._populated = true;
+        var a = /(?:MSIE.(\d+\.\d+))|(?:(?:Firefox|GranParadiso|Iceweasel).(\d+\.\d+))|(?:Opera(?:.+Version.|.)(\d+\.\d+))|(?:AppleWebKit.(\d+(?:\.\d+)?))/.exec(navigator.userAgent);
+        var c = /(Mac OS X)|(Windows)|(Linux)/.exec(navigator.userAgent);
+        var b = /\b(iPhone|iP[ao]d)/.exec(navigator.userAgent);
+        if (a) {
+            FB.UA._ie = a[1] ? parseFloat(a[1]) : NaN;
+            if (FB.UA._ie >= 8 && !window.HTMLCollection) FB.UA._ie = 7;
+            FB.UA._firefox = a[2] ? parseFloat(a[2]) : NaN;
+            FB.UA._opera = a[3] ? parseFloat(a[3]) : NaN;
+            FB.UA._safari = a[4] ? parseFloat(a[4]) : NaN;
+            if (FB.UA._safari) {
+                a = /(?:Chrome\/(\d+\.\d+))/.exec(navigator.userAgent);
+                FB.UA._chrome = a && a[1] ? parseFloat(a[1]) : NaN;
+            } else FB.UA._chrome = NaN;
+        } else FB.UA._ie = FB.UA._firefox = FB.UA._opera = FB.UA._chrome = FB.UA._safari = NaN;
+        if (c) {
+            FB.UA._osx = !! c[1];
+            FB.UA._windows = !! c[2];
+            FB.UA._linux = !! c[3];
+        } else FB.UA._osx = FB.UA._windows = FB.UA._linux = false;
+        FB.UA._iphone = b;
+    }
+});
 FB.provide('Dom', {
     containsCss: function (c, a) {
         var b = ' ' + c.className + ' ';
@@ -945,7 +1001,7 @@ FB.provide('Dom', {
             }
         });
         if (a) return;
-        if (FB.Dom.getBrowserType() != 'ie') {
+        if (!FB.UA.ie()) {
             var d = document.createElement('style');
             d.type = 'text/css';
             d.textContent = e;
@@ -956,18 +1012,6 @@ FB.provide('Dom', {
         } catch (b) {
             if (document.styleSheets[0]) document.styleSheets[0].cssText += e;
         }
-    },
-    getBrowserType: function () {
-        if (!FB.Dom._browserType) {
-            var d = window.navigator.userAgent.toLowerCase(),
-                b = ['msie', 'firefox', 'safari', 'gecko'],
-                c = ['ie', 'mozilla', 'safari', 'mozilla'];
-            for (var a = 0; a < b.length; a++) if (d.indexOf(b[a]) >= 0) {
-                FB.Dom._browserType = c[a];
-                break;
-            }
-        }
-        return FB.Dom._browserType;
     },
     getViewportInfo: function () {
         var a = (document.documentElement && document.compatMode == 'CSS1Compat') ? document.documentElement : document.body;
@@ -994,7 +1038,7 @@ FB.provide('Dom', {
     if (document.addEventListener) {
         document.addEventListener('DOMContentLoaded', domReady, false);
     } else if (document.attachEvent) document.attachEvent('onreadystatechange', domReady);
-    if (FB.Dom.getBrowserType() == 'ie' && window === top)(function () {
+    if (FB.UA.ie() && window === top)(function () {
         try {
             document.documentElement.doScroll('left');
         } catch (error) {
@@ -1087,7 +1131,7 @@ FB.provide('Dialog', {
             b.onclick = e.onClose;
             d.appendChild(b);
         }
-        if (FB.Dom.getBrowserType() == 'ie') {
+        if (FB.UA.ie()) {
             a += ' fb_dialog_legacy';
             FB.Array.forEach(['vert_left', 'vert_right', 'horiz_top', 'horiz_bottom', 'top_left', 'top_right', 'bottom_left', 'bottom_right'], function (g) {
                 var h = document.createElement('span');
@@ -1215,7 +1259,7 @@ FB.provide('UIServer', {
     },
     getXdRelation: function (a) {
         if (a === 'popup') return 'opener';
-        if (a === 'dialog' || a === 'iframe') return 'parent';
+        if (a === 'dialog' || a === 'iframe' || a === 'hidden') return 'parent';
         if (a === 'async') return 'parent.frames[' + window.name + ']';
     },
     popup: function (b) {
@@ -1557,14 +1601,16 @@ FB.provide('Frictionless', {
     },
     processRequestResponse: function (a) {
         return function (c) {
-            var d = c.frictionless_value;
-            if (typeof d !== 'undefined') {
-                var b = [];
-                FB.Array.forEach(c.request_ids, function (f, e) {
-                    FB.Frictionless._allowedRecipients[e] = d;
-                    b.push(f);
-                }, false);
-                c.request_ids = b;
+            if (c) {
+                var d = c.frictionless_value;
+                if (typeof d !== 'undefined') {
+                    var b = [];
+                    FB.Array.forEach(c.request_ids, function (f, e) {
+                        FB.Frictionless._allowedRecipients[e] = d;
+                        b.push(f);
+                    }, false);
+                    c.request_ids = b;
+                }
             }
             a && a(c);
         };
@@ -1795,10 +1841,9 @@ FB.provide('XFBML', {
     },
     _getDomElements: function (a, e, d) {
         var c = e + ':' + d;
-        switch (FB.Dom.getBrowserType()) {
-        case 'mozilla':
+        if (FB.UA.firefox()) {
             return a.getElementsByTagNameNS(document.body.namespaceURI, c);
-        case 'ie':
+        } else if (FB.UA.ie() < 9) {
             try {
                 var docNamespaces = document.namespaces;
                 if (docNamespaces && docNamespaces[e]) {
@@ -1807,9 +1852,8 @@ FB.provide('XFBML', {
                 }
             } catch (b) {}
             return a.getElementsByTagName(c);
-        default:
-            return a.getElementsByTagName(c);
-        }
+        } else
+        return a.getElementsByTagName(c);
     },
     _tagInfos: [{
         localName: 'activity',
@@ -2749,7 +2793,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         var e = {
             marginTop: this._initTopMargin + this._initialHeight + 'px'
         };
-        if (FB.Dom.getBrowserType() == 'ie') {
+        if (FB.UA.ie()) {
             e.backgroundPositionY = this._initialHeight + 'px';
         } else e.backgroundPosition = '? ' + this._initialHeight + 'px';
         FB.Anim.ate(this._page, e, this._animationSpeed);
@@ -2800,7 +2844,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         var a = {
             marginTop: this._initTopMargin + 'px'
         };
-        if (FB.Dom.getBrowserType() == 'ie') {
+        if (FB.UA.ie()) {
             a.backgroundPositionY = '0px';
         } else a.backgroundPosition = '? 0px';
         var b = (this._animationSpeed == 0) ? 0 : 300;
@@ -3066,41 +3110,44 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
             height: 200,
             masterFrameName: b.masterFrameName,
             layout: this._getLayout(),
-            relativeHeightOffset: this._getHeightOffset(),
+            relativeHeightOffset: this._getHeightOffset(b),
             relativeWidthOffset: this._getWidthOffset(b)
         };
         return new FB.XFBML.EdgeCommentWidget(c);
     },
-    _getHeightOffset: function () {
+    _getHeightOffset: function (c) {
+        if (c && c.preComputedHeightOffset) return parseInt(c.preComputedHeightOffset, 10) + 'px';
         var a = this._getLayout();
         var b = {
             standard: '20px',
-            button_count: '17px',
+            button_count: '18px',
             box_count: '-5px',
             simple: '17px'
         };
         return b[a];
     },
-    _getCommonEdgeCommentWidgetOpts: function (b, a, c) {
+    _getCommonEdgeCommentWidgetOpts: function (c, a, d, b) {
         return {
             colorscheme: this._attr.colorscheme,
             commentNode: a,
-            controllerID: b.controllerID,
-            nodeImageURL: b.nodeImageURL,
-            nodeTitle: b.nodeTitle,
-            nodeURL: b.nodeURL,
-            nodeSummary: b.nodeSummary,
+            controllerID: c.controllerID,
+            nodeImageURL: c.nodeImageURL,
+            nodeTitle: c.nodeTitle,
+            nodeURL: c.nodeURL,
+            nodeSummary: c.nodeSummary,
             width: 400,
             height: 300,
-            relativeHeightOffset: this._getHeightOffset(),
-            relativeWidthOffset: (c ? this._getWidthOffset(b) : this._getWidthOffset())
+            relativeHeightOffset: (b ? this._getHeightOffset(c) : this._getHeightOffset()),
+            relativeWidthOffset: (d ? this._getWidthOffset(c) : this._getWidthOffset()),
+            error: c.error,
+            siderender: c.siderender
         };
     },
     _getWidthOffset: function (c) {
-        if (c.preComputedWidthOffset) return parseInt(c.preComputedWidthOffset, 10) + 'px';
+        if (c && c.preComputedWidthOffset) return parseInt(c.preComputedWidthOffset, 10) + 'px';
         var a = this._getLayout();
         var b = {
-            standard: '17px',
+            standard: '0px',
             box_count: '0px',
             button_count: '0px',
             simple: '0px'
@@ -3140,6 +3187,8 @@ FB.subclass('XFBML.SendButtonFormWidget', 'XFBML.EdgeCommentWidget', function (a
     this._attr.channel = this.getChannelUrl();
     this._attr.controllerID = a.controllerID;
     this._attr.colorscheme = a.colorscheme;
+    this._attr.error = a.error;
+    this._attr.siderender = a.siderender;
 }, {
     _showLoader: true,
     getUrlBits: function () {
@@ -3180,7 +3229,7 @@ FB.subclass('XFBML.Send', 'XFBML.EdgeWidget', null, {
         return '25px';
     },
     _getWidthOffset: function () {
-        return '-5px';
+        return '0px';
     },
     getSize: function () {
         return {
@@ -3204,7 +3253,7 @@ FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
     },
     _createEdgeCommentWidget: function (b, a) {
         if ('send' in this._attr && 'widget_type' in b && b.widget_type == 'send') {
-            var c = this._getCommonEdgeCommentWidgetOpts(b, a, true);
+            var c = this._getCommonEdgeCommentWidgetOpts(b, a, true, true);
             return new FB.XFBML.SendButtonFormWidget(c);
         } else
         return this._callBase("_createEdgeCommentWidget", b, a);
