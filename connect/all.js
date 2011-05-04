@@ -1,4 +1,4 @@
-/*1303859045,169616236,JIT Construction: v371127,fr_FR*/
+/*1304473188,169559142,JIT Construction: v374087,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -1663,7 +1663,7 @@ FB.provide('', {
         }
         if (FB._inCanvas) FB.Canvas.init();
         FB.Event.subscribe('xfbml.parse', function () {
-            if (FB.XFBML.Rectangle) FB.XFBML.Rectangle.batchRectangleRequests();
+            FB.XFBML.IframeWidget.batchWidgetPipeRequests();
         });
         if (a.xfbml) window.setTimeout(function () {
             if (FB.XFBML) if (FB.initSitevars.parseXFBMLBeforeDomReady) {
@@ -1792,32 +1792,49 @@ FB.provide('', {
 FB.UIServer.Methods['auth.login'] = FB.UIServer.Methods['permissions.request'];
 FB.provide('XFBML', {
     _renderTimeout: 30000,
-    parse: function (c, a) {
-        c = c || document.body;
-        var b = 1,
-            d = function () {
-                b--;
-                if (b === 0) {
-                    a && a();
+    parse: function (d, b) {
+        d = d || document.body;
+        var c = 1,
+            e = function () {
+                c--;
+                if (c === 0) {
+                    b && b();
                     FB.Event.fire('xfbml.render');
                 }
             };
-        FB.Array.forEach(FB.XFBML._tagInfos, function (f) {
-            if (!f.xmlns) f.xmlns = 'fb';
-            var g = FB.XFBML._getDomElements(c, f.xmlns, f.localName);
-            for (var e = 0; e < g.length; e++) {
-                b++;
-                FB.XFBML._processElement(g[e], f, d);
+        var a = {};
+        if (FB.XFBML._widgetPipeIsEnabled()) FB.Array.forEach(FB.XFBML._tagInfos, function (f) {
+            if (f.supportsWidgetPipe) {
+                var h = f.xmlns ? f.xmlns : 'fb';
+                var g = FB.XFBML._getDomElements(d, h, f.localName);
+                a[f.localName] = g;
+                FB.XFBML._widgetPipeEnabledTagCount += g.length;
+            }
+        });
+        FB.Array.forEach(FB.XFBML._tagInfos, function (g) {
+            if (!g.xmlns) g.xmlns = 'fb';
+            var h;
+            if (a[g.localName] !== undefined) {
+                h = a[g.localName];
+            } else h = FB.XFBML._getDomElements(d, g.xmlns, g.localName);
+            for (var f = 0; f < h.length; f++) {
+                c++;
+                FB.XFBML._processElement(h[f], g, e);
             }
         });
         FB.Event.fire('xfbml.parse');
         window.setTimeout(function () {
-            if (b > 0) FB.log(b + ' XFBML tags failed to render in ' + FB.XFBML._renderTimeout + 'ms.');
+            if (c > 0) FB.log(c + ' XFBML tags failed to render in ' + FB.XFBML._renderTimeout + 'ms.');
         }, FB.XFBML._renderTimeout);
-        d();
+        e();
     },
     registerTag: function (a) {
         FB.XFBML._tagInfos.push(a);
+    },
+    shouldUseWidgetPipe: function () {
+        if (!FB.XFBML._widgetPipeIsEnabled()) return false;
+        var a = FB.XFBML._widgetPipeEnabledTagCount > FB.widgetPipeTagCountThreshold;
+        return a;
     },
     _processElement: function (dom, tagInfo, cb) {
         var element = dom._element;
@@ -1837,7 +1854,7 @@ FB.provide('XFBML', {
                 if (tagInfo.className === 'FB.XFBML.LoginButton') {
                     renderInIframe = getBoolAttr('render-in-iframe');
                     showFaces = getBoolAttr('show-faces') || getBoolAttr('show_faces');
-                    isLogin = renderInIframe || showFaces;
+                    isLogin = renderInIframe || showFaces || getBoolAttr('oneclick');
                     if (isLogin) fn = FB.XFBML.Login;
                 }
                 element = dom._element = new fn(dom);
@@ -1903,7 +1920,8 @@ FB.provide('XFBML', {
     },
     {
         localName: 'like',
-        className: 'FB.XFBML.Like'
+        className: 'FB.XFBML.Like',
+        supportsWidgetPipe: true
     },
     {
         localName: 'like-box',
@@ -1956,15 +1974,11 @@ FB.provide('XFBML', {
     {
         localName: 'share-button',
         className: 'FB.XFBML.ShareButton'
-    },
-    {
-        localName: 'social-bar',
-        className: 'FB.XFBML.SocialBar'
-    },
-    {
-        localName: 'rectangle',
-        className: 'FB.XFBML.Rectangle'
-    }]
+    }],
+    _widgetPipeEnabledTagCount: 0,
+    _widgetPipeIsEnabled: function () {
+        return FB.widgetPipeEnabledApps[FB._apiKey] !== undefined;
+    }
 });
 (function () {
     try {
@@ -2309,11 +2323,13 @@ FB.Class('XFBML.Element', function (a) {
     }
 }, FB.EventProvider));
 FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
+    _iframeName: null,
     _showLoader: true,
     _refreshOnAuthChange: false,
     _allowReProcess: false,
     _fetchPreCachedLoader: false,
     _visibleAfter: 'load',
+    _widgetPipeEnabled: false,
     getUrlBits: function () {
         throw new Error('Inheriting class needs to implement getUrlBits().');
     },
@@ -2322,7 +2338,14 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     },
     oneTimeSetup: function () {},
     getSize: function () {},
-    getIframeName: function () {},
+    getIframeName: function () {
+        if (!this._iframeName && this._widgetPipeEnabled && FB.XFBML.shouldUseWidgetPipe()) {
+            this._iframeName = this.generateWidgetPipeIframeName();
+            FB.XFBML.IframeWidget.allWidgetPipeIframes[this._iframeName] = this;
+            if (FB.XFBML.IframeWidget.masterWidgetPipeIframe === null) FB.XFBML.IframeWidget.masterWidgetPipeIframe = this;
+        }
+        return this._iframeName;
+    },
     getIframeTitle: function () {},
     getChannelUrl: function () {
         if (!this._channelUrl) {
@@ -2364,7 +2387,12 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
             onload: FB.bind(this.fire, this, 'iframe.onload')
         });
     },
+    generateWidgetPipeIframeName: function () {
+        FB.XFBML.IframeWidget.widgetPipeIframeCount++;
+        return 'fb_iframe_' + FB.XFBML.IframeWidget.widgetPipeIframeCount;
+    },
     getFullyQualifiedURL: function () {
+        if (FB.XFBML.shouldUseWidgetPipe() && this._widgetPipeEnabled) return this._getWidgetPipeShell();
         var b = this._getURL();
         if (!this._fetchPreCachedLoader) b += '?' + FB.QS.encode(this._getQS());
         if (b.length > 2000) {
@@ -2376,6 +2404,9 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
             this.subscribe('iframe.onload', a);
         }
         return b;
+    },
+    _getWidgetPipeShell: function () {
+        return FB.getDomain('staticfb') + 'common/widget_pipe_shell.php';
     },
     _oneTimeSetup: function () {
         this.subscribe('xd.resize', FB.bind(this._handleResizeMsg, this));
@@ -2449,6 +2480,52 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
             target: this.getIframeNode().name,
             params: this._getQS()
         });
+    }
+});
+FB.provide('XFBML.IframeWidget', {
+    widgetPipeIframeCount: 0,
+    masterWidgetPipeIframe: null,
+    allWidgetPipeIframes: {},
+    batchWidgetPipeRequests: function () {
+        if (!FB.XFBML.IframeWidget.masterWidgetPipeIframe) return;
+        var a = FB.XFBML.IframeWidget._groupWidgetPipeDescriptions();
+        var c = {
+            widget_pipe: FB.JSON.stringify(a),
+            href: window.location,
+            site: location.hostname,
+            channel: FB.XFBML.IframeWidget.masterWidgetPipeIframe.getChannelUrl(),
+            api_key: FB._apiKey,
+            locale: FB._locale,
+            sdk: 'joey',
+            session_key: FB._session && FB._session.session_key
+        };
+        var b = FB.guid();
+        FB.Content.insertIframe({
+            url: 'about:blank',
+            root: document.getElementById('fb-root') || document.body,
+            name: b,
+            className: 'fb_hidden',
+            onload: function () {
+                FB.Content.submitToTarget({
+                    url: FB._domain.www + 'widget_pipe.php',
+                    target: b,
+                    params: c
+                }, true);
+            }
+        });
+    },
+    _groupWidgetPipeDescriptions: function () {
+        var e = {};
+        for (var b in FB.XFBML.IframeWidget.allWidgetPipeIframes) {
+            var a = FB.XFBML.IframeWidget.allWidgetPipeIframes[b];
+            var c = a.getUrlBits();
+            var d = {
+                widget: c.name
+            };
+            FB.copy(d, c.params);
+            e[b] = d;
+        }
+        return e;
     }
 });
 FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
@@ -2989,7 +3066,7 @@ FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
 });
 FB.subclass('XFBML.Friendpile', 'XFBML.Facepile', null, {});
 FB.subclass('XFBML.EdgeCommentWidget', 'XFBML.IframeWidget', function (a) {
-    this._iframeWidth = a.width;
+    this._iframeWidth = a.width + 1;
     this._iframeHeight = a.height;
     this._attr = {
         master_frame_name: a.masterFrameName
@@ -3060,16 +3137,18 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
         };
     },
     _getWidgetHeight: function () {
-        var a = this._getLayout();
-        var c = this._shouldShowFaces() ? 'show' : 'hide';
-        var b = {
+        var b = this._getLayout();
+        var e = this._shouldShowFaces() ? 'show' : 'hide';
+        var d = this.getAttribute('send');
+        var a = 65 + (d && d !== 'false' ? 25 : 0);
+        var c = {
             standard: {
                 show: 80,
                 hide: 35
             },
             box_count: {
-                show: 65,
-                hide: 65
+                show: a,
+                hide: a
             },
             button_count: {
                 show: 21,
@@ -3080,7 +3159,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
                 hide: 20
             }
         };
-        return b[a][c];
+        return c[b][e];
     },
     _getWidgetWidth: function () {
         var e = this._getLayout();
@@ -3295,6 +3374,7 @@ FB.provide('XFBML.Send', {
     }
 });
 FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
+    _widgetPipeEnabled: true,
     getUrlBits: function () {
         return {
             name: 'like',
@@ -3428,7 +3508,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         if (this._attr.autologoutlink) FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));
         if (this._attr.registration_url) {
             FB.Event.subscribe('auth.statusChange', this._saveStatus(this.process));
-            FB.getLoginStatus(this._saveStatus(this.process));
+            FB.getLoginStatus(this._saveStatus(this.process, true));
         }
         return true;
     },
@@ -3468,7 +3548,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         switch (this._attr.status) {
         case 'unknown':
             FB.ui({
-                method: 'auth.loginToFacebook'
+                method: 'auth.logintoFacebook'
             }, FB.bind(function (a) {
                 FB.getLoginStatus(this._saveStatus(this._authCallback), true);
             }, this));
@@ -3488,12 +3568,13 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
     _authCallback: function (a) {
         FB.Helper.invokeHandler(this._attr.onlogin, this, [a]);
     },
-    _saveStatus: function (a) {
-        return FB.bind(function (b) {
-            this._attr.status = b.status;
+    _saveStatus: function (a, b) {
+        return FB.bind(function (c) {
+            if (!b && this._attr.registration_url && this._attr.status == 'unknown' && c.status == 'notConnected') window.top.location = this._attr.registration_url;
+            this._attr.status = c.status;
             if (a) {
                 a = this.bind(a, this);
-                return a(b);
+                return a(c);
             }
         }, this);
     }
@@ -3605,7 +3686,6 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
         this.dom.innerHTML = c;
     },
     _renderOther: function (c) {
-        if (!c) return;
         var b = '',
             a = '';
         if (this._uid == FB.Helper.getLoggedInUser() && this._getBoolAttribute('use-you', true)) {
@@ -3616,7 +3696,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
             } else if (this._possessive) {
                 b = 'your';
             } else b = 'you';
-        } else {
+        } else if (c) {
             if (null === c.first_name) c.first_name = '';
             if (null === c.last_name) c.last_name = '';
             if (this._firstnameonly && c.first_name !== undefined) {
@@ -3628,7 +3708,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
         if (!b) b = FB.String.escapeHTML(this.getAttribute('if-cant-see', 'Facebook User'));
         if (b) {
             if (this._getBoolAttribute('capitalize', false)) b = FB.Helper.upperCaseFirstChar(b);
-            if (this._linked) {
+            if (c && this._linked) {
                 a = FB.Helper.getProfileLink(c, b, this.getAttribute('href', null));
             } else a = b;
         }
@@ -4234,8 +4314,13 @@ FB.provide("Arbiter", {
 FB.initSitevars = {
     "parseXFBMLBeforeDomReady": false
 };
+FB.widgetPipeEnabledApps = {
+    "111476658864976": 1,
+    "cca6477272fc5cb805f85a84f20fca1d": 1
+};
+FB.widgetPipeTagCountThreshold = 4;
 FB.provide("Canvas.EarlyFlush", {
-    "_appIds": [149470875078432, 291549705119],
+    "_appIds": [149470875078432, 291549705119, 185102844866173],
     "_sampleRate": 10000
 }, true);
 FB.provide("XFBML.ConnectBar", {
