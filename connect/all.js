@@ -1,4 +1,4 @@
-/*1304473188,169559142,JIT Construction: v374087,fr_FR*/
+/*1305078049,169898096,JIT Construction: v376700,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -1677,36 +1677,41 @@ FB.provide('', {
                 });
             } else FB.Dom.ready(FB.XFBML.parse);
         }, 0);
-        if (FB.Canvas && FB.Canvas.EarlyFlush) FB.Canvas.EarlyFlush.maybeSample();
+        if (FB.Canvas && FB.Canvas.EarlyFlush) FB.Canvas.EarlyFlush._maybeSample();
     }
 });
 FB.provide('Canvas.EarlyFlush', {
     _sampleRate: 0,
     _appIds: [],
-    maybeSample: function () {
+    _links: [],
+    addResource: function (a) {
+        if (!FB._inCanvas || !FB._apiKey || !FB.Canvas.EarlyFlush._sampleRate) return;
+        FB.Canvas.EarlyFlush._links.push(a);
+    },
+    _maybeSample: function () {
         if (!FB._inCanvas || !FB._apiKey || !FB.Canvas.EarlyFlush._sampleRate) return;
         var b = Math.random();
         if (b > 1 / FB.Canvas.EarlyFlush._sampleRate) return;
         var a = FB.Canvas.EarlyFlush._appIds;
         if (FB.Array.indexOf(FB.Canvas.EarlyFlush._appIds, parseInt(FB._apiKey, 10)) == -1) return;
-        window.setTimeout(FB.Canvas.EarlyFlush.sample, 10000);
+        window.setTimeout(FB.Canvas.EarlyFlush._sample, 10000);
     },
-    sample: function () {
-        var c = {
+    _sample: function () {
+        var b = {
             object: 'data',
             link: 'href',
             script: 'src'
         };
-        var a = [];
-        FB.Array.forEach(c, function (d, e) {
-            FB.Array.forEach(window.document.getElementsByTagName(e), function (f) {
-                if (f[d]) a.push(f[d]);
+        FB.Array.forEach(b, function (c, d) {
+            FB.Array.forEach(window.document.getElementsByTagName(d), function (e) {
+                if (e[c]) FB.Canvas.EarlyFlush._links.push(e[c]);
             });
         });
-        var b = FB.JSON.stringify(a);
+        var a = FB.JSON.stringify(FB.Canvas.EarlyFlush._links);
         FB.api(FB._apiKey + '/staticresources', 'post', {
-            urls: b
+            urls: a
         });
+        FB.Canvas.EarlyFlush._links = [];
     }
 });
 FB.provide('CanvasInsights', {
@@ -1716,6 +1721,7 @@ FB.provide('CanvasInsights', {
         FB.Arbiter.inform('RecordIframeAppTti', {
             frame: window.name || 'iframe_canvas',
             time: (new Date()).getTime(),
+            appId: parseInt(FB._apiKey, 10),
             channelUrl: b
         });
     }
@@ -2406,7 +2412,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
         return b;
     },
     _getWidgetPipeShell: function () {
-        return FB.getDomain('staticfb') + 'common/widget_pipe_shell.php';
+        return FB.getDomain('www') + 'common/widget_pipe_shell.php';
     },
     _oneTimeSetup: function () {
         this.subscribe('xd.resize', FB.bind(this._handleResizeMsg, this));
@@ -3507,8 +3513,8 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
         };
         if (this._attr.autologoutlink) FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));
         if (this._attr.registration_url) {
-            FB.Event.subscribe('auth.statusChange', this._saveStatus(this.process));
-            FB.getLoginStatus(this._saveStatus(this.process, true));
+            FB.Event.subscribe('auth.statusChange', this._saveStatus(this.process, false));
+            FB.getLoginStatus(this._saveStatus(this.process, false));
         }
         return true;
     },
@@ -3550,7 +3556,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
             FB.ui({
                 method: 'auth.logintoFacebook'
             }, FB.bind(function (a) {
-                FB.getLoginStatus(this._saveStatus(this._authCallback), true);
+                FB.bind(FB.getLoginStatus(this._saveStatus(this._authCallback, true), true), this);
             }, this));
             break;
         case 'notConnected':
@@ -3570,7 +3576,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
     },
     _saveStatus: function (a, b) {
         return FB.bind(function (c) {
-            if (!b && this._attr.registration_url && this._attr.status == 'unknown' && c.status == 'notConnected') window.top.location = this._attr.registration_url;
+            if (b && this._attr.registration_url && this._attr.status == 'notConnected' && c.status == 'notConnected') window.top.location = this._attr.registration_url;
             this._attr.status = c.status;
             if (a) {
                 a = this.bind(a, this);
