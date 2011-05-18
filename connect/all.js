@@ -1,4 +1,4 @@
-/*1305078049,169898096,JIT Construction: v376700,fr_FR*/
+/*1305677465,169546369,JIT Construction: v379627,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -1174,12 +1174,22 @@ FB.provide('Dialog', {
     }
 });
 FB.provide('', {
-    ui: function (e, b) {
-        if (!e.method) {
+    ui: function (f, b) {
+        if (!f.method) {
             FB.log('"method" is a required parameter for FB.ui().');
             return;
         }
-        var a = FB.UIServer.prepareCall(e, b);
+        if (f.method == 'permissions.request' && (f.display == 'iframe' || f.display == 'dialog')) {
+            var h = f.perms.split(',');
+            for (var e = 0; e < h.length; e++) {
+                var g = h[e].trim();
+                if (!FB.initSitevars.iframePermissions[g.trim()]) {
+                    f.display = 'popup';
+                    break;
+                }
+            }
+        }
+        var a = FB.UIServer.prepareCall(f, b);
         if (!a) return;
         var d = a.params.display;
         if (d == 'dialog') d = 'iframe';
@@ -1273,7 +1283,7 @@ FB.provide('UIServer', {
             e = parseInt(h + ((g - k) / 2), 10),
             j = parseInt(i + ((f - d) / 2.5), 10),
             c = ('width=' + k + ',height=' + d + ',left=' + e + ',top=' + j + ',scrollbars=1');
-        if (b.params.method == 'permissions.request') c += ',location=1,toolbar=0';
+        if (b.params && b.params.method == 'permissions.request') c += ',location=1,toolbar=0';
         if (b.post) {
             FB.UIServer._active[b.id] = window.open('about:blank', b.id, c);
             FB.Content.submitToTarget({
@@ -2999,8 +3009,10 @@ FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
             max_rows: this.getAttribute('max-rows'),
             action: this.getAttribute('action', 'like'),
             width: this._getPxAttribute('width', 200),
-            ref: this.getAttribute('ref')
+            ref: this.getAttribute('ref'),
+            login_text: this.dom.innerHTML
         };
+        this.clear();
         for (var a in this._extraParams) this._attr[a] = this._extraParams[a];
         return true;
     },
@@ -4312,13 +4324,44 @@ FB.provide("Flash", {
     "_swfPath": "rsrc.php\/v1\/yF\/r\/Y7YCBKX-HZn.swf"
 }, true);
 FB.provide("XD", {
-    "_xdProxyUrl": "connect\/xd_proxy.php?version=0"
+    "_xdProxyUrl": "connect\/xd_proxy.php?version=2"
 }, true);
 FB.provide("Arbiter", {
-    "_canvasProxyUrl": "connect\/canvas_proxy.php?version=0"
+    "_canvasProxyUrl": "connect\/canvas_proxy.php?version=2"
 }, true);
 FB.initSitevars = {
-    "parseXFBMLBeforeDomReady": false
+    "parseXFBMLBeforeDomReady": false,
+    "iframePermissions": {
+        "read_stream": false,
+        "manage_mailbox": false,
+        "manage_friendlists": false,
+        "read_mailbox": false,
+        "publish_checkins": true,
+        "status_update": true,
+        "photo_upload": true,
+        "video_upload": true,
+        "sms": false,
+        "create_event": true,
+        "rsvp_event": true,
+        "offline_access": true,
+        "email": true,
+        "xmpp_login": false,
+        "create_note": true,
+        "share_item": true,
+        "export_stream": false,
+        "publish_stream": true,
+        "publish_likes": true,
+        "ads_management": false,
+        "contact_email": true,
+        "access_private_data": false,
+        "read_insights": false,
+        "read_requests": false,
+        "read_friendlists": true,
+        "manage_pages": false,
+        "physical_login": false,
+        "manage_groups": false,
+        "read_deals": false
+    }
 };
 FB.widgetPipeEnabledApps = {
     "111476658864976": 1,
