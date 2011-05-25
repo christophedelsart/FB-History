@@ -1,4 +1,4 @@
-/*1305677465,169546369,JIT Construction: v379627,fr_FR*/
+/*1306284399,169913969,JIT Construction: v383084,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -1849,7 +1849,7 @@ FB.provide('XFBML', {
     },
     shouldUseWidgetPipe: function () {
         if (!FB.XFBML._widgetPipeIsEnabled()) return false;
-        var a = FB.XFBML._widgetPipeEnabledTagCount > FB.widgetPipeTagCountThreshold;
+        var a = FB.XFBML._widgetPipeEnabledTagCount > 1;
         return a;
     },
     _processElement: function (dom, tagInfo, cb) {
@@ -1990,6 +1990,10 @@ FB.provide('XFBML', {
     {
         localName: 'share-button',
         className: 'FB.XFBML.ShareButton'
+    },
+    {
+        localName: 'social-bar',
+        className: 'FB.XFBML.SocialBar'
     }],
     _widgetPipeEnabledTagCount: 0,
     _widgetPipeIsEnabled: function () {
@@ -3426,7 +3430,8 @@ FB.subclass('XFBML.LikeBox', 'XFBML.IframeWidget', null, {
             stream: this._getBoolAttribute('stream', true),
             width: this._getPxAttribute('width', 300),
             href: this.getAttribute('href'),
-            colorscheme: this.getAttribute('colorscheme', 'light')
+            colorscheme: this.getAttribute('colorscheme', 'light'),
+            border_color: this.getAttribute('border_color')
         };
         if (this._attr.connections === '0') {
             this._attr.show_faces = false;
@@ -4141,9 +4146,9 @@ FB.subclass('XFBML.SocialBar', 'XFBML.EdgeWidget', function (a) {
         FB.Dom.setStyle(this._barIframe, 'height', '34px');
         FB.Dom.setStyle(this._barIframe.parentNode, 'height', '34px');
     },
-    _iframeOnLoad: function () {
-        var c = this._barIframe = this.getIframeNode(),
-            b = c.parentNode;
+    _iframeOnload: function (c) {
+        this._barIframe = c;
+        var b = c.parentNode;
         var d = true;
         b.id = 'fb_social_bar_container';
         if (d) {
@@ -4212,7 +4217,7 @@ FB.subclass('XFBML.SocialBar', 'XFBML.EdgeWidget', function (a) {
         this.subscribe('xd.closeChild', FB.bind(this._closeChild, this));
         this.subscribe('xd.logoutSocialBar', FB.logout);
         this.subscribe('xd.loginSocialBar', FB.login);
-        this.subscribe('iframe.onload', FB.bind(this._iframeOnLoad, this));
+        this.subscribe('iframe.onload', FB.bind(this._iframeOnload, this));
         this.subscribe('xd.presentEdgeCommentDialog', FB.bind(this._onEdgeCreate, this));
         this.subscribe('xd.presentEdgeCommentDialog', FB.bind(this._handleEdgeCommentDialogPresentation, this));
         this.subscribe('xd.dismissEdgeCommentDialog', FB.bind(this._handleEdgeCommentDialogDismissal, this));
@@ -4369,7 +4374,7 @@ FB.widgetPipeEnabledApps = {
 };
 FB.widgetPipeTagCountThreshold = 4;
 FB.provide("Canvas.EarlyFlush", {
-    "_appIds": [149470875078432, 291549705119, 185102844866173],
+    "_appIds": [149470875078432, 291549705119, 185102844866173, 117800604948275],
     "_sampleRate": 10000
 }, true);
 FB.provide("XFBML.ConnectBar", {
