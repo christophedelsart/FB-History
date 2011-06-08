@@ -1,4 +1,4 @@
-/*1306818637,169912692,JIT Construction: v385068,fr_FR*/
+/*1307492719,169553261,JIT Construction: v388875,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -180,6 +180,14 @@ FB.provide('Content', {
                 e.onload && e.onload(e.root.firstChild);
             }
         };
+        if (FB.UA.mobile()) {
+            orientationFix = function () {
+                if (FB.Dialog._active) FB.Dialog._centerActive(FB.Canvas.getPageInfo());
+            };
+            if ("onorientationchange" in window) {
+                window.addEventListener("orientationchange", orientationFix);
+            } else window.addEventListener("resize", orientationFix);
+        }
         if (document.attachEvent) {
             var b = ('<iframe' + ' id="' + e.id + '"' + ' name="' + e.name + '"' + (e.title ? ' title="' + e.title + '"' : '') + (e.className ? ' class="' + e.className + '"' : '') + ' style="border:none;' + (e.width ? 'width:' + e.width + 'px;' : '') + (e.height ? 'height:' + e.height + 'px;' : '') + '"' + ' src="' + e.url + '"' + ' frameborder="0"' + ' scrolling="no"' + ' allowtransparency="true"' + ' onload="FB.Content._callbacks.' + a + '()"' + '></iframe>');
             e.root.innerHTML = '<iframe src="javascript:false"' + ' frameborder="0"' + ' scrolling="no"' + ' style="height:1px"></iframe>';
@@ -626,10 +634,10 @@ FB.provide('XD', {
         }
         return e;
     },
-    handler: function (a, e, b) {
+    handler: function (a, e, b, c) {
         if (window.location.toString().indexOf(FB.XD.Fragment._magic) > 0) return 'javascript:false;//';
-        var f = FB.getDomain('cdn') + FB.XD._xdProxyUrl + '#',
-            c = FB.guid();
+        var f = FB.getDomain('cdn') + FB.XD._xdProxyUrl + '#';
+        c = c || FB.guid();
         if (FB.XD._transport == 'fragment') {
             f = FB.XD.Fragment._channelUrl;
             var d = f.indexOf('#');
@@ -660,6 +668,11 @@ FB.provide('XD', {
             FB.XD.recv(event.data);
         }
     },
+    WebView: {
+        onMessage: function (a, c, b) {
+            FB.XD.recv(b);
+        }
+    },
     Flash: {
         init: function () {
             FB.Flash.onReady(function () {
@@ -685,10 +698,75 @@ FB.provide('XD', {
     }
 });
 FB.XD.Fragment.checkAndDispatch();
+FB.provide('UA', {
+    ie: function () {
+        return FB.UA._populate() || this._ie;
+    },
+    firefox: function () {
+        return FB.UA._populate() || this._firefox;
+    },
+    opera: function () {
+        return FB.UA._populate() || this._opera;
+    },
+    safari: function () {
+        return FB.UA._populate() || this._safari;
+    },
+    chrome: function () {
+        return FB.UA._populate() || this._chrome;
+    },
+    windows: function () {
+        return FB.UA._populate() || this._windows;
+    },
+    osx: function () {
+        return FB.UA._populate() || this._osx;
+    },
+    linux: function () {
+        return FB.UA._populate() || this._linux;
+    },
+    ios: function () {
+        return FB.UA._populate() || this._ios;
+    },
+    mobile: function () {
+        return FB.UA._populate() || this._mobile;
+    },
+    android: function () {
+        return FB.UA._populate() || this._android;
+    },
+    nativeApp: function () {
+        return !!window.fbrpc || FB.UA._populate() || (this._ios && !navigator.userAgent.match(/Safari/i));
+    },
+    _populated: false,
+    _populate: function () {
+        if (FB.UA._populated) return;
+        FB.UA._populated = true;
+        var a = /(?:MSIE.(\d+\.\d+))|(?:(?:Firefox|GranParadiso|Iceweasel).(\d+\.\d+))|(?:Opera(?:.+Version.|.)(\d+\.\d+))|(?:AppleWebKit.(\d+(?:\.\d+)?))/.exec(navigator.userAgent);
+        var c = /(Mac OS X)|(Windows)|(Linux)/.exec(navigator.userAgent);
+        var b = /\b(iPhone|iP[ao]d)/.exec(navigator.userAgent);
+        FB.UA._android = navigator.userAgent.match(/Android/i);
+        FB.UA._mobile = b || FB.UA._android || navigator.userAgent.match(/Mobile/i);
+        if (a) {
+            FB.UA._ie = a[1] ? parseFloat(a[1]) : NaN;
+            if (FB.UA._ie >= 8 && !window.HTMLCollection) FB.UA._ie = 7;
+            FB.UA._firefox = a[2] ? parseFloat(a[2]) : NaN;
+            FB.UA._opera = a[3] ? parseFloat(a[3]) : NaN;
+            FB.UA._safari = a[4] ? parseFloat(a[4]) : NaN;
+            if (FB.UA._safari) {
+                a = /(?:Chrome\/(\d+\.\d+))/.exec(navigator.userAgent);
+                FB.UA._chrome = a && a[1] ? parseFloat(a[1]) : NaN;
+            } else FB.UA._chrome = NaN;
+        } else FB.UA._ie = FB.UA._firefox = FB.UA._opera = FB.UA._chrome = FB.UA._safari = NaN;
+        if (c) {
+            FB.UA._osx = !! c[1];
+            FB.UA._windows = !! c[2];
+            FB.UA._linux = !! c[3];
+        } else FB.UA._osx = FB.UA._windows = FB.UA._linux = false;
+        FB.UA._ios = b;
+    }
+});
 FB.provide('Arbiter', {
     _canvasProxyUrl: 'connect/canvas_proxy.php',
     inform: function (c, e, f, b) {
-        if (FB.Canvas.isTabIframe()) {
+        if (FB.Canvas.isTabIframe() || (FB.UA.mobile() && window.postMessage)) {
             var d = FB.JSON.stringify({
                 method: c,
                 params: e
@@ -796,6 +874,25 @@ FB.provide('Canvas', {
     getPageInfo: function () {
         return FB.Canvas._pageInfo;
     },
+    setDoneLoading: function (a) {
+        FB.Canvas._passAppTtiMessage(a, 'RecordIframeAppTti');
+    },
+    stopTimer: function (a) {
+        FB.Canvas._passAppTtiMessage(a, 'StopIframeAppTtiTimer');
+    },
+    startTimer: function () {
+        FB.Canvas._passAppTtiMessage(null, 'StartIframeAppTtiTimer');
+    },
+    _passAppTtiMessage: function (a, c) {
+        var b = null;
+        if (a) b = FB.XD.handler(a, 'top.frames[' + window.name + ']', false);
+        FB.Arbiter.inform(c, {
+            frame: window.name || 'iframe_canvas',
+            time: (new Date()).getTime(),
+            appId: parseInt(FB._apiKey, 10),
+            channelUrl: b
+        });
+    },
     _computeContentSize: function () {
         var a = document.body,
             c = document.documentElement,
@@ -879,60 +976,6 @@ FB.provide('String', {
             e = d.charCodeAt();
             return '\\u00' + Math.floor(e / 16).toString(16) + (e % 16).toString(16);
         }) + '"' : '"' + c + '"';
-    }
-});
-FB.provide('UA', {
-    ie: function () {
-        return FB.UA._populate() || this._ie;
-    },
-    firefox: function () {
-        return FB.UA._populate() || this._firefox;
-    },
-    opera: function () {
-        return FB.UA._populate() || this._opera;
-    },
-    safari: function () {
-        return FB.UA._populate() || this._safari;
-    },
-    chrome: function () {
-        return FB.UA._populate() || this._chrome;
-    },
-    windows: function () {
-        return FB.UA._populate() || this._windows;
-    },
-    osx: function () {
-        return FB.UA._populate() || this._osx;
-    },
-    linux: function () {
-        return FB.UA._populate() || this._linux;
-    },
-    iphone: function () {
-        return FB.UA._populate() || this._iphone;
-    },
-    _populated: false,
-    _populate: function () {
-        if (FB.UA._populated) return;
-        FB.UA._populated = true;
-        var a = /(?:MSIE.(\d+\.\d+))|(?:(?:Firefox|GranParadiso|Iceweasel).(\d+\.\d+))|(?:Opera(?:.+Version.|.)(\d+\.\d+))|(?:AppleWebKit.(\d+(?:\.\d+)?))/.exec(navigator.userAgent);
-        var c = /(Mac OS X)|(Windows)|(Linux)/.exec(navigator.userAgent);
-        var b = /\b(iPhone|iP[ao]d)/.exec(navigator.userAgent);
-        if (a) {
-            FB.UA._ie = a[1] ? parseFloat(a[1]) : NaN;
-            if (FB.UA._ie >= 8 && !window.HTMLCollection) FB.UA._ie = 7;
-            FB.UA._firefox = a[2] ? parseFloat(a[2]) : NaN;
-            FB.UA._opera = a[3] ? parseFloat(a[3]) : NaN;
-            FB.UA._safari = a[4] ? parseFloat(a[4]) : NaN;
-            if (FB.UA._safari) {
-                a = /(?:Chrome\/(\d+\.\d+))/.exec(navigator.userAgent);
-                FB.UA._chrome = a && a[1] ? parseFloat(a[1]) : NaN;
-            } else FB.UA._chrome = NaN;
-        } else FB.UA._ie = FB.UA._firefox = FB.UA._opera = FB.UA._chrome = FB.UA._safari = NaN;
-        if (c) {
-            FB.UA._osx = !! c[1];
-            FB.UA._windows = !! c[2];
-            FB.UA._linux = !! c[3];
-        } else FB.UA._osx = FB.UA._windows = FB.UA._linux = false;
-        FB.UA._iphone = b;
     }
 });
 FB.provide('Dom', {
@@ -1138,7 +1181,10 @@ FB.provide('Dialog', {
                 h.className = 'fb_dialog_' + g;
                 d.appendChild(h);
             });
-        } else a += ' fb_dialog_advanced';
+        } else {
+            a += ' fb_dialog_advanced';
+            if (FB.UA.mobile()) a += ' fb_mobile';
+        }
         if (e.content) FB.Content.append(e.content, c);
         d.className = a;
         var f = parseInt(e.width, 10);
@@ -1158,6 +1204,10 @@ FB.provide('Dialog', {
             FB.Dialog._stack.push(a);
         }
     },
+    hide: function (a) {
+        a = FB.Dialog._findRoot(a);
+        if (a == FB.Dialog._active) FB.Dialog._lowerActive();
+    },
     remove: function (a) {
         a = FB.Dialog._findRoot(a);
         if (a) {
@@ -1171,6 +1221,106 @@ FB.provide('Dialog', {
                 a.parentNode.removeChild(a);
             }, 3000);
         }
+    }
+});
+FB.provide('Helper', {
+    isUser: function (a) {
+        return a < 2.2e+09 || (a >= 1e+14 && a <= 100099999989999);
+    },
+    getLoggedInUser: function () {
+        return FB._session ? FB._session.uid : null;
+    },
+    upperCaseFirstChar: function (a) {
+        if (a.length > 0) {
+            return a.substr(0, 1).toUpperCase() + a.substr(1);
+        } else
+        return a;
+    },
+    getProfileLink: function (c, b, a) {
+        a = a || (c ? FB.getDomain('www') + 'profile.php?id=' + c.uid : null);
+        if (a) b = '<a class="fb_link" href="' + a + '">' + b + '</a>';
+        return b;
+    },
+    invokeHandler: function (handler, scope, args) {
+        if (handler) if (typeof handler === 'string') {
+            eval(handler);
+        } else if (handler.apply) handler.apply(scope, args || []);
+    },
+    fireEvent: function (a, b) {
+        var c = b._attr.href;
+        b.fire(a, c);
+        FB.Event.fire(a, c, b);
+    },
+    executeFunctionByName: function (d) {
+        var a = Array.prototype.slice.call(arguments, 1);
+        var f = d.split(".");
+        var c = f.pop();
+        var b = window;
+        for (var e = 0; e < f.length; e++) b = b[f[e]];
+        return b[c].apply(this, a);
+    }
+});
+FB.provide('TemplateData', {
+    _gkTimeout: 60 * 20,
+    _localStorageTimeout: 60 * 60 * 24,
+    available: function () {
+        return FB.TemplateData.supportsLocalStorage() && FB._userStatus == 'connected' && FB.TemplateData.gkValid() && FB.TemplateData.gkSuccess();
+    },
+    supportsLocalStorage: function () {
+        try {
+            return 'localStorage' in window && window.localStorage !== null;
+        } catch (a) {
+            return false;
+        }
+    },
+    localStorageStale: function () {
+        var b = FB.TemplateData.getResponse();
+        if (!b) return false;
+        var a = Math.round((new Date()).getTime());
+        return (a - b.setAt) / 1000 > FB.TemplateData._localStorageTimeout;
+    },
+    gkValid: function () {
+        var b = FB.TemplateData.getResponse();
+        if (!b) return false;
+        var a = Math.round((new Date()).getTime());
+        return (a - b.setAt) / 1000 < FB.TemplateData._gkTimeout;
+    },
+    gkSuccess: function () {
+        var a = FB.TemplateData.getResponse();
+        if (!a) return false;
+        return a.enable_templates;
+    },
+    getResponse: function () {
+        if (!FB.TemplateData.supportsLocalStorage()) return null;
+        return FB.JSON.parse(localStorage.FB_templateDataResponse || "null");
+    },
+    saveResponse: function (a) {
+        if (FB.TemplateData.supportsLocalStorage()) localStorage.FB_templateDataResponse = FB.JSON.stringify(a);
+    },
+    getData: function () {
+        var a = FB.TemplateData.getResponse();
+        return a ? a.data : {};
+    },
+    getCurrentUserID: function () {
+        var a = FB.TemplateData.getResponse();
+        return a ? a.currentUserID : 0;
+    },
+    init: function () {
+        if (FB.TemplateData.supportsLocalStorage() && !('FB_templateDataResponse' in localStorage)) FB.TemplateData.clear();
+    },
+    clear: function () {
+        FB.TemplateData.saveResponse(null);
+    },
+    update: function (a) {
+        if (FB._userStatus != 'connected' || FB.TemplateData.getCurrentUserID() !== FB.Helper.getLoggedInUser()) FB.TemplateData.clear();
+        if (FB._userStatus == 'connected' && (!FB.TemplateData.getResponse() || !FB.TemplateData.gkValid() || FB.TemplateData.localStorageStale())) FB.api({
+            method: 'dialog.template_data'
+        }, function (b) {
+            if ('error_code' in b) return;
+            b.currentUserID = FB.Helper.getLoggedInUser();
+            b.setAt = (new Date()).getTime();
+            FB.TemplateData.saveResponse(b);
+        });
     }
 });
 FB.provide('', {
@@ -1215,31 +1365,27 @@ FB.provide('UIServer', {
     },
     prepareCall: function (h, b) {
         var g = h.method.toLowerCase(),
-            f = FB.UIServer.Methods[g] || {
-                size: {
-                    width: 575,
-                    height: 240
-                }
-            },
+            f = FB.copy({}, FB.UIServer.Methods[g]),
             e = FB.guid(),
-            d = (f.noHttps !== true) && (FB._https || (g !== 'auth.status'));
+            c = (f.noHttps !== true) && (FB._https || (g !== 'auth.status'));
         FB.copy(h, {
             api_key: FB._apiKey,
             app_id: FB._apiKey,
             locale: FB._locale,
             sdk: 'joey',
-            access_token: d && FB._session && FB._session.access_token || undefined
+            access_token: c && FB._session && FB._session.access_token || undefined
         });
         h.display = FB.UIServer.getDisplayMode(f, h);
-        if (!f.url) {
-            f.url = 'dialog/' + g;
-            if (!FB.Canvas.isTabIframe()) delete h.method;
-        }
+        if (!f.url) f.url = 'dialog/' + g;
         var a = {
             cb: b,
             id: e,
-            size: f.size || {},
-            url: FB.getDomain(d ? 'https_www' : 'www') + f.url,
+            size: f.size || {
+                width: 575,
+                height: 240
+            },
+            url: FB.getDomain(c ? 'https_www' : 'www') + f.url,
+            forceHTTPS: c,
             params: h
         };
         var j = f.transform ? f.transform : FB.UIServer.genericTransform;
@@ -1247,19 +1393,57 @@ FB.provide('UIServer', {
             a = j(a);
             if (!a) return;
         }
-        var i = FB.UIServer.getXdRelation(a.params.display);
+        var d = f.getXdRelation || FB.UIServer.getXdRelation;
+        var i = d(a.params.display);
         if (!(a.id in FB.UIServer._defaultCb) && !('next' in a.params)) a.params.next = FB.UIServer._xdResult(a.cb, a.id, i, true);
         if (i === 'parent') a.params.channel_url = FB.UIServer._xdChannelHandler(e, 'parent.parent');
-        a.params = FB.JSON.flatten(a.params);
-        var c = FB.QS.encode(a.params);
-        if ((a.url + c).length > 2000) {
-            a.post = true;
-        } else if (c) a.url += '?' + c;
+        a = FB.UIServer.prepareParams(a);
         return a;
+    },
+    prepareParams: function (a) {
+        var c = FB.UIServer.getFullTemplateURL(a);
+        var d = FB.UIServer.supportsTemplate(a);
+        if (!FB.Canvas.isTabIframe()) delete a.params.method;
+        if (d) {
+            FB.copy(a.params, FB.TemplateData.getData());
+            a.url = c;
+            a.frameName = FB.guid();
+            FB.XD.handler(function (e) {
+                if (e.type == 'getParams') frames[a.frameName].postMessage({
+                    params: a.params,
+                    cb: e.returnCb
+                }, '*');
+            }, 'parent', true, a.frameName);
+        } else {
+            a.params = FB.JSON.flatten(a.params);
+            var b = FB.QS.encode(a.params);
+            if (FB.UIServer.urlTooLongForIE(a.url + b)) {
+                a.post = true;
+            } else if (b) a.url += '?' + b;
+        }
+        return a;
+    },
+    supportsTemplate: function (a) {
+        return FB.TemplateData.available() && a.params.method === 'feed' && a.params.display === 'touch' && a.params.in_iframe && FB.UIServer.feedParamsAllowTemplate(a.params) && FB.UA.mobile();
+    },
+    feedParamsAllowTemplate: function (a) {
+        return !a.to && !('attachment' in a) && !('source' in a);
+    },
+    urlTooLongForIE: function (a) {
+        return a.length > 2000;
+    },
+    getFullTemplateURL: function (a) {
+        var c = {
+            display: a.params.display,
+            in_iframe: a.params.in_iframe
+        };
+        var b = FB.QS.encode(FB.JSON.flatten(c));
+        return FB.getDomain(a.forceHTTPS ? 'https_staticfb' : 'staticfb') + 'dialog/' + a.params.method + '?' + b + '&preview_template=1';
     },
     getDisplayMode: function (a, b) {
         if (b.display === 'hidden') return 'hidden';
         if (FB.Canvas.isTabIframe() && b.display !== 'popup') return 'async';
+        if (FB.UA.mobile() || b.display === 'touch') return 'touch';
         if (!FB._session && b.display == 'dialog' && !a.loggedOutIframe) {
             FB.log('"dialog" mode can only be used when the user is connected.');
             return 'popup';
@@ -1268,7 +1452,7 @@ FB.provide('UIServer', {
         return b.display || (FB._session ? 'dialog' : 'popup');
     },
     getXdRelation: function (a) {
-        if (a === 'popup') return 'opener';
+        if (a === 'popup' || a === 'touch') return 'opener';
         if (a === 'dialog' || a === 'iframe' || a === 'hidden') return 'parent';
         if (a === 'async') return 'parent.frames[' + window.name + ']';
     },
@@ -1294,12 +1478,31 @@ FB.provide('UIServer', {
         } else FB.UIServer._active[b.id] = window.open(b.url, b.id, c);
         if (b.id in FB.UIServer._defaultCb) FB.UIServer._popupMonitor();
     },
+    touch: function (a) {
+        if (FB.UA.nativeApp()) {
+            a.frame = a.id;
+            if (FB.UA.ios()) {
+                FB.UIServer._active[a.id] = window.fbrpc && fbrpc.open(a.url, a.id, '');
+            } else {
+                FB.UIServer._active[a.id] = 'webview';
+                fbrpc.call('openWebView', FB.JSON.stringify({
+                    url: a.url,
+                    windowId: a.id
+                }));
+            }
+        } else if (a.params.in_iframe) {
+            a.hideLoader = true;
+            FB.UIServer.iframe(a);
+            FB.Dialog.show(a.root);
+        } else FB.UIServer.popup(a);
+    },
     hidden: function (a) {
         a.className = 'FB_UI_Hidden';
         a.root = FB.Content.appendHidden('');
         FB.UIServer._insertIframe(a);
     },
     iframe: function (a) {
+        if (window.screen && screen.availWidth) a.size.width = Math.min(screen.availWidth - 6, a.size.width);
         a.className = 'FB_UI_Dialog';
         a.root = FB.Dialog.create({
             onClose: function () {
@@ -1345,6 +1548,7 @@ FB.provide('UIServer', {
             className: b.className,
             width: b.size.width,
             height: b.size.height,
+            name: b.frameName,
             onInsert: a
         });
     },
@@ -1381,9 +1585,12 @@ FB.provide('UIServer', {
             if (c.type == 'resize') {
                 if (c.height) d.style.height = c.height + 'px';
                 if (c.width) d.style.width = c.width + 'px';
+                if (c.ackData && c.ackData.height) c.ackData.ackData = {
+                    height: c.ackData.height
+                };
                 FB.Arbiter.inform('resize.ack', c.ackData || {}, 'parent.frames[' + d.name + ']', true);
                 FB.Dialog.show(d);
-            }
+            } else if (c.type == 'hide') FB.Dialog.hide(d);
         }, b, true);
     },
     _xdNextHandler: function (a, b, d, c) {
@@ -1407,6 +1614,7 @@ FB.provide('UIServer', {
                 FB.UIServer._popupCount--;
             }
         } catch (e) {}
+        if (c === 'webview') fbrpc.call('closeWebView', '{}');
         delete FB.UIServer._active[b.frame];
         delete FB.UIServer._defaultCb[b.frame];
         a(b);
@@ -1550,14 +1758,16 @@ FB.provide('UIServer.Methods', {
         transform: function (a) {
             var b = a.cb,
                 c = a.id,
-                d = FB.Auth.xdHandler;
+                e = FB.Auth.xdHandler;
             delete a.cb;
+            var d = FB.UA.nativeApp() ? 3 : (FB._inMobileCanvas ? 2 : 1);
             FB.copy(a.params, {
-                no_session: d(b, c, 'parent', false, 'notConnected'),
-                no_user: d(b, c, 'parent', false, 'unknown'),
-                ok_session: d(b, c, 'parent', false, 'connected'),
+                no_session: e(b, c, 'parent', false, 'notConnected'),
+                no_user: e(b, c, 'parent', false, 'unknown'),
+                ok_session: e(b, c, 'parent', false, 'connected'),
                 session_version: 3,
-                extern: FB._inCanvas ? 0 : 2
+                extern: FB._inCanvas ? 0 : 2,
+                session_origin: d
             });
             return a;
         }
@@ -1610,20 +1820,6 @@ FB.provide('Frictionless', {
         FB.Event.subscribe('auth.login', function (a) {
             if (a.session) FB.Frictionless._updateRecipients();
         });
-        FB.provide('UIServer.Methods', {
-            apprequests: {
-                size: {
-                    width: 575,
-                    height: 240
-                },
-                transform: function (a) {
-                    a = FB.UIServer.genericTransform(a);
-                    a.cb = FB.Frictionless._processRequestResponse(a.cb);
-                    a.hideLoader = FB.Frictionless.isAllowed(a.params.to);
-                    return a;
-                }
-            }
-        });
     },
     _processRequestResponse: function (a) {
         return function (d) {
@@ -1664,6 +1860,8 @@ FB.provide('', {
         FB._apiKey = a.appId || a.apiKey;
         if (!a.logging && window.location.toString().indexOf('fb_debug=1') < 0) FB._logging = false;
         FB.XD.init(a.channelUrl);
+        FB.TemplateData.init();
+        FB.Event.subscribe('auth.sessionChange', FB.TemplateData.update);
         if (a.frictionlessRequests) FB.Frictionless.init();
         if (FB._apiKey) {
             FB.Cookie.setEnabled(a.cookie);
@@ -1726,14 +1924,21 @@ FB.provide('Canvas.EarlyFlush', {
 });
 FB.provide('CanvasInsights', {
     setDoneLoading: function (a) {
-        var b = null;
-        if (a) b = FB.XD.handler(a, 'top.frames[' + window.name + ']', false);
-        FB.Arbiter.inform('RecordIframeAppTti', {
-            frame: window.name || 'iframe_canvas',
-            time: (new Date()).getTime(),
-            appId: parseInt(FB._apiKey, 10),
-            channelUrl: b
-        });
+        FB.Canvas.setDoneLoading(a);
+    }
+});
+FB.provide('UIServer.MobileIframableMethod', {
+    transform: function (a) {
+        if (a.params.display === 'touch' && !FB.UA.nativeApp() && a.params.access_token && window.postMessage) {
+            a.params.channel = FB.UIServer._xdChannelHandler(a.id, 'parent');
+            a.params.in_iframe = 1;
+            return a;
+        } else
+        return FB.UIServer.genericTransform(a);
+    },
+    getXdRelation: function (a) {
+        if (a === 'touch' && !FB.UA.nativeApp() && window.postMessage) return 'parent';
+        return FB.UIServer.getXdRelation(a);
     }
 });
 FB.provide('UIServer.Methods', {
@@ -1776,7 +1981,21 @@ FB.provide('UIServer.Methods', {
             });
             return a;
         }
-    }
+    },
+    apprequests: {
+        transform: function (a) {
+            a = FB.UIServer.MobileIframableMethod.transform(a);
+            if (FB.Frictionless && FB.Frictionless._useFrictionless) {
+                a.cb = FB.Frictionless._processRequestResponse(a.cb);
+                a.hideLoader = FB.Frictionless.isAllowed(a.params.to);
+            }
+            return a;
+        },
+        getXdRelation: function (a) {
+            return FB.UIServer.MobileIframableMethod.getXdRelation(a);
+        }
+    },
+    feed: FB.UIServer.MobileIframableMethod
 });
 FB.provide('', {
     share: function (a) {
@@ -2611,43 +2830,6 @@ FB.subclass('XFBML.ButtonElement', 'XFBML.Element', null, {
         this.dom.innerHTML = ('<a class="' + a + '">' + '<span class="fb_button_text">' + b + '</span>' + '</a>');
         this.dom.firstChild.onclick = FB.bind(this.onClick, this);
         this.fire('render');
-    }
-});
-FB.provide('Helper', {
-    isUser: function (a) {
-        return a < 2.2e+09 || (a >= 1e+14 && a <= 100099999989999);
-    },
-    getLoggedInUser: function () {
-        return FB._session ? FB._session.uid : null;
-    },
-    upperCaseFirstChar: function (a) {
-        if (a.length > 0) {
-            return a.substr(0, 1).toUpperCase() + a.substr(1);
-        } else
-        return a;
-    },
-    getProfileLink: function (c, b, a) {
-        a = a || (c ? FB.getDomain('www') + 'profile.php?id=' + c.uid : null);
-        if (a) b = '<a class="fb_link" href="' + a + '">' + b + '</a>';
-        return b;
-    },
-    invokeHandler: function (handler, scope, args) {
-        if (handler) if (typeof handler === 'string') {
-            eval(handler);
-        } else if (handler.apply) handler.apply(scope, args || []);
-    },
-    fireEvent: function (a, b) {
-        var c = b._attr.href;
-        b.fire(a, c);
-        FB.Event.fire(a, c, b);
-    },
-    executeFunctionByName: function (d) {
-        var a = Array.prototype.slice.call(arguments, 1);
-        var f = d.split(".");
-        var c = f.pop();
-        var b = window;
-        for (var e = 0; e < f.length; e++) b = b[f[e]];
-        return b[c].apply(this, a);
     }
 });
 FB.subclass('XFBML.AddProfileTab', 'XFBML.ButtonElement', null, {
@@ -4326,13 +4508,13 @@ FB.provide("Flash", {
     "_minVersions": [
         [10, 0, 22, 87]
     ],
-    "_swfPath": "rsrc.php\/v1\/yF\/r\/Y7YCBKX-HZn.swf"
+    "_swfPath": "rsrc.php\/v1\/yx\/r\/WFg56j28XFs.swf"
 }, true);
 FB.provide("XD", {
-    "_xdProxyUrl": "connect\/xd_proxy.php?version=2"
+    "_xdProxyUrl": "connect\/xd_proxy.php?version=3"
 }, true);
 FB.provide("Arbiter", {
-    "_canvasProxyUrl": "connect\/canvas_proxy.php?version=2"
+    "_canvasProxyUrl": "connect\/canvas_proxy.php?version=3"
 }, true);
 FB.initSitevars = {
     "parseXFBMLBeforeDomReady": false,
@@ -4370,7 +4552,8 @@ FB.initSitevars = {
 };
 FB.widgetPipeEnabledApps = {
     "111476658864976": 1,
-    "cca6477272fc5cb805f85a84f20fca1d": 1
+    "cca6477272fc5cb805f85a84f20fca1d": 1,
+    "179150165472010": 1
 };
 FB.widgetPipeTagCountThreshold = 4;
 FB.provide("Canvas.EarlyFlush", {
@@ -4396,5 +4579,5 @@ FB.provide("XFBML.ProfilePic", {
     }
 }, true);
 if (FB.Dom && FB.Dom.addCssRules) {
-    FB.Dom.addCssRules(".fb_hidden{position:absolute;top:-10000px;z-index:10001}\n.fb_reset{background:none;border-spacing:0;border:0;color:#000;cursor:auto;direction:ltr;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif;font-size: 11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}\n.fb_link img{border:none}\n.fb_dialog{position:absolute;top:-10000px;z-index:10001}\n.fb_dialog_advanced{background:rgba(82, 82, 82, .7);padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px}\n.fb_dialog_content{background:#fff;color:#333}\n.fb_dialog_close_icon{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px;top:8px\\9;right:7px\\9}\n.fb_dialog_close_icon:hover{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/s816eWC-2sl.gif)}\n.fb_dialog_close_icon:active{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/s816eWC-2sl.gif)}\n.fb_dialog_loader{background-color:#f2f2f2;border:1px solid #606060;font-size: 24px;padding:20px}\n.fb_dialog_top_left,\n.fb_dialog_top_right,\n.fb_dialog_bottom_left,\n.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}\n.fb_dialog_top_left{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}\n.fb_dialog_top_right{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}\n.fb_dialog_bottom_left{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}\n.fb_dialog_bottom_right{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}\n.fb_dialog_vert_left,\n.fb_dialog_vert_right,\n.fb_dialog_horiz_top,\n.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}\n.fb_dialog_vert_left,\n.fb_dialog_vert_right{width:10px;height:100\u0025}\n.fb_dialog_vert_left{margin-left:-10px}\n.fb_dialog_vert_right{right:0;margin-right:-10px}\n.fb_dialog_horiz_top,\n.fb_dialog_horiz_bottom{width:100\u0025;height:10px}\n.fb_dialog_horiz_top{margin-top:-10px}\n.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}\n.fb_dialog_iframe{line-height:0}\n.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #3b5998;color:#fff;font-size: 14px;font-weight:bold;margin:0}\n.fb_dialog_content .dialog_title > span{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zd\/r\/Cou7n-nqK52.gif) no-repeat 5px 50\u0025;float:left;padding:5px 0 7px 26px}\n.fb_dialog_content .dialog_content{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/z9\/r\/jKEcVPZFk-2.gif) no-repeat 50\u0025 50\u0025;border:1px solid #555;border-bottom:0;border-top:0;height:150px}\n.fb_dialog_content .dialog_footer{background:#f2f2f2;border:1px solid #555;border-top-color:#ccc;height:40px}\n#fb_dialog_loader_close{float:right}\n.fb_iframe_widget{position:relative;display:-moz-inline-block;display:inline-block}\n.fb_iframe_widget iframe{position:relative;vertical-align:text-bottom}\n.fb_iframe_widget span{position:relative}\n.fb_hide_iframes iframe{position:relative;left:-10000px}\n.fb_iframe_widget_loader{position:relative;display:inline-block}\n.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}\n.fb_iframe_widget_loader .FB_Loader{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/z9\/r\/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50\u0025;z-index:4}\n.fb_button_simple,\n.fb_button_simple_rtl{background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zH\/r\/eIpbnVKI9lR.png);background-repeat:no-repeat;cursor:pointer;outline:none;text-decoration:none}\n.fb_button_simple_rtl{background-position:right 0}\n.fb_button_simple .fb_button_text{margin:0 0 0 20px;padding-bottom:1px}\n.fb_button_simple_rtl .fb_button_text{margin:0 10px 0 0}\na.fb_button_simple:hover .fb_button_text,\na.fb_button_simple_rtl:hover .fb_button_text,\n.fb_button_simple:hover .fb_button_text,\n.fb_button_simple_rtl:hover .fb_button_text{text-decoration:underline}\n.fb_button,\n.fb_button_rtl{background:#29447e url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/FGFbc80dUKj.png);background-repeat:no-repeat;cursor:pointer;display:inline-block;padding:0 0 0 1px;text-decoration:none;outline:none}\n.fb_button .fb_button_text,\n.fb_button_rtl .fb_button_text{background:#5f78ab url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/FGFbc80dUKj.png);border-top:solid 1px #879ac0;border-bottom:solid 1px #1a356e;color:#fff;display:block;font-family:\"lucida grande\",tahoma,verdana,arial,sans-serif;font-weight:bold;padding:2px 6px 3px 6px;margin:1px 1px 0 21px;text-shadow:none}\na.fb_button,\na.fb_button_rtl,\n.fb_button,\n.fb_button_rtl{text-decoration:none}\na.fb_button:active .fb_button_text,\na.fb_button_rtl:active .fb_button_text,\n.fb_button:active .fb_button_text,\n.fb_button_rtl:active .fb_button_text{border-bottom:solid 1px #29447e;border-top:solid 1px #45619d;background:#4f6aa3;text-shadow:none}\n.fb_button_xlarge,\n.fb_button_xlarge_rtl{background-position:left -60px;font-size: 24px;line-height:30px}\n.fb_button_xlarge .fb_button_text{padding:3px 8px 3px 12px;margin-left:38px}\na.fb_button_xlarge:active{background-position:left -99px}\n.fb_button_xlarge_rtl{background-position:right -268px}\n.fb_button_xlarge_rtl .fb_button_text{padding:3px 8px 3px 12px;margin-right:39px}\na.fb_button_xlarge_rtl:active{background-position:right -307px}\n.fb_button_large,\n.fb_button_large_rtl{background-position:left -138px;font-size: 13px;line-height:16px}\n.fb_button_large .fb_button_text{margin-left:24px;padding:2px 6px 4px 6px}\na.fb_button_large:active{background-position:left -163px}\n.fb_button_large_rtl{background-position:right -346px}\n.fb_button_large_rtl .fb_button_text{margin-right:25px}\na.fb_button_large_rtl:active{background-position:right -371px}\n.fb_button_medium,\n.fb_button_medium_rtl{background-position:left -188px;font-size: 11px;line-height:14px}\na.fb_button_medium:active{background-position:left -210px}\n.fb_button_medium_rtl{background-position:right -396px}\n.fb_button_text_rtl,\n.fb_button_medium_rtl .fb_button_text{padding:2px 6px 3px 6px;margin-right:22px}\na.fb_button_medium_rtl:active{background-position:right -418px}\n.fb_button_small,\n.fb_button_small_rtl{background-position:left -232px;font-size: 10px;line-height:10px}\n.fb_button_small .fb_button_text{padding:2px 6px 3px;margin-left:17px}\na.fb_button_small:active,\n.fb_button_small:active{background-position:left -250px}\n.fb_button_small_rtl{background-position:right -440px}\n.fb_button_small_rtl .fb_button_text{padding:2px 6px;margin-right:18px}\na.fb_button_small_rtl:active{background-position:right -458px}\n.fb_share_count_wrapper{position:relative;float:left}\n.fb_share_count{background:#b0b9ec none repeat scroll 0 0;color:#333;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif;text-align:center}\n.fb_share_count_inner{background:#e8ebf2;display:block}\n.fb_share_count_right{margin-left:-1px;display:inline-block}\n.fb_share_count_right .fb_share_count_inner{border-top:solid 1px #e8ebf2;border-bottom:solid 1px #b0b9ec;margin:1px 1px 0 1px;font-size: 10px;line-height:10px;padding:2px 6px 3px;font-weight:bold}\n.fb_share_count_top{display:block;letter-spacing:-1px;line-height:34px;margin-bottom:7px;font-size: 22px;border:solid 1px #b0b9ec}\n.fb_share_count_nub_top{border:none;display:block;position:absolute;left:7px;top:35px;margin:0;padding:0;width:6px;height:7px;background-repeat:no-repeat;background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zU\/r\/bSOHtKbCGYI.png)}\n.fb_share_count_nub_right{border:none;display:inline-block;padding:0;width:5px;height:10px;background-repeat:no-repeat;background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zX\/r\/i_oIVTKMYsL.png);vertical-align:top;background-position:right 5px;z-index:10;left:2px;margin:0 2px 0 0;position:relative}\n.fb_share_no_count{display:none}\n.fb_share_size_Small .fb_share_count_right .fb_share_count_inner{font-size: 10px}\n.fb_share_size_Medium .fb_share_count_right .fb_share_count_inner{font-size: 11px;padding:2px 6px 3px;letter-spacing:-1px;line-height:14px}\n.fb_share_size_Large .fb_share_count_right .fb_share_count_inner{font-size: 13px;line-height:16px;padding:2px 6px 4px;font-weight:normal;letter-spacing:-1px}\n.fb_share_count_hidden .fb_share_count_nub_top,\n.fb_share_count_hidden .fb_share_count_top,\n.fb_share_count_hidden .fb_share_count_nub_right,\n.fb_share_count_hidden .fb_share_count_right{visibility:hidden}\n.fb_connect_bar_container div,\n.fb_connect_bar_container span,\n.fb_connect_bar_container a,\n.fb_connect_bar_container img,\n.fb_connect_bar_container strong{background:none;border-spacing:0;border:0;direction:ltr;font-style:normal;font-variant:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal;vertical-align:baseline}\n.fb_connect_bar_container{position:fixed;left:0 !important;right:0 !important;height:42px !important;padding:0 25px !important;margin:0 !important;vertical-align:middle !important;border-bottom:1px solid #333 !important;background:#3b5998 !important;z-index:99999999 !important;overflow:hidden !important}\n.fb_connect_bar_container_ie6{position:absolute;top:expression(document.compatMode==\"CSS1Compat\"? document.documentElement.scrollTop+\"px\":body.scrollTop+\"px\")}\n.fb_connect_bar{position:relative;margin:auto;height:100\u0025;width:100\u0025;padding:6px 0 0 0 !important;background:none;color:#fff !important;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif !important;font-size: 13px !important;font-style:normal !important;font-variant:normal !important;font-weight:normal !important;letter-spacing:normal !important;line-height:1 !important;text-decoration:none !important;text-indent:0 !important;text-shadow:none !important;text-transform:none !important;white-space:normal !important;word-spacing:normal !important}\n.fb_connect_bar a:hover{color:#fff}\n.fb_connect_bar .fb_profile img{height:30px;width:30px;vertical-align:middle;margin:0 6px 5px 0}\n.fb_connect_bar div a,\n.fb_connect_bar span,\n.fb_connect_bar span a{color:#bac6da;font-size: 11px;text-decoration:none}\n.fb_connect_bar .fb_buttons{float:right;margin-top:7px}\n.fb_edge_widget_with_comment{position:relative;*z-index:1000}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget{position:absolute}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_ltr{left:-4px}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_rtl{left:2px}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget{left:0;z-index:1}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget .FB_Loader{left:0;top:1px;margin-top:6px;margin-left:0;background-position:50\u0025 50\u0025;background-color:#fff;height:150px;width:394px;border:1px #666 solid;border-bottom:2px solid #283e6c;z-index:1}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget.dark .FB_Loader{background-color:#000;border-bottom:2px solid #ccc}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget.siderender\n.FB_Loader{margin-top:0}\n#fb_social_bar_container{position:fixed;left:0;right:0;height:34px;padding:0 25px;z-index:999999999}\n.fb_social_bar_iframe{position:relative;float:right;opacity:0;-moz-opacity:0;filter:alpha(opacity=0)}\n.fb_social_bar_iframe_bottom_ie6{bottom:auto;top:expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)))}\n.fb_social_bar_iframe_top_ie6{bottom:auto;top:expression(eval(document.documentElement.scrollTop-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)))}\n", ["fb.css.base", "fb.css.dialog", "fb.css.iframewidget", "fb.css.button", "fb.css.sharebutton", "fb.css.connectbarwidget", "fb.css.edgecommentwidget", "fb.css.sendbuttonformwidget", "fb.css.socialbarwidget"]);
+    FB.Dom.addCssRules(".fb_hidden{position:absolute;top:-10000px;z-index:10001}\n.fb_reset{background:none;border-spacing:0;border:0;color:#000;cursor:auto;direction:ltr;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif;font-size: 11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}\n.fb_link img{border:none}\n.fb_dialog{position:absolute;top:-10000px;z-index:10001}\n.fb_dialog_advanced{background:rgba(82, 82, 82, .7);padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px}\n.fb_dialog_advanced.fb_mobile{background:rgba(82, 82, 82, .7);padding:4px;-moz-border-radius:2px;-webkit-border-radius:2px}\n.fb_dialog_content{background:#fff;color:#333}\n.fb_dialog_close_icon{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px;top:8px\\9;right:7px\\9}\n.fb_mobile .fb_dialog_close_icon{top:11px\n}\n.fb_dialog_close_icon:hover{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/s816eWC-2sl.gif)}\n.fb_dialog_close_icon:active{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/s816eWC-2sl.gif)}\n.fb_dialog_loader{background-color:#f2f2f2;border:1px solid #606060;font-size: 24px;padding:20px}\n.fb_dialog_top_left,\n.fb_dialog_top_right,\n.fb_dialog_bottom_left,\n.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}\n.fb_dialog_top_left{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}\n.fb_dialog_top_right{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}\n.fb_dialog_bottom_left{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}\n.fb_dialog_bottom_right{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/ze\/r\/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}\n.fb_dialog_vert_left,\n.fb_dialog_vert_right,\n.fb_dialog_horiz_top,\n.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}\n.fb_dialog_vert_left,\n.fb_dialog_vert_right{width:10px;height:100\u0025}\n.fb_dialog_vert_left{margin-left:-10px}\n.fb_dialog_vert_right{right:0;margin-right:-10px}\n.fb_dialog_horiz_top,\n.fb_dialog_horiz_bottom{width:100\u0025;height:10px}\n.fb_dialog_horiz_top{margin-top:-10px}\n.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}\n.fb_dialog_iframe{line-height:0}\n.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #3b5998;color:#fff;font-size: 14px;font-weight:bold;margin:0}\n.fb_dialog_content .dialog_title > span{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zd\/r\/Cou7n-nqK52.gif) no-repeat 5px 50\u0025;float:left;padding:5px 0 7px 26px}\n.fb_dialog_content .dialog_content{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/z9\/r\/jKEcVPZFk-2.gif) no-repeat 50\u0025 50\u0025;border:1px solid #555;border-bottom:0;border-top:0;height:150px}\n.fb_dialog_content .dialog_footer{background:#f2f2f2;border:1px solid #555;border-top-color:#ccc;height:40px}\n#fb_dialog_loader_close{float:right}\n.fb_iframe_widget{position:relative;display:-moz-inline-block;display:inline-block}\n.fb_iframe_widget iframe{position:relative;vertical-align:text-bottom}\n.fb_iframe_widget span{position:relative}\n.fb_hide_iframes iframe{position:relative;left:-10000px}\n.fb_iframe_widget_loader{position:relative;display:inline-block}\n.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}\n.fb_iframe_widget_loader .FB_Loader{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/z9\/r\/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50\u0025;z-index:4}\n.fb_button_simple,\n.fb_button_simple_rtl{background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zH\/r\/eIpbnVKI9lR.png);background-repeat:no-repeat;cursor:pointer;outline:none;text-decoration:none}\n.fb_button_simple_rtl{background-position:right 0}\n.fb_button_simple .fb_button_text{margin:0 0 0 20px;padding-bottom:1px}\n.fb_button_simple_rtl .fb_button_text{margin:0 10px 0 0}\na.fb_button_simple:hover .fb_button_text,\na.fb_button_simple_rtl:hover .fb_button_text,\n.fb_button_simple:hover .fb_button_text,\n.fb_button_simple_rtl:hover .fb_button_text{text-decoration:underline}\n.fb_button,\n.fb_button_rtl{background:#29447e url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/FGFbc80dUKj.png);background-repeat:no-repeat;cursor:pointer;display:inline-block;padding:0 0 0 1px;text-decoration:none;outline:none}\n.fb_button .fb_button_text,\n.fb_button_rtl .fb_button_text{background:#5f78ab url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zL\/r\/FGFbc80dUKj.png);border-top:solid 1px #879ac0;border-bottom:solid 1px #1a356e;color:#fff;display:block;font-family:\"lucida grande\",tahoma,verdana,arial,sans-serif;font-weight:bold;padding:2px 6px 3px 6px;margin:1px 1px 0 21px;text-shadow:none}\na.fb_button,\na.fb_button_rtl,\n.fb_button,\n.fb_button_rtl{text-decoration:none}\na.fb_button:active .fb_button_text,\na.fb_button_rtl:active .fb_button_text,\n.fb_button:active .fb_button_text,\n.fb_button_rtl:active .fb_button_text{border-bottom:solid 1px #29447e;border-top:solid 1px #45619d;background:#4f6aa3;text-shadow:none}\n.fb_button_xlarge,\n.fb_button_xlarge_rtl{background-position:left -60px;font-size: 24px;line-height:30px}\n.fb_button_xlarge .fb_button_text{padding:3px 8px 3px 12px;margin-left:38px}\na.fb_button_xlarge:active{background-position:left -99px}\n.fb_button_xlarge_rtl{background-position:right -268px}\n.fb_button_xlarge_rtl .fb_button_text{padding:3px 8px 3px 12px;margin-right:39px}\na.fb_button_xlarge_rtl:active{background-position:right -307px}\n.fb_button_large,\n.fb_button_large_rtl{background-position:left -138px;font-size: 13px;line-height:16px}\n.fb_button_large .fb_button_text{margin-left:24px;padding:2px 6px 4px 6px}\na.fb_button_large:active{background-position:left -163px}\n.fb_button_large_rtl{background-position:right -346px}\n.fb_button_large_rtl .fb_button_text{margin-right:25px}\na.fb_button_large_rtl:active{background-position:right -371px}\n.fb_button_medium,\n.fb_button_medium_rtl{background-position:left -188px;font-size: 11px;line-height:14px}\na.fb_button_medium:active{background-position:left -210px}\n.fb_button_medium_rtl{background-position:right -396px}\n.fb_button_text_rtl,\n.fb_button_medium_rtl .fb_button_text{padding:2px 6px 3px 6px;margin-right:22px}\na.fb_button_medium_rtl:active{background-position:right -418px}\n.fb_button_small,\n.fb_button_small_rtl{background-position:left -232px;font-size: 10px;line-height:10px}\n.fb_button_small .fb_button_text{padding:2px 6px 3px;margin-left:17px}\na.fb_button_small:active,\n.fb_button_small:active{background-position:left -250px}\n.fb_button_small_rtl{background-position:right -440px}\n.fb_button_small_rtl .fb_button_text{padding:2px 6px;margin-right:18px}\na.fb_button_small_rtl:active{background-position:right -458px}\n.fb_share_count_wrapper{position:relative;float:left}\n.fb_share_count{background:#b0b9ec none repeat scroll 0 0;color:#333;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif;text-align:center}\n.fb_share_count_inner{background:#e8ebf2;display:block}\n.fb_share_count_right{margin-left:-1px;display:inline-block}\n.fb_share_count_right .fb_share_count_inner{border-top:solid 1px #e8ebf2;border-bottom:solid 1px #b0b9ec;margin:1px 1px 0 1px;font-size: 10px;line-height:10px;padding:2px 6px 3px;font-weight:bold}\n.fb_share_count_top{display:block;letter-spacing:-1px;line-height:34px;margin-bottom:7px;font-size: 22px;border:solid 1px #b0b9ec}\n.fb_share_count_nub_top{border:none;display:block;position:absolute;left:7px;top:35px;margin:0;padding:0;width:6px;height:7px;background-repeat:no-repeat;background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zU\/r\/bSOHtKbCGYI.png)}\n.fb_share_count_nub_right{border:none;display:inline-block;padding:0;width:5px;height:10px;background-repeat:no-repeat;background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v1\/zX\/r\/i_oIVTKMYsL.png);vertical-align:top;background-position:right 5px;z-index:10;left:2px;margin:0 2px 0 0;position:relative}\n.fb_share_no_count{display:none}\n.fb_share_size_Small .fb_share_count_right .fb_share_count_inner{font-size: 10px}\n.fb_share_size_Medium .fb_share_count_right .fb_share_count_inner{font-size: 11px;padding:2px 6px 3px;letter-spacing:-1px;line-height:14px}\n.fb_share_size_Large .fb_share_count_right .fb_share_count_inner{font-size: 13px;line-height:16px;padding:2px 6px 4px;font-weight:normal;letter-spacing:-1px}\n.fb_share_count_hidden .fb_share_count_nub_top,\n.fb_share_count_hidden .fb_share_count_top,\n.fb_share_count_hidden .fb_share_count_nub_right,\n.fb_share_count_hidden .fb_share_count_right{visibility:hidden}\n.fb_connect_bar_container div,\n.fb_connect_bar_container span,\n.fb_connect_bar_container a,\n.fb_connect_bar_container img,\n.fb_connect_bar_container strong{background:none;border-spacing:0;border:0;direction:ltr;font-style:normal;font-variant:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal;vertical-align:baseline}\n.fb_connect_bar_container{position:fixed;left:0 !important;right:0 !important;height:42px !important;padding:0 25px !important;margin:0 !important;vertical-align:middle !important;border-bottom:1px solid #333 !important;background:#3b5998 !important;z-index:99999999 !important;overflow:hidden !important}\n.fb_connect_bar_container_ie6{position:absolute;top:expression(document.compatMode==\"CSS1Compat\"? document.documentElement.scrollTop+\"px\":body.scrollTop+\"px\")}\n.fb_connect_bar{position:relative;margin:auto;height:100\u0025;width:100\u0025;padding:6px 0 0 0 !important;background:none;color:#fff !important;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif !important;font-size: 13px !important;font-style:normal !important;font-variant:normal !important;font-weight:normal !important;letter-spacing:normal !important;line-height:1 !important;text-decoration:none !important;text-indent:0 !important;text-shadow:none !important;text-transform:none !important;white-space:normal !important;word-spacing:normal !important}\n.fb_connect_bar a:hover{color:#fff}\n.fb_connect_bar .fb_profile img{height:30px;width:30px;vertical-align:middle;margin:0 6px 5px 0}\n.fb_connect_bar div a,\n.fb_connect_bar span,\n.fb_connect_bar span a{color:#bac6da;font-size: 11px;text-decoration:none}\n.fb_connect_bar .fb_buttons{float:right;margin-top:7px}\n.fb_edge_widget_with_comment{position:relative;*z-index:1000}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget{position:absolute}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_ltr{left:-4px}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget iframe.fb_rtl{left:2px}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget{left:0;z-index:1}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget .FB_Loader{left:0;top:1px;margin-top:6px;margin-left:0;background-position:50\u0025 50\u0025;background-color:#fff;height:150px;width:394px;border:1px #666 solid;border-bottom:2px solid #283e6c;z-index:1}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget.dark .FB_Loader{background-color:#000;border-bottom:2px solid #ccc}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget.siderender\n.FB_Loader{margin-top:0}\n#fb_social_bar_container{position:fixed;left:0;right:0;height:34px;padding:0 25px;z-index:999999999}\n.fb_social_bar_iframe{position:relative;float:right;opacity:0;-moz-opacity:0;filter:alpha(opacity=0)}\n.fb_social_bar_iframe_bottom_ie6{bottom:auto;top:expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)))}\n.fb_social_bar_iframe_top_ie6{bottom:auto;top:expression(eval(document.documentElement.scrollTop-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)))}\n", ["fb.css.base", "fb.css.dialog", "fb.css.iframewidget", "fb.css.button", "fb.css.sharebutton", "fb.css.connectbarwidget", "fb.css.edgecommentwidget", "fb.css.sendbuttonformwidget", "fb.css.socialbarwidget"]);
 }
