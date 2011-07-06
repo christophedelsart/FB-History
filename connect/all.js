@@ -1,4 +1,4 @@
-/*1309301508,169550703,JIT Construction: v398760,fr_FR*/
+/*1309389099,169900918,JIT Construction: v399362,fr_FR*/
 
 if (!window.FB) window.FB = {
     _apiKey: null,
@@ -2071,7 +2071,7 @@ FB.provide('', {
         FB._apiKey = a.appId || a.apiKey;
         if (!a.logging && window.location.toString().indexOf('fb_debug=1') < 0) FB._logging = false;
         FB.XD.init(a.channelUrl);
-        if (FB.UA.mobile() && a.useCachedDialogs) {
+        if (FB.UA.mobile() && (a.useCachedDialogs !== false)) {
             FB.TemplateUI.init();
             FB.Event.subscribe('auth.sessionChange', FB.TemplateData.update);
         }
