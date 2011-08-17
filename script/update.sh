@@ -10,6 +10,8 @@ var2="`echo $var1 | awk -F" " '{print $5}'`"
 unset IFS
 echo "Viewing diff ..."
 git difftool -y -t opendiff ../connect/all.js
+echo "Git Log :"
+git log --oneline -n 5
 echo "Ready to commit ..."
 read -p "Do you want to commit Yes / No ?" ans
 if [ "$ans" == "y" ] || [ "$ans" == "Y" ] || [ "$ans" == "Yes" ]
@@ -31,6 +33,6 @@ else
 			echo "Reverting local version ..."
 			git checkout ../connect/all.js
 		else
-			echo "Local version updated & commited ..."
+			echo "Local version updated ..."
 		fi
 fi
