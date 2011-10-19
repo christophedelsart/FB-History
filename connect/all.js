@@ -1,5 +1,4 @@
-/*1318377043,169925735,JIT Construction: v456768,fr_FR*/
-
+/*1318980118,169924984,JIT Construction: v460084,fr_FR*/
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
@@ -116,10 +115,8 @@ FB.provide('Array', {
         if (Object.prototype.toString.apply(c) === '[object Array]' || (!(c instanceof Function) && typeof c.length == 'number')) {
             if (c.forEach) {
                 c.forEach(a);
-            } else
-            for (var b = 0, e = c.length; b < e; b++) a(c[b], b, c);
-        } else
-        for (var d in c) if (f || c.hasOwnProperty(d)) a(c[d], d, c);
+            } else for (var b = 0, e = c.length; b < e; b++) a(c[b], b, c);
+        } else for (var d in c) if (f || c.hasOwnProperty(d)) a(c[d], d, c);
     },
     toArray: function (b) {
         for (var c = 0, a = [], d = b.length; c < d; c++) a[c] = b[c];
@@ -168,8 +165,7 @@ FB.provide('Content', {
             var b = document.createElement('div');
             c.appendChild(b).innerHTML = a;
             return b;
-        } else
-        return c.appendChild(a);
+        } else return c.appendChild(a);
     },
     appendHidden: function (a) {
         if (!FB.Content._hiddenRoot) {
@@ -264,11 +260,11 @@ FB.provide('Flash', {
         if (FB.UA.ie() >= 9) {
             if (!FB.Flash._unloadRegistered) {
                 var f = function () {
-                    FB.Array.forEach(FB.Flash._names, function (i, h) {
-                        var g = document.getElementById(h);
-                        if (g) g.removeNode(true);
-                    });
-                };
+                        FB.Array.forEach(FB.Flash._names, function (i, h) {
+                            var g = document.getElementById(h);
+                            if (g) g.removeNode(true);
+                        });
+                    };
                 window.attachEvent('onunload', f);
                 FB.Flash._unloadRegistered = true;
             }
@@ -382,8 +378,7 @@ if (!this.JSON) this.JSON = {};
                         if (v) partial.push(quote(k) + (gap ? ': ' : ':') + v);
                     }
                 }
-            } else
-            for (k in value) if (Object.hasOwnProperty.call(value, k)) {
+            } else for (k in value) if (Object.hasOwnProperty.call(value, k)) {
                 v = str(k, value);
                 if (v) partial.push(quote(k) + (gap ? ': ' : ':') + v);
             }
@@ -435,8 +430,7 @@ FB.provide('JSON', {
     stringify: function (a) {
         if (window.Prototype && Object.toJSON) {
             return Object.toJSON(a);
-        } else
-        return JSON.stringify(a);
+        } else return JSON.stringify(a);
     },
     parse: function (a) {
         return JSON.parse(a);
@@ -533,8 +527,7 @@ FB.provide('ApiServer', {
             } catch (e2_ignore) {}
             if (FB.Flash.hasMinVersion()) {
                 FB.ApiServer.flash(b, g, d, FB.JSON.flatten(f), a);
-            } else
-            throw new Error('Your browser does not support long connect ' + 'requests. You can fix this problem by upgrading your browser ' + 'or installing the latest version of Flash');
+            } else throw new Error('Your browser does not support long connect ' + 'requests. You can fix this problem by upgrading your browser ' + 'or installing the latest version of Flash');
         }
     },
     corsPost: function (c, g, e, f, a) {
@@ -549,8 +542,7 @@ FB.provide('ApiServer', {
             };
             h.send(d);
             return true;
-        } else
-        return false;
+        } else return false;
     },
     _createCORSRequest: function (b, c, a) {
         if (!window.XMLHttpRequest) return null;
@@ -705,8 +697,7 @@ FB.provide('XD', {
                 e = e[g];
             } else if (d = /^frames\[['"]?([a-zA-Z0-9-_]+)['"]?\]$/.exec(g)) {
                 e = e.frames[d[1]];
-            } else
-            throw new SyntaxError('Malformed id to resolve: ' + b + ', pt: ' + g);
+            } else throw new SyntaxError('Malformed id to resolve: ' + b + ', pt: ' + g);
         }
         return e;
     },
@@ -879,8 +870,7 @@ FB.provide('Arbiter', {
             if (window.postMessage) {
                 FB.XD.resolveRelation(g || 'parent').postMessage(e, '*');
                 return;
-            } else
-            try {
+            } else try {
                 window.opener.postMessage(e);
                 return;
             } catch (b) {}
@@ -937,12 +927,16 @@ FB.provide('Canvas', {
             if (b.type != "application/x-shockwave-flash" && b.classid.toUpperCase() != FB.Canvas._flashClassID) continue;
             var c = false;
             for (var e = 0; e < b.childNodes.length; e++) if (b.childNodes[e].nodeName == "PARAM" && b.childNodes[e].name == "wmode") if (b.childNodes[e].value == "opaque" || b.childNodes[e].value == "transparent") c = true;
-            if (!c) if (f.state == 'opened') {
-                b._old_visibility = b.style.visibility;
-                b.style.visibility = 'hidden';
-            } else if (f.state == 'closed') {
-                b.style.visibility = b._old_visibility;
-                delete b._old_visibility;
+            if (!c) {
+                var g = Math.random();
+                if (g <= 1 / 1000) FB.api(FB._apiKey + '/occludespopups', 'post', {});
+                if (f.state == 'opened') {
+                    b._old_visibility = b.style.visibility;
+                    b.style.visibility = 'hidden';
+                } else if (f.state == 'closed') {
+                    b.style.visibility = b._old_visibility;
+                    delete b._old_visibility;
+                }
             }
         }
     },
@@ -1200,8 +1194,7 @@ FB.provide('Dom', {
             d.type = 'text/css';
             d.textContent = e;
             document.getElementsByTagName('head')[0].appendChild(d);
-        } else
-        try {
+        } else try {
             document.createStyleSheet().cssText = e;
         } catch (b) {
             if (document.styleSheets[0]) document.styleSheets[0].cssText += e;
@@ -1443,8 +1436,7 @@ FB.provide('Dialog', {
     _handleOrientationChange: function () {
         if (FB.UA.iPad()) {
             FB.Dialog._centerActive(FB.Canvas.getPageInfo());
-        } else
-        for (var a in FB.Dialog._dialogs) if (document.getElementById(a)) document.getElementById(a).style.width = FB.UIServer.getDefaultSize().width + 'px';
+        } else for (var a in FB.Dialog._dialogs) if (document.getElementById(a)) document.getElementById(a).style.width = FB.UIServer.getDefaultSize().width + 'px';
     },
     _addOrientationHandler: function () {
         if (!FB.UA.mobile()) return;
@@ -1705,8 +1697,8 @@ FB.provide('UIServer', {
     iframe: function (a) {
         a.className = 'FB_UI_Dialog';
         var b = function () {
-            FB.UIServer._triggerDefault(a.id);
-        };
+                FB.UIServer._triggerDefault(a.id);
+            };
         a.root = FB.Dialog.create({
             onClose: b,
             closeIcon: true,
@@ -1765,8 +1757,8 @@ FB.provide('UIServer', {
     _insertIframe: function (b) {
         FB.UIServer._loadedNodes[b.id] = false;
         var a = function (c) {
-            if (b.id in FB.UIServer._loadedNodes) FB.UIServer.setLoadedNode(b, c);
-        };
+                if (b.id in FB.UIServer._loadedNodes) FB.UIServer.setLoadedNode(b, c);
+            };
         if (b.post) {
             FB.Content.insertIframe({
                 url: 'about:blank',
@@ -1898,10 +1890,10 @@ FB.provide('', {
         if (!b && FB.Auth._loadState == 'loading') return;
         FB.Auth._loadState = 'loading';
         var c = function (d) {
-            FB.Auth._loadState = 'loaded';
-            FB.Event.fire('FB.loginStatus', d);
-            FB.Event.clear('FB.loginStatus');
-        };
+                FB.Auth._loadState = 'loaded';
+                FB.Event.fire('FB.loginStatus', d);
+                FB.Event.clear('FB.loginStatus');
+            };
         if (FB.UA.mobile() && window.postMessage && window.localStorage) {
             FB.Auth.staticAuthCheck(c);
         } else if (FB._oauth) {
@@ -1925,14 +1917,12 @@ FB.provide('', {
     getAccessToken: function () {
         if (FB._oauth) {
             return (FB._authResponse && FB._authResponse.accessToken) || null;
-        } else
-        return (FB._session && FB._session.access_token) || null;
+        } else return (FB._session && FB._session.access_token) || null;
     },
     getUserID: function () {
         if (FB._oauth) {
             return FB._userID;
-        } else
-        return (FB._session && FB._session.uid) || 0;
+        } else return (FB._session && FB._session.uid) || 0;
     },
     login: function (a, b) {
         if (FB._oauth) {
@@ -1967,11 +1957,11 @@ FB.provide('Auth', {
                 var d = FB.guid();
                 var e = false;
                 var c = function (h) {
-                    if (!e) {
-                        e = true;
-                        FB.Auth._staticAuthHandler(b, h);
-                    }
-                };
+                        if (!e) {
+                            e = true;
+                            FB.Auth._staticAuthHandler(b, h);
+                        }
+                    };
                 FB.XD.handler(c, 'parent', true, d);
                 setTimeout(c, 500);
                 g.postMessage(FB.JSON.stringify({
@@ -2091,7 +2081,10 @@ FB.provide('Auth', {
         };
     },
     _getSessionOrigin: function () {
-        return FB.UA.nativeApp() ? 3 : (FB.UA.mobile() ? 2 : 1);
+        if (FB.UA.nativeApp()) return 3;
+        if (FB.UA.mobile()) return 2;
+        if (FB._inCanvas) return 5;
+        return 1;
     },
     xdNewHandler: function (b, c, d, a) {
         if (!FB._oauth) throw new Error('xdNewHandler should not be invoked unless ' + 'OAuth2 is being used.');
@@ -2130,14 +2123,6 @@ FB.provide('Auth', {
             };
             b && b(response);
         };
-    },
-    getOrigin: function () {
-        if (FB.UA.nativeApp()) {
-            return 3;
-        } else if (FB._inMobileCanvas) {
-            return 2;
-        } else
-        return 1;
     },
     parseSignedRequest: function (d) {
         if (!d) return null;
@@ -2228,7 +2213,7 @@ FB.provide('UIServer.Methods', {
             FB.copy(a.params, {
                 client_id: FB._apiKey,
                 redirect_uri: FB.Auth.xdNewHandler(b, c, 'opener'),
-                origin: FB.Auth.getOrigin(),
+                origin: FB.Auth._getSessionOrigin(),
                 response_type: 'token,signed_request'
             });
             return a;
@@ -2278,7 +2263,7 @@ FB.provide('UIServer.Methods', {
             FB.copy(a.params, {
                 client_id: FB._apiKey,
                 redirect_uri: FB.Auth.xdNewHandler(b, c, 'parent'),
-                origin: FB.Auth.getOrigin(),
+                origin: FB.Auth._getSessionOrigin(),
                 response_type: 'token,signed_request,code'
             });
             return a;
@@ -2512,8 +2497,7 @@ FB.provide('UIServer.MobileIframableMethod', {
             a.params.channel = FB.UIServer._xdChannelHandler(a.id, 'parent');
             if (!FB.UA.nativeApp()) a.params.in_iframe = 1;
             return a;
-        } else
-        return FB.UIServer.genericTransform(a);
+        } else return FB.UIServer.genericTransform(a);
     },
     getXdRelation: function (b) {
         var a = b.display;
@@ -2677,40 +2661,40 @@ FB.provide('XFBML', {
             element.process();
         } else {
             var processor = function () {
-                var fn = eval(tagInfo.className);
-                var isLogin = false;
-                var showFaces = true;
-                var renderInIframe = false;
-                var addToTimeline = (tagInfo.className === 'FB.XFBML.AddToTimeline');
-                if ((tagInfo.className === 'FB.XFBML.LoginButton') || addToTimeline) {
-                    renderInIframe = FB.XFBML.getBoolAttr(dom, 'render-in-iframe');
-                    mode = dom.getAttribute('mode');
-                    showFaces = (addToTimeline && mode != 'button') || FB.XFBML.getBoolAttr(dom, 'show-faces');
-                    isLogin = addToTimeline || renderInIframe || showFaces || FB.XFBML.getBoolAttr(dom, 'oneclick');
-                    if (isLogin && !addToTimeline) fn = FB.XFBML.Login;
-                }
-                element = dom._element = new fn(dom);
-                if (isLogin) {
-                    showFaces = !! showFaces;
-                    var extraParams = {
-                        show_faces: showFaces,
-                        add_to_profile: addToTimeline,
-                        mode: mode
-                    };
-                    var scope = dom.getAttribute('scope');
-                    if (scope) {
-                        if (FB._oauth) {
-                            extraParams.scope = scope;
-                        } else extraParams.perms = scope;
-                    } else {
-                        var perms = dom.getAttribute('perms');
-                        if (perms) extraParams.perms = perms;
+                    var fn = eval(tagInfo.className);
+                    var isLogin = false;
+                    var showFaces = true;
+                    var renderInIframe = false;
+                    var addToTimeline = (tagInfo.className === 'FB.XFBML.AddToTimeline');
+                    if ((tagInfo.className === 'FB.XFBML.LoginButton') || addToTimeline) {
+                        renderInIframe = FB.XFBML.getBoolAttr(dom, 'render-in-iframe');
+                        mode = FB.XFBML.getAttr(dom, 'mode');
+                        showFaces = (addToTimeline && mode != 'button') || FB.XFBML.getBoolAttr(dom, 'show-faces');
+                        isLogin = addToTimeline || renderInIframe || showFaces || FB.XFBML.getBoolAttr(dom, 'oneclick');
+                        if (isLogin && !addToTimeline) fn = FB.XFBML.Login;
                     }
-                    element.setExtraParams(extraParams);
-                }
-                element.subscribe('render', cb);
-                element.process();
-            };
+                    element = dom._element = new fn(dom);
+                    if (isLogin) {
+                        showFaces = !! showFaces;
+                        var extraParams = {
+                            show_faces: showFaces,
+                            add_to_profile: addToTimeline,
+                            mode: mode
+                        };
+                        var scope = FB.XFBML.getAttr(dom, 'scope');
+                        if (scope) {
+                            if (FB._oauth) {
+                                extraParams.scope = scope;
+                            } else extraParams.perms = scope;
+                        } else {
+                            var perms = FB.XFBML.getAttr(dom, 'perms');
+                            if (perms) extraParams.perms = perms;
+                        }
+                        element.setExtraParams(extraParams);
+                    }
+                    element.subscribe('render', cb);
+                    element.process();
+                };
             if (FB.CLASSES[tagInfo.className.substr(3)]) {
                 processor();
             } else FB.log('Tag ' + tagInfo.className + ' was not found.');
@@ -2729,107 +2713,82 @@ FB.provide('XFBML', {
                 }
             } catch (b) {}
             return a.getElementsByTagName(c);
-        } else
-        return a.getElementsByTagName(c);
+        } else return a.getElementsByTagName(c);
     },
     _tagInfos: [{
         localName: 'activity',
         className: 'FB.XFBML.Activity'
-    },
-    {
+    }, {
         localName: 'add-profile-tab',
         className: 'FB.XFBML.AddProfileTab'
-    },
-    {
+    }, {
         localName: 'add-to-timeline',
         className: 'FB.XFBML.AddToTimeline'
-    },
-    {
+    }, {
         localName: 'bookmark',
         className: 'FB.XFBML.Bookmark'
-    },
-    {
+    }, {
         localName: 'comments',
         className: 'FB.XFBML.Comments'
-    },
-    {
+    }, {
         localName: 'comments-count',
         className: 'FB.XFBML.CommentsCount'
-    },
-    {
+    }, {
         localName: 'connect-bar',
         className: 'FB.XFBML.ConnectBar'
-    },
-    {
+    }, {
         localName: 'fan',
         className: 'FB.XFBML.Fan'
-    },
-    {
+    }, {
         localName: 'like',
         className: 'FB.XFBML.Like',
         supportsWidgetPipe: true
-    },
-    {
+    }, {
         localName: 'like-box',
         className: 'FB.XFBML.LikeBox'
-    },
-    {
+    }, {
         localName: 'live-stream',
         className: 'FB.XFBML.LiveStream'
-    },
-    {
+    }, {
         localName: 'login',
         className: 'FB.XFBML.Login'
-    },
-    {
+    }, {
         localName: 'login-button',
         className: 'FB.XFBML.LoginButton'
-    },
-    {
+    }, {
         localName: 'facepile',
         className: 'FB.XFBML.Facepile'
-    },
-    {
+    }, {
         localName: 'friendpile',
         className: 'FB.XFBML.Friendpile'
-    },
-    {
+    }, {
         localName: 'name',
         className: 'FB.XFBML.Name'
-    },
-    {
+    }, {
         localName: 'profile-pic',
         className: 'FB.XFBML.ProfilePic'
-    },
-    {
+    }, {
         localName: 'question',
         className: 'FB.XFBML.Question'
-    },
-    {
+    }, {
         localName: 'recommendations',
         className: 'FB.XFBML.Recommendations'
-    },
-    {
+    }, {
         localName: 'recommendations-bar',
         className: 'FB.XFBML.RecommendationsBar'
-    },
-    {
+    }, {
         localName: 'registration',
         className: 'FB.XFBML.Registration'
-    },
-    {
+    }, {
         localName: 'send',
         className: 'FB.XFBML.Send'
-    },
-    {
+    }, {
         localName: 'serverfbml',
         className: 'FB.XFBML.ServerFbml'
-    },
-    {
+    }, {
         localName: 'share-button',
         className: 'FB.XFBML.ShareButton'
-    },
-    {
+    }, {
         localName: 'social-bar',
         className: 'FB.XFBML.RecommendationsBar'
     }],
@@ -2898,7 +2857,7 @@ FB.subclass('Data.Query', 'Waitable', function () {
         return a;
     },
     _encode: function (a) {
-        return typeof(a) == 'string' ? FB.String.quote(a) : a;
+        return typeof (a) == 'string' ? FB.String.quote(a) : a;
     },
     toString: function () {
         return '#' + this.name;
@@ -2939,7 +2898,7 @@ FB.provide('Data', {
     waitOn: function (dependencies, callback) {
         var result = new FB.Waitable(),
             count = dependencies.length;
-        if (typeof(callback) == 'string') {
+        if (typeof (callback) == 'string') {
             var s = callback;
             callback = function (args) {
                 return eval(s);
@@ -3066,9 +3025,9 @@ FB.provide('Native', {
             a();
         } else {
             var b = function (c) {
-                window.removeEventListener(FB.Native.NATIVE_READY_EVENT, b);
-                FB.Native.onready(a);
-            };
+                    window.removeEventListener(FB.Native.NATIVE_READY_EVENT, b);
+                    FB.Native.onready(a);
+                };
             window.addEventListener(FB.Native.NATIVE_READY_EVENT, b, false);
         }
     }
@@ -3118,8 +3077,7 @@ FB.provide('Helper', {
     upperCaseFirstChar: function (a) {
         if (a.length > 0) {
             return a.substr(0, 1).toUpperCase() + a.substr(1);
-        } else
-        return a;
+        } else return a;
     },
     getProfileLink: function (c, b, a) {
         a = a || (c ? FB.getDomain('www') + 'profile.php?id=' + c.uid : null);
@@ -3343,6 +3301,14 @@ FB.provide('TemplateUI', {
         return FB.TemplateUI.isFrictionlessAppRequest(b, a) && a.to && FB.Frictionless.isAllowed(a.to);
     }
 });
+FB.provide('URI', {
+    resolve: function (b) {
+        if (!b) return window.location.href;
+        var a = document.createElement('div');
+        a.innerHTML = '<a href="' + b.replace('"', '&quot;') + '"></a>';
+        return a.firstChild.href;
+    }
+});
 FB.Class('XFBML.Element', function (a) {
     this.dom = a;
 }, FB.copy({
@@ -3359,8 +3325,7 @@ FB.Class('XFBML.Element', function (a) {
             var d = parseInt(c.replace('px', ''), 10);
             if (isNaN(d)) {
                 return a;
-            } else
-            return d;
+            } else return d;
         });
     },
     _getAttributeFromList: function (c, b, a) {
@@ -3368,8 +3333,7 @@ FB.Class('XFBML.Element', function (a) {
             d = d.toLowerCase();
             if (FB.Array.indexOf(a, d) > -1) {
                 return d;
-            } else
-            return b;
+            } else return b;
         });
     },
     isValid: function () {
@@ -4466,8 +4430,7 @@ FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
         if ('send' in this._attr && 'widget_type' in b && b.widget_type == 'send') {
             var c = this._getCommonEdgeCommentWidgetOpts(b, a, true, true);
             return new FB.XFBML.SendButtonFormWidget(c);
-        } else
-        return this._callBase("_createEdgeCommentWidget", b, a);
+        } else return this._callBase("_createEdgeCommentWidget", b, a);
     },
     getIframeTitle: function () {
         return 'Like this content on Facebook.';
@@ -4605,10 +4568,8 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
                 return FB.Intl._tx("Se d\u00e9connecter de Facebook");
             } else if (FB.getAccessToken()) {
                 return '';
-            } else
-            return this._getLoginText();
-        } else
-        switch (this._attr.status) {
+            } else return this._getLoginText();
+        } else switch (this._attr.status) {
         case 'unknown':
             return this._getLoginText();
         case 'notConnected':
@@ -4633,8 +4594,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
                     scope: this._attr.scope
                 });
             } else FB.logout(FB.bind(this._authCallback, this));
-        } else
-        switch (this._attr.status) {
+        } else switch (this._attr.status) {
         case 'unknown':
             FB.ui({
                 method: 'auth.logintoFacebook'
@@ -4730,8 +4690,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
             } else if (this._reflexive) {
                 c = 'yourself';
             } else c = 'you';
-        } else
-        switch (b.sex) {
+        } else switch (b.sex) {
         case 'male':
             if (this._possessive) {
                 c = this._reflexive ? 'his own' : 'his';
@@ -4975,7 +4934,7 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
             font: this.getAttribute('font'),
             colorscheme: this.getAttribute('colorscheme'),
             side: this.getAttribute('side'),
-            href: this.getAttribute('href', window.location.href),
+            href: FB.URI.resolve(this.getAttribute('href')),
             site: this.getAttribute('site'),
             action: this.getAttribute('action'),
             ref: this.getAttribute('ref'),
@@ -5152,16 +5111,14 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
         var b;
         if (!this._attr.fields) {
             b = ['name'];
-        } else
-        try {
+        } else try {
             b = FB.JSON.parse(this._attr.fields);
         } catch (a) {
             b = this._attr.fields.split(/,/);
         }
         if (this._attr.width < this._skinnyWidth) {
             return this._skinnyBaseHeight + b.length * this._skinnyFieldHeight;
-        } else
-        return this._baseHeight + b.length * this._fieldHeight;
+        } else return this._baseHeight + b.length * this._fieldHeight;
     },
     getUrlBits: function () {
         return {
