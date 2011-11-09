@@ -1,4 +1,4 @@
-/*1320194028,169587570,JIT Construction: v466493,fr_FR*/
+/*1320802564,169549181,JIT Construction: v469515,fr_FR*/
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
@@ -703,6 +703,7 @@ FB.provide('XD', {
     },
     handler: function (a, f, c, d, b) {
         if (window.location.toString().indexOf(FB.XD.Fragment._magic) > 0) return 'javascript:false;//';
+        if (FB.initSitevars.forceSecureXdProxy) b = true;
         var g = FB.getDomain((b ? 'https_' : '') + 'cdn') + FB.XD._xdProxyUrl + '#';
         d = d || FB.guid();
         f = f || 'opener';
@@ -1548,6 +1549,7 @@ FB.provide('Dialog', {
 });
 FB.provide('', {
     ui: function (f, b) {
+        f = FB.copy({}, f);
         if (!f.method) {
             FB.log('"method" is a required parameter for FB.ui().');
             return null;
@@ -1630,7 +1632,7 @@ FB.provide('UIServer', {
         }
         var d = f.getXdRelation || FB.UIServer.getXdRelation;
         var i = d(a.params);
-        if (!(a.id in FB.UIServer._defaultCb) && !('next' in a.params)) a.params.next = FB.UIServer._xdResult(a.cb, a.id, i, true);
+        if (!(a.id in FB.UIServer._defaultCb) && !('next' in a.params) && !('redirect_uri' in a.params)) a.params.next = FB.UIServer._xdResult(a.cb, a.id, i, true);
         if (i === 'parent') a.params.channel_url = FB.UIServer._xdChannelHandler(e, 'parent.parent');
         a = FB.UIServer.prepareParams(a);
         return a;
@@ -3129,7 +3131,7 @@ FB.provide('TemplateData', {
     _localStorageTimeout: 60 * 60 * 24,
     _enabled: true,
     enabled: function () {
-        return FB.TemplateData._enabled && FB.TemplateData._initialized && FB.TemplateData.supportsLocalStorage() && FB._userStatus == 'connected' && FB.TemplateData.getResponse();
+        return FB.TemplateData._enabled && FB.TemplateData._initialized && FB.TemplateData.supportsLocalStorage() && FB._userStatus == 'connected' && FB.TemplateData.getResponse() && FB.TemplateData.getData().apprequests.template_data_enabled;
     },
     supportsLocalStorage: function () {
         try {
@@ -3324,7 +3326,7 @@ FB.provide('URI', {
     resolve: function (b) {
         if (!b) return window.location.href;
         var a = document.createElement('div');
-        a.innerHTML = '<a href="' + b.replace('"', '&quot;') + '"></a>';
+        a.innerHTML = '<a href="' + b.replace(/"/g, '&quot;') + '"></a>';
         return a.firstChild.href;
     }
 });
@@ -3800,7 +3802,7 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
     getSize: function () {
         return {
             width: this._attr.width,
-            height: 200
+            height: 160
         };
     },
     getUrlBits: function () {
@@ -5402,7 +5404,7 @@ FB.provide("TemplateData", {
     "_enabled": true
 }, true);
 FB.provide("TemplateUI", {
-    "_version": 17
+    "_version": 18
 }, true);
 FB.provide("XFBML.ConnectBar", {
     "imgs": {
