@@ -1,4 +1,4 @@
-/*1322035521,169904765,JIT Construction: v476372,fr_FR*/
+/*1322614840,169586304,JIT Construction: v478438,fr_FR*/
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
@@ -920,6 +920,12 @@ FB.provide('Canvas', {
         FB.Arbiter.inform('getPageInfo', c, 'top');
         return FB.Canvas._pageInfo;
     },
+    hideFlashElement: function (a) {
+        a.style.visibility = 'hidden';
+    },
+    showFlashElement: function (a) {
+        a.style.visibility = '';
+    },
     _flashClassID: "CLSID:D27CDB6E-AE6D-11CF-96B8-444553540000",
     _hideFlashCallback: function (g) {
         var a = window.document.getElementsByTagName('object');
@@ -939,8 +945,8 @@ FB.provide('Canvas', {
                     };
                     setTimeout(function (j) {
                         if (j.state == 'opened') {
-                            j.elem.style.visibility = 'hidden';
-                        } else j.elem.style.visibility = '';
+                            FB.Canvas.hideFlashElement(j.elem);
+                        } else FB.Canvas.showFlashElement(j.elem);
                     }.bind(this, b), i);
                     FB.Canvas._devHideFlashCallback(b);
                 } else if (g.state == 'opened') {
