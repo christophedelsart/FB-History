@@ -1,4 +1,4 @@
-/*1322614840,169586304,JIT Construction: v478438,fr_FR*/
+/*1323219408,169914744,JIT Construction: v482006,fr_FR*/
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
@@ -640,12 +640,12 @@ FB.provide('EventProvider', {
     listen: function (a, event, b) {
         if (a.addEventListener) {
             a.addEventListener(event, b, false);
-        } else if (a.attachEvent) a.attachEvent(event, b);
+        } else if (a.attachEvent) a.attachEvent('on' + event, b);
     },
     unlisten: function (a, event, b) {
         if (a.removeEventListener) {
             a.removeEventListener(event, b, false);
-        } else if (a.detachEvent) a.detachEvent(event, b);
+        } else if (a.detachEvent) a.detachEvent('on' + event, b);
     }
 });
 FB.provide('Event', FB.EventProvider);
@@ -3144,7 +3144,7 @@ FB.provide('TemplateData', {
     _localStorageTimeout: 60 * 60 * 24,
     _enabled: true,
     enabled: function () {
-        return FB.TemplateData._enabled && FB.TemplateData._initialized && FB.TemplateData.supportsLocalStorage() && FB._userStatus == 'connected' && FB.TemplateData.getResponse() && FB.TemplateData.getData().apprequests.template_data_enabled;
+        return FB.TemplateData._enabled && FB.TemplateData._initialized && FB.TemplateData.supportsLocalStorage() && FB._userStatus == 'connected' && FB.TemplateData.getResponse();
     },
     supportsLocalStorage: function () {
         try {
@@ -3772,7 +3772,8 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
             width: this._getPxAttribute('width', 550),
             href: this.getAttribute('href'),
             permalink: this.getAttribute('permalink'),
-            publish_feed: this.getAttribute('publish_feed')
+            publish_feed: this.getAttribute('publish_feed'),
+            mobile: this._getBoolAttribute('mobile')
         };
         if (!a.href) {
             a.migrated = this.getAttribute('migrated');
@@ -3825,7 +3826,9 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
         };
     },
     getDefaultWebDomain: function () {
-        return 'https_www';
+        if (this._attr.mobile) {
+            return 'https_m';
+        } else return 'https_www';
     },
     _handleCommentMsg: function (a) {
         if (!this.isValid()) return;
@@ -4188,7 +4191,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
             ref: this.getAttribute('ref'),
             show_faces: this._shouldShowFaces(),
             no_resize: this._getBoolAttribute('no_resize'),
-            send: this.getAttribute('send'),
+            send: this._getBoolAttribute('send'),
             url_map: this.getAttribute('url_map'),
             extended_social_context: this._getBoolAttribute('extended_social_context', false)
         };
@@ -4212,8 +4215,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     _getWidgetHeight: function () {
         var b = this._getLayout();
         var e = this._shouldShowFaces() ? 'show' : 'hide';
-        var d = this.getAttribute('send');
-        var a = 65 + (d && d !== 'false' ? 25 : 0);
+        var d = this._getBoolAttribute('send');
+        var a = 65 + (d ? 25 : 0);
         var c = {
             standard: {
                 show: 80,
@@ -4236,11 +4239,11 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     },
     _getWidgetWidth: function () {
         var e = this._getLayout();
-        var h = this.getAttribute('send');
+        var h = this._getBoolAttribute('send');
         var i = this._shouldShowFaces() ? 'show' : 'hide';
         var g = (this.getAttribute('action') === 'recommend');
-        var k = (g ? 265 : 225) + (h && h !== false ? 60 : 0);
-        var c = (g ? 130 : 90) + (h && h !== 'false' ? 60 : 0);
+        var k = (g ? 265 : 225) + (h ? 60 : 0);
+        var c = (g ? 130 : 90) + (h ? 60 : 0);
         var b = this.getAttribute('action') === 'recommend' ? 100 : 55;
         var j = this.getAttribute('action') === 'recommend' ? 90 : 50;
         var f = {
@@ -4472,7 +4475,7 @@ FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
         return 'Like this content on Facebook.';
     }
 });
-FB.subclass('XFBML.LikeBox', 'XFBML.IframeWidget', null, {
+FB.subclass('XFBML.LikeBox', 'XFBML.EdgeWidget', null, {
     _visibleAfter: 'load',
     setupAndValidate: function () {
         this._attr = {
@@ -4869,7 +4872,7 @@ FB.subclass('XFBML.Question', 'XFBML.IframeWidget', null, {
             channel: this.getChannelUrl(),
             api_key: FB._apiKey,
             permalink: this.getAttribute('permalink'),
-            width: this.getAttribute('width', 400),
+            width: this._getPxAttribute('width', 400),
             height: 0
         };
         this.subscribe('xd.firstVote', FB.bind(this._onInitialVote, this));
@@ -5063,9 +5066,9 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
             var a = this.dom.getBoundingClientRect().top;
             return a <= b;
         default:
-            var d = window.scrollY + b;
+            var d = window.pageYOffset || document.body.scrollTop;
             var c = document.documentElement.scrollHeight;
-            return d / c >= this._attr.trigger;
+            return (d + b) / c >= this._attr.trigger;
         }
     },
     _handleResizeMsg: function (a) {
@@ -5130,7 +5133,7 @@ FB.subclass('XFBML.Registration', 'XFBML.IframeWidget', null, {
                 FB.Arbiter.inform('Registration.Validation', {
                     errors: e,
                     id: b.id
-                }, 'parent.frames["' + this.getIframeNode().name + '"]', window.location.protocol == 'https:');
+                }, 'parent.frames["' + this.getIframeNode().name + '"]', this._attr.channel_url.substring(0, 5) == "https");
             });
             var c = FB.Helper.executeFunctionByName(this._attr.onvalidate, d, a);
             if (c) a(c);
@@ -5288,7 +5291,7 @@ FB.subclass('XFBML.Subscribe', 'XFBML.EdgeWidget', null, {
             api_key: FB._apiKey,
             font: this.getAttribute('font'),
             colorscheme: this.getAttribute('colorscheme', 'light'),
-            user: this.getAttribute('user'),
+            href: this.getAttribute('href'),
             ref: this.getAttribute('ref'),
             layout: this._getLayout(),
             show_faces: this._shouldShowFaces(),
@@ -5306,8 +5309,8 @@ FB.subclass('XFBML.Subscribe', 'XFBML.EdgeWidget', null, {
         var c = this._getLayout();
         var d = {
             standard: 450,
-            box_count: 85,
-            button_count: 110
+            box_count: 83,
+            button_count: 115
         };
         var b = d[c];
         var e = this._getPxAttribute('width', b);
@@ -5317,11 +5320,11 @@ FB.subclass('XFBML.Subscribe', 'XFBML.EdgeWidget', null, {
                 max: 900
             },
             box_count: {
-                min: 85,
+                min: 43,
                 max: 900
             },
             button_count: {
-                min: 110,
+                min: 63,
                 max: 900
             }
         };
