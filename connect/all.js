@@ -1,4 +1,4 @@
-/*1323840523,169582460,JIT Construction: v485662,fr_FR*/
+/*1324431318,169543473,JIT Construction: v488529,fr_FR*/
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
@@ -1124,10 +1124,11 @@ FB.provide('Dom', {
             FB.Dom.removeCss(b, a);
         }
     },
-    getByClass: function (b, c) {
+    getByClass: function (b, c, g) {
         c = c || document.body;
-        if (c.getElementsByClassName) return FB.Array.toArray(c.getElementsByClassName(b));
-        var a = c.getElementsByTagName('*'),
+        g = g || '*';
+        if (c.querySelectorAll) return FB.Array.toArray(c.querySelectorAll(g + '.' + b));
+        var a = c.getElementsByTagName(g),
             d = [];
         for (var e = 0, f = a.length; e < f; e++) if (this.containsCss(a[e], b)) d[d.length] = a[e];
         return d;
@@ -1714,7 +1715,7 @@ FB.provide('UIServer', {
     },
     setLoadedNode: function (a, b) {
         FB.UIServer._loadedNodes[a.id] = b;
-        if (a.params) b.fbCallID = a.id;
+        if (a.params && a.params.display != 'popup') b.fbCallID = a.id;
     },
     getLoadedNode: function (a) {
         return FB.UIServer._loadedNodes[a.id];
@@ -2134,7 +2135,7 @@ FB.provide('Auth', {
                 FB.Auth.setAuthResponse(a, 'connected');
                 if (FB.Cookie.getEnabled()) {
                     var c = (new Date()).getTime() + 1000 * a.expiresIn;
-                    FB.Cookie.setSignedRequestCookie(d.signed_request, c);
+                    FB.Cookie.setSignedRequestCookie(d.signed_request, c, d.base_domain);
                 }
             } else if (!FB._authResponse && a) {
                 FB.Auth.setAuthResponse(a, 'connected');
@@ -2329,11 +2330,12 @@ FB.provide('Cookie', {
         if (!a) return null;
         return a[1];
     },
-    setSignedRequestCookie: function (b, a) {
+    setSignedRequestCookie: function (c, b, a) {
         if (!FB._oauth) throw new Error('FB.Cookie.setSignedRequestCookie should only be ' + 'used with OAuth2.');
-        if (!b) throw new Error('Value passed to FB.Cookie.setSignedRequestCookie ' + 'was empty.');
+        if (!c) throw new Error('Value passed to FB.Cookie.setSignedRequestCookie ' + 'was empty.');
         if (!FB.Cookie.getEnabled()) return;
-        FB.Cookie.setRaw('fbsr_', b, a);
+        FB.Cookie.setRaw('fbsr_', c, b, a);
+        FB.Cookie._domain = a;
     },
     clearSignedRequestCookie: function () {
         if (!FB._oauth) throw new Error('FB.Cookie.setSignedRequestCookie should only be ' + 'used with OAuth2.');
@@ -2618,7 +2620,7 @@ FB.provide('XFBML', {
     getElements: function (b, f, d) {
         var a = FB.Array,
             e = FB.XFBML._getDomElements(b, f, d),
-            c = FB.Dom.getByClass(f + '-' + d, b);
+            c = FB.Dom.getByClass(f + '-' + d, b, 'div');
         e = a.toArray(e);
         c = a.toArray(c);
         c = a.filter(c, function (g) {
@@ -4928,37 +4930,40 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
         };
     },
     setupAndValidate: function () {
-        function b(k, j) {
-            var l = 0;
-            var m = null;
+        function b(l, k) {
+            var m = 0;
+            var n = null;
 
-            function n() {
-                j();
-                m = null;
-                l = (new Date()).getTime();
+            function o() {
+                k();
+                n = null;
+                m = (new Date()).getTime();
             }
             return function () {
-                if (!m) {
-                    var o = (new Date()).getTime();
-                    if (o - l < k) {
-                        m = window.setTimeout(n, k - (o - l));
-                    } else n();
+                if (!n) {
+                    var p = (new Date()).getTime();
+                    if (p - m < l) {
+                        n = window.setTimeout(o, l - (p - m));
+                    } else o();
                 }
                 return true;
             };
         }
+        function i(l) {
+            if (l.match(/^\d+(?:\.\d+)?%$/)) {
+                var k = Math.min(Math.max(parseInt(l, 10), 0), 100);
+                l = k / 100;
+            } else if (l != 'manual' && l != 'onvisible') l = 'onvisible';
+            return l;
+        }
+        function g(k) {
+            return Math.max(parseInt(k, 10) || 30, 10);
+        }
+        function f(k) {
+            return parseInt(k, 10) || 2;
+        }
         function h(k) {
-            if (k.match(/^\d+(?:\.\d+)?%$/)) {
-                var j = Math.min(Math.max(parseInt(k, 10), 0), 100);
-                k = j / 100;
-            } else if (k != 'manual' && k != 'onvisible') k = 'onvisible';
-            return k;
-        }
-        function f(j) {
-            return Math.max(parseInt(j, 10) || 30, 10);
-        }
-        function g(j) {
-            if (j == 'left' || j == 'right') return j;
+            if (k == 'left' || k == 'right') return k;
             return FB._localeIsRtl ? 'left' : 'right';
         }
         this._attr = {
@@ -4967,18 +4972,19 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
             font: this.getAttribute('font'),
             colorscheme: this.getAttribute('colorscheme'),
             href: FB.URI.resolve(this.getAttribute('href')),
-            side: g(this.getAttribute('side')),
+            side: h(this.getAttribute('side')),
             site: this.getAttribute('site'),
             action: this.getAttribute('action'),
             ref: this.getAttribute('ref'),
-            trigger: h(this.getAttribute('trigger', '')),
-            read_time: f(this.getAttribute('read_time'))
+            trigger: i(this.getAttribute('trigger', '')),
+            read_time: g(this.getAttribute('read_time')),
+            num_recommendations: f(this.getAttribute('num_recommendations'))
         };
         FB._inPlugin = true;
         this._showLoader = false;
         this.subscribe('iframe.onload', FB.bind(function () {
-            var j = this.dom.children[0];
-            j.className = 'fbpluginrecommendationsbar' + this._attr.side;
+            var k = this.dom.children[0];
+            k.className = 'fbpluginrecommendationsbar' + this._attr.side;
         }, this));
         var a = FB.bind(function () {
             FB.Event.unlisten(window, 'scroll', a);
@@ -4991,8 +4997,8 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
         FB.Event.listen(document.documentElement, 'click', a);
         FB.Event.listen(document.documentElement, 'mousemove', a);
         if (this._attr.trigger == "manual") {
-            var c = FB.bind(function (j) {
-                if (j == this._attr.href) {
+            var c = FB.bind(function (k) {
+                if (k == this._attr.href) {
                     FB.Event.unsubscribe('xfbml.recommendationsbar.read', c);
                     this.arbiterInform('platform/plugins/recommendations_bar/trigger', null, FB.Arbiter.BEHAVIOR_STATE);
                 }
@@ -5013,7 +5019,7 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
             e();
         }
         this.visible = false;
-        var i = b(500, FB.bind(function () {
+        var j = b(500, FB.bind(function () {
             if (!this.visible && this.calculateVisibility()) {
                 this.visible = true;
                 this.arbiterInform('platform/plugins/recommendations_bar/visible');
@@ -5023,9 +5029,9 @@ FB.subclass('XFBML.RecommendationsBar', 'XFBML.IframeWidget', null, {
             }
             return true;
         }, this));
-        FB.Event.listen(window, 'scroll', i);
-        FB.Event.listen(window, 'resize', i);
-        i();
+        FB.Event.listen(window, 'scroll', j);
+        FB.Event.listen(window, 'resize', j);
+        j();
         this.focused = true;
         var d = FB.bind(function () {
             this.focused = !this.focused;
