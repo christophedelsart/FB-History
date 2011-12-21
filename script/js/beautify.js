@@ -9,6 +9,7 @@
       http://jsbeautifier.org/
 
   Originally converted to javascript by Vital, <vital76@gmail.com>
+  "End braces on own line" added by Chris J. Shull, <chrisjshull@gmail.com>
 
   You are free to use this in any way you want, in case you find this useful or working for you.
 
@@ -21,15 +22,22 @@
     indent_char (default space)      — character to indent with,
     preserve_newlines (default true) — whether existing line breaks should be preserved,
     preserve_max_newlines (default unlimited) - maximum number of line breaks to be preserved in one chunk,
-    indent_level (default 0)         — initial indentation level, you probably won't need this ever,
 
-    space_after_anon_function (default false) — if true, then space is added between "function ()"
-            (jslint is happy about this); if false, then the common "function()" output is used.
-    braces_on_own_line (default false) - ANSI / Allman brace style, each opening/closing brace gets its own line.
+    jslint_happy (default false) — if true, then jslint-stricter mode is enforced.
+
+            jslint_happy   !jslint_happy
+            ---------------------------------
+             function ()      function()
+
+    brace_style (default "collapse") - "collapse" | "expand" | "end-expand"
+            put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line.
 
     e.g
 
-    js_beautify(js_source_text, {indent_size: 1, indent_char: '\t'});
+    js_beautify(js_source_text, {
+      'indent_size': 1,
+      'indent_char': '\t'
+    });
 
 
 */
@@ -42,17 +50,29 @@ function js_beautify(js_source_text, options) {
     var whitespace, wordchar, punct, parser_pos, line_starters, digits;
     var prefix, token_type, do_block_just_closed;
     var wanted_newline, just_added_newline, n_newlines;
+    var preindent_string = '';
 
 
     // Some interpreters have unexpected results with foo = baz || bar;
     options = options ? options : {};
-    var opt_braces_on_own_line = options.braces_on_own_line ? options.braces_on_own_line : false;
+
+    var opt_brace_style;
+
+    // compatibility
+    if (options.space_after_anon_function !== undefined && options.jslint_happy === undefined) {
+        options.jslint_happy = options.space_after_anon_function;
+    }
+    if (options.braces_on_own_line !== undefined) { //graceful handling of depricated option
+        opt_brace_style = options.braces_on_own_line ? "expand" : "collapse";
+    }
+    opt_brace_style = options.brace_style ? options.brace_style : (opt_brace_style ? opt_brace_style : "collapse");
+
+
     var opt_indent_size = options.indent_size ? options.indent_size : 4;
     var opt_indent_char = options.indent_char ? options.indent_char : ' ';
     var opt_preserve_newlines = typeof options.preserve_newlines === 'undefined' ? true : options.preserve_newlines;
     var opt_max_preserve_newlines = typeof options.max_preserve_newlines === 'undefined' ? false : options.max_preserve_newlines;
-    var opt_indent_level = options.indent_level ? options.indent_level : 0; // starting indentation
-    var opt_space_after_anon_function = options.space_after_anon_function === 'undefined' ? false : options.space_after_anon_function;
+    var opt_jslint_happy = options.jslint_happy === 'undefined' ? false : options.jslint_happy;
     var opt_keep_array_indentation = typeof options.keep_array_indentation === 'undefined' ? false : options.keep_array_indentation;
 
     just_added_newline = false;
@@ -64,17 +84,22 @@ function js_beautify(js_source_text, options) {
         eat_newlines = typeof eat_newlines === 'undefined' ? false : eat_newlines;
         while (output.length && (output[output.length - 1] === ' '
             || output[output.length - 1] === indent_string
+            || output[output.length - 1] === preindent_string
             || (eat_newlines && (output[output.length - 1] === '\n' || output[output.length - 1] === '\r')))) {
             output.pop();
         }
     }
 
-    function is_array(mode) {
-        return mode === '[EXPRESSION]' || mode === '[INDENTED-EXPRESSION]';
-    }
-
     function trim(s) {
         return s.replace(/^\s\s*|\s\s*$/, '');
+    }
+
+    function force_newline()
+    {
+        var old_keep_array_indentation = opt_keep_array_indentation;
+        opt_keep_array_indentation = false;
+        print_newline()
+        opt_keep_array_indentation = old_keep_array_indentation;
     }
 
     function print_newline(ignore_repeated) {
@@ -97,15 +122,14 @@ function js_beautify(js_source_text, options) {
             just_added_newline = true;
             output.push("\n");
         }
+        if (preindent_string) {
+            output.push(preindent_string);
+        }
         for (var i = 0; i < flags.indentation_level; i += 1) {
             output.push(indent_string);
         }
         if (flags.var_line && flags.var_line_reindented) {
-            if (opt_indent_char === ' ') {
-                output.push('    '); // var_line always pushes 4 spaces, so that the variables would be one under another
-            } else {
-                output.push(indent_string); // skip space-stuffing, if indenting with a tab
-            }
+            output.push(indent_string); // skip space-stuffing, if indenting with a tab
         }
     }
 
@@ -158,7 +182,8 @@ function js_beautify(js_source_text, options) {
             in_case: false,
             eat_next_space: false,
             indentation_baseline: -1,
-            indentation_level: (flags ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : opt_indent_level)
+            indentation_level: (flags ? flags.indentation_level + ((flags.var_line && flags.var_line_reindented) ? 1 : 0) : 0),
+            ternary_depth: 0
         };
     }
 
@@ -177,6 +202,14 @@ function js_beautify(js_source_text, options) {
         }
     }
 
+    function all_lines_start_with(lines, c) {
+        for (var i = 0; i < lines.length; i++) {
+            if (trim(lines[i])[0] != c) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     function in_array(what, arr) {
         for (var i = 0; i < arr.length; i += 1) {
@@ -185,50 +218,6 @@ function js_beautify(js_source_text, options) {
             }
         }
         return false;
-    }
-
-    // Walk backwards from the colon to find a '?' (colon is part of a ternary op)
-    // or a '{' (colon is part of a class literal).  Along the way, keep track of
-    // the blocks and expressions we pass so we only trigger on those chars in our
-    // own level, and keep track of the colons so we only trigger on the matching '?'.
-
-
-    function is_ternary_op() {
-        var level = 0,
-            colon_count = 0;
-        for (var i = output.length - 1; i >= 0; i--) {
-            switch (output[i]) {
-            case ':':
-                if (level === 0) {
-                    colon_count++;
-                }
-                break;
-            case '?':
-                if (level === 0) {
-                    if (colon_count === 0) {
-                        return true;
-                    } else {
-                        colon_count--;
-                    }
-                }
-                break;
-            case '{':
-                if (level === 0) {
-                    return false;
-                }
-                level--;
-                break;
-            case '(':
-            case '[':
-                level--;
-                break;
-            case ')':
-            case ']':
-            case '}':
-                level++;
-                break;
-            }
-        }
     }
 
     function get_next_token() {
@@ -358,7 +347,9 @@ function js_beautify(js_source_text, options) {
             if (c === 'in') { // hack for 'in' operator
                 return [c, 'TK_OPERATOR'];
             }
-            if (wanted_newline && last_type !== 'TK_OPERATOR' && !flags.if_line && (opt_preserve_newlines || last_text !== 'var')) {
+            if (wanted_newline && last_type !== 'TK_OPERATOR'
+                && last_type !== 'TK_EQUALS'
+                && !flags.if_line && (opt_preserve_newlines || last_text !== 'var')) {
                 print_newline();
             }
             return [c, 'TK_WORD'];
@@ -503,6 +494,23 @@ function js_beautify(js_source_text, options) {
         }
 
         if (c === '#') {
+
+
+            if (output.length === 0 && input.charAt(parser_pos) === '!') {
+                // shebang
+                resulting_string = c;
+                while (parser_pos < input_length && c != '\n') {
+                    c = input.charAt(parser_pos);
+                    resulting_string += c;
+                    parser_pos += 1;
+                }
+                output.push(trim(resulting_string) + '\n');
+                print_newline();
+                return get_next_token();
+            }
+
+
+
             // Spidermonkey-specific sharp variables for circular references
             // https://developer.mozilla.org/En/Sharp_variables_in_JavaScript
             // http://mxr.mozilla.org/mozilla-central/source/js/src/jsscan.cpp around line 1935
@@ -567,6 +575,10 @@ function js_beautify(js_source_text, options) {
         opt_indent_size -= 1;
     }
 
+    while (js_source_text && (js_source_text[0] === ' ' || js_source_text[0] === '\t')) {
+        preindent_string += js_source_text[0];
+        js_source_text = js_source_text.substring(1);
+    }
     input = js_source_text;
 
     last_word = ''; // last 'TK_WORD' passed
@@ -581,7 +593,9 @@ function js_beautify(js_source_text, options) {
     wordchar = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$'.split('');
     digits = '0123456789'.split('');
 
-    punct = '+ - * / % & ++ -- = += -= *= /= %= == === != !== > < >= <= >> << >>> >>>= >>= <<= && &= | || ! !! , : ? ^ ^= |= ::'.split(' ');
+    punct = '+ - * / % & ++ -- = += -= *= /= %= == === != !== > < >= <= >> << >>> >>>= >>= <<= && &= | || ! !! , : ? ^ ^= |= ::';
+    punct += ' <%= <% %> <?= <? ?>'; // try to be a good boy and try not to break the markup language identifiers
+    punct = punct.split(' ');
 
     // words which should always start on new line.
     line_starters = 'continue,try,throw,return,var,if,switch,case,default,for,while,break,function'.split(',');
@@ -661,9 +675,9 @@ function js_beautify(js_source_text, options) {
                 // do nothing on (( and )( and ][ and ]( and .(
             } else if (last_type !== 'TK_WORD' && last_type !== 'TK_OPERATOR') {
                 print_single_space();
-            } else if (last_word === 'function') {
+            } else if (last_word === 'function' || last_word === 'typeof') {
                 // function() vs function ()
-                if (opt_space_after_anon_function) {
+                if (opt_jslint_happy) {
                     print_single_space();
                 }
             } else if (in_array(last_text, line_starters) || last_text === 'catch') {
@@ -706,9 +720,9 @@ function js_beautify(js_source_text, options) {
             } else {
                 set_mode('BLOCK');
             }
-            if (opt_braces_on_own_line) {
+            if (opt_brace_style=="expand") {
                 if (last_type !== 'TK_OPERATOR') {
-                    if (last_text == 'return') {
+                    if (last_text === 'return' || last_text === '=') {
                         print_single_space();
                     } else {
                         print_newline(true);
@@ -726,7 +740,12 @@ function js_beautify(js_source_text, options) {
                 } else {
                     // if TK_OPERATOR or TK_START_EXPR
                     if (is_array(flags.previous_mode) && last_text === ',') {
-                        print_newline(); // [a, b, c, {
+                        if (last_last_text === '}') {
+                            // }, { in array context
+                            print_single_space();
+                        } else {
+                            print_newline(); // [a, b, c, {
+                        }
                     }
                 }
                 indent();
@@ -737,8 +756,10 @@ function js_beautify(js_source_text, options) {
 
         case 'TK_END_BLOCK':
             restore_mode();
-            if (opt_braces_on_own_line) {
-                print_newline();
+            if (opt_brace_style=="expand") {
+                if (last_text !== '{') {
+                    print_newline();
+                }
                 print_token();
             } else {
                 if (last_type === 'TK_START_BLOCK') {
@@ -778,15 +799,20 @@ function js_beautify(js_source_text, options) {
             }
 
             if (token_text === 'function') {
+                if (flags.var_line) {
+                    flags.var_line_reindented = true;
+                }
                 if ((just_added_newline || last_text === ';') && last_text !== '{') {
                     // make sure there is a nice clean space of at least one blank line
                     // before a new function definition
                     n_newlines = just_added_newline ? n_newlines : 0;
+                    if ( ! opt_preserve_newlines) {
+                        n_newlines = 1;
+                    }
 
                     for (var i = 0; i < 2 - n_newlines; i++) {
                         print_newline(false);
                     }
-
                 }
             }
 
@@ -808,10 +834,11 @@ function js_beautify(js_source_text, options) {
             prefix = 'NONE';
 
             if (last_type === 'TK_END_BLOCK') {
+
                 if (!in_array(token_text.toLowerCase(), ['else', 'catch', 'finally'])) {
                     prefix = 'NEWLINE';
                 } else {
-                    if (opt_braces_on_own_line) {
+                    if (opt_brace_style=="expand" || opt_brace_style=="end-expand") {
                         prefix = 'NEWLINE';
                     } else {
                         prefix = 'SPACE';
@@ -825,6 +852,11 @@ function js_beautify(js_source_text, options) {
             } else if (last_type === 'TK_STRING') {
                 prefix = 'NEWLINE';
             } else if (last_type === 'TK_WORD') {
+                if (last_text === 'else') {
+                    // eat newlines between ...else *** some_op...
+                    // won't preserve extra newlines in this place (if any), but don't care that much
+                    trim_output(true);
+                }
                 prefix = 'SPACE';
             } else if (last_type === 'TK_START_BLOCK') {
                 prefix = 'NEWLINE';
@@ -833,20 +865,30 @@ function js_beautify(js_source_text, options) {
                 prefix = 'NEWLINE';
             }
 
+            if (in_array(token_text, line_starters) && last_text !== ')') {
+                if (last_text == 'else') {
+                    prefix = 'SPACE';
+                } else {
+                    prefix = 'NEWLINE';
+                }
+            }
+
             if (flags.if_line && last_type === 'TK_END_EXPR') {
                 flags.if_line = false;
             }
             if (in_array(token_text.toLowerCase(), ['else', 'catch', 'finally'])) {
-                if (last_type !== 'TK_END_BLOCK' || opt_braces_on_own_line) {
+                if (last_type !== 'TK_END_BLOCK' || opt_brace_style=="expand" || opt_brace_style=="end-expand") {
                     print_newline();
                 } else {
                     trim_output(true);
                     print_single_space();
                 }
-            } else if (in_array(token_text, line_starters) || prefix === 'NEWLINE') {
+            } else if (prefix === 'NEWLINE') {
                 if ((last_type === 'TK_START_EXPR' || last_text === '=' || last_text === ',') && token_text === 'function') {
                     // no need to force newline on 'function': (function
                     // DONOTHING
+                } else if (token_text === 'function' && last_text == 'new') {
+                    print_single_space();
                 } else if (last_text === 'return' || last_text === 'throw') {
                     // no newline between 'return nnn'
                     print_single_space();
@@ -857,13 +899,15 @@ function js_beautify(js_source_text, options) {
                             // no newline for } else if {
                             print_single_space();
                         } else {
+                            flags.var_line = false;
+                            flags.var_line_reindented = false;
                             print_newline();
                         }
                     }
-                } else {
-                    if (in_array(token_text, line_starters) && last_text !== ')') {
-                        print_newline();
-                    }
+                } else if (in_array(token_text, line_starters) && last_text != ')') {
+                    flags.var_line = false;
+                    flags.var_line_reindented = false;
+                    print_newline();
                 }
             } else if (is_array(flags.mode) && last_text === ',' && last_last_text === '}') {
                 print_newline(); // }, in lists get a newline treatment
@@ -879,8 +923,11 @@ function js_beautify(js_source_text, options) {
                 flags.var_line_tainted = false;
             }
 
-            if (token_text === 'if' || token_text === 'else') {
+            if (token_text === 'if') {
                 flags.if_line = true;
+            }
+            if (token_text === 'else') {
+                flags.if_line = false;
             }
 
             break;
@@ -890,6 +937,10 @@ function js_beautify(js_source_text, options) {
             print_token();
             flags.var_line = false;
             flags.var_line_reindented = false;
+            if (flags.mode == 'OBJECT') {
+                // OBJECT mode is weird and doesn't get reset too well.
+                flags.mode = 'BLOCK';
+            }
             break;
 
         case 'TK_STRING':
@@ -1013,10 +1064,14 @@ function js_beautify(js_source_text, options) {
                 space_before = false;
 
             } else if (token_text === ':') {
-                if (!is_ternary_op()) {
+                if (flags.ternary_depth == 0) {
                     flags.mode = 'OBJECT';
                     space_before = false;
+                } else {
+                    flags.ternary_depth -= 1;
                 }
+            } else if (token_text === '?') {
+                flags.ternary_depth += 1;
             }
             if (space_before) {
                 print_single_space();
@@ -1038,7 +1093,7 @@ function js_beautify(js_source_text, options) {
 
             var lines = token_text.split(/\x0a|\x0d\x0a/);
 
-            if (/^\/\*\*/.test(token_text)) {
+            if (all_lines_start_with(lines.slice(1), '*')) {
                 // javadoc: reformat and reindent
                 print_newline();
                 output.push(lines[0]);
@@ -1077,7 +1132,7 @@ function js_beautify(js_source_text, options) {
             if (is_expression(flags.mode)) {
                 print_single_space();
             } else {
-                print_newline();
+                force_newline();
             }
             break;
 
@@ -1090,10 +1145,13 @@ function js_beautify(js_source_text, options) {
                 print_single_space();
             }
             print_token();
-            print_newline();
+            force_newline();
             break;
 
         case 'TK_UNKNOWN':
+            if (last_text === 'return' || last_text === 'throw') {
+                print_single_space();
+            }
             print_token();
             break;
         }
@@ -1103,7 +1161,8 @@ function js_beautify(js_source_text, options) {
         last_text = token_text;
     }
 
-    return output.join('').replace(/[\n ]+$/, '');
+    var sweet_code = preindent_string + output.join('').replace(/[\n ]+$/, '');
+    return sweet_code;
 
 }
 
