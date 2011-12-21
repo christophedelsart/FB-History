@@ -16,7 +16,7 @@ echo "Ready to commit ..."
 read -p "Do you want to commit Yes / No ?" ans
 if [ "$ans" == "y" ] || [ "$ans" == "Y" ] || [ "$ans" == "Yes" ]
 then
-		git commit -ae -m "$var2"
+		git commit -e -m "$var2" ../connect/all.js
 		
 		read -p "Do you want to push Yes / No ?" ans
 		if [ "$ans" == "y" ] || [ "$ans" == "Y" ] || [ "$ans" == "Yes" ]
