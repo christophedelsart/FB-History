@@ -1,4 +1,5 @@
-/*1324431318,169543473,JIT Construction: v488529,fr_FR*/
+/*1324659203,169901419,JIT Construction: v489567,fr_FR*/
+
 if (!window.FB) window.FB = {
     _apiKey: null,
     _session: null,
@@ -2135,7 +2136,7 @@ FB.provide('Auth', {
                 FB.Auth.setAuthResponse(a, 'connected');
                 if (FB.Cookie.getEnabled()) {
                     var c = (new Date()).getTime() + 1000 * a.expiresIn;
-                    FB.Cookie.setSignedRequestCookie(d.signed_request, c, d.base_domain);
+                    FB.Cookie.setSignedRequestCookie(d.signed_request, c);
                 }
             } else if (!FB._authResponse && a) {
                 FB.Auth.setAuthResponse(a, 'connected');
@@ -2330,12 +2331,11 @@ FB.provide('Cookie', {
         if (!a) return null;
         return a[1];
     },
-    setSignedRequestCookie: function (c, b, a) {
+    setSignedRequestCookie: function (b, a) {
         if (!FB._oauth) throw new Error('FB.Cookie.setSignedRequestCookie should only be ' + 'used with OAuth2.');
-        if (!c) throw new Error('Value passed to FB.Cookie.setSignedRequestCookie ' + 'was empty.');
+        if (!b) throw new Error('Value passed to FB.Cookie.setSignedRequestCookie ' + 'was empty.');
         if (!FB.Cookie.getEnabled()) return;
-        FB.Cookie.setRaw('fbsr_', c, b, a);
-        FB.Cookie._domain = a;
+        FB.Cookie.setRaw('fbsr_', b, a);
     },
     clearSignedRequestCookie: function () {
         if (!FB._oauth) throw new Error('FB.Cookie.setSignedRequestCookie should only be ' + 'used with OAuth2.');
@@ -2576,7 +2576,10 @@ FB.provide('UIServer.Methods', {
             a = FB.UIServer.MobileIframableMethod.transform(a);
             a.params.frictionless = FB.Frictionless && FB.Frictionless._useFrictionless;
             if (a.params.frictionless) {
-                a.hideLoader = FB.Frictionless.isAllowed(a.params.to);
+                if (FB.Frictionless.isAllowed(a.params.to)) {
+                    a.params.in_iframe = true;
+                    a.hideLoader = true;
+                }
                 a.cb = FB.Frictionless._processRequestResponse(a.cb, a.hideLoader);
             }
             return a;
