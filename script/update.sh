@@ -12,6 +12,7 @@ echo "Viewing diff ..."
 git difftool -y -t opendiff ../connect/all.js
 echo "Git Log :"
 git log --oneline -n 5
+date
 echo "Ready to commit ..."
 read -p "Do you want to commit Yes / No ?" ans
 if [ "$ans" == "y" ] || [ "$ans" == "Y" ] || [ "$ans" == "Yes" ]
