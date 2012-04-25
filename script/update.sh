@@ -1,9 +1,10 @@
 echo "Pulling changes ..."
-git pull
+#git pull
 echo "Downloading new js file ..."
 curl -G http://connect.facebook.net/fr_FR/all.js -o ../connect/all.js
 echo "Beautifying ..."
-jsc js/beautifier.js -- "`cat ../connect/all.js`" > ../connect/all.js
+python/js-beautify -jo ../connect/all-beautified.js ../connect/all.js
+mv ../connect/all-beautified.js ../connect/all.js
 IFS=,
 var1="`head -1 ../connect/all.js`"
 var2="`echo $var1 | awk -F" " '{print $5}'`"
