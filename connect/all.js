@@ -1,563 +1,597 @@
-/*1338354674,169931908,JIT Construction: v565026,fr_FR*/
+/*1338936241,169893488,JIT Construction: v568892,fr_FR*/
 
-var FB;
-if (!FB) {
-    FB = {};
-    (function () {
-        function bagofholding() {};
-        var __DEV__ = 0;
+window.FB || (function () {
+    var ES5 = function () {
+            __d("ES5ArrayPrototype", [], function (a, b, c, d, e, f) {
+                var g = {};
+                g.map = function (h, i) {
+                    if (typeof h != 'function') throw new TypeError();
+                    var j, k = this.length,
+                        l = new Array(k);
+                    for (j = 0; j < k; ++j) if (j in this) l[j] = h.call(i, this[j], j, this);
+                    return l;
+                };
+                g.forEach = function (h, i) {
+                    g.map.call(this, h, i);
+                };
+                g.filter = function (h, i) {
+                    if (typeof h != 'function') throw new TypeError();
+                    var j, k, l = this.length,
+                        m = [];
+                    for (j = 0; j < l; ++j) if (j in this) {
+                        k = this[j];
+                        if (h.call(i, k, j, this)) m.push(k);
+                    }
+                    return m;
+                };
+                g.every = function (h, i) {
+                    if (typeof h != 'function') throw new TypeError();
+                    var j = new Object(this),
+                        k = j.length;
+                    for (var l = 0; l < k; l++) if (l in j) if (!h.call(i, j[l], l, j)) return false;
+                    return true;
+                };
+                g.some = function (h, i) {
+                    if (typeof h != 'function') throw new TypeError();
+                    var j = new Object(this),
+                        k = j.length;
+                    for (var l = 0; l < k; l++) if (l in j) if (h.call(i, j[l], l, j)) return true;
+                    return false;
+                };
+                g.indexOf = function (h, i) {
+                    var j = this.length;
+                    i |= 0;
+                    if (i < 0) i += j;
+                    for (; i < j; i++) if (i in this && this[i] === h) return i;
+                    return -1;
+                };
+                e.exports = g;
+            });
+            __d("ES5FunctionPrototype", [], function (a, b, c, d, e, f) {
+                var g = {};
+                g.bind = function (h) {
+                    if (typeof this != 'function') throw new TypeError('Bind must be called on a function');
+                    var i = this,
+                        j = Array.prototype.slice.call(arguments, 1);
 
-        function __d() {
-            FB.__d.apply(FB, arguments);
-        }
-
-        function require() {
-            return FB.require.apply(null, arguments);
-        }
-        var ES5 = function () {
-                __d("ES5ArrayPrototype", [], function (a, b, c, d, e, f) {
-                    var g = {};
-                    g.map = function (h, i) {
-                        if (typeof h != 'function') throw new TypeError();
-                        var j, k = this.length,
-                            l = new Array(k);
-                        for (j = 0; j < k; ++j) if (j in this) l[j] = h.call(i, this[j], j, this);
-                        return l;
+                    function k() {
+                        return i.apply(h, j.concat(Array.prototype.slice.call(arguments)));
+                    }
+                    k.displayName = 'bound:' + (i.displayName || i.name || '(?)');
+                    k.toString = function l() {
+                        return 'bound: ' + i;
                     };
-                    g.forEach = function (h, i) {
-                        g.map.call(this, h, i);
-                    };
-                    g.filter = function (h, i) {
-                        if (typeof h != 'function') throw new TypeError();
-                        var j, k, l = this.length,
-                            m = [];
-                        for (j = 0; j < l; ++j) if (j in this) {
-                            k = this[j];
-                            if (h.call(i, k, j, this)) m.push(k);
-                        }
-                        return m;
-                    };
-                    g.every = function (h, i) {
-                        if (typeof h != 'function') throw new TypeError();
-                        var j = new Object(this),
-                            k = j.length;
-                        for (var l = 0; l < k; l++) if (l in j) if (!h.call(i, j[l], l, j)) return false;
-                        return true;
-                    };
-                    g.some = function (h, i) {
-                        if (typeof h != 'function') throw new TypeError();
-                        var j = new Object(this),
-                            k = j.length;
-                        for (var l = 0; l < k; l++) if (l in j) if (h.call(i, j[l], l, j)) return true;
-                        return false;
-                    };
-                    g.indexOf = function (h, i) {
-                        var j = this.length;
-                        i |= 0;
-                        if (i < 0) i += j;
-                        for (; i < j; i++) if (i in this && this[i] === h) return i;
-                        return -1;
-                    };
-                    e.exports = g;
-                });
-                __d("ES5FunctionPrototype", [], function (a, b, c, d, e, f) {
-                    var g = {};
-                    g.bind = function (h) {
-                        if (typeof this != 'function') throw new TypeError('Bind must be called on a function');
-                        var i = this,
-                            j = Array.prototype.slice.call(arguments, 1);
-
-                        function k() {
-                            return i.apply(h, j.concat(Array.prototype.slice.call(arguments)));
-                        }
-                        k.displayName = 'bound:' + (i.displayName || i.name || '(?)');
-                        k.toString = function l() {
-                            return 'bound: ' + i;
+                    return k;
+                };
+                e.exports = g;
+            });
+            __d("ES5StringPrototype", [], function (a, b, c, d, e, f) {
+                var g = {};
+                g.trim = function () {
+                    if (this == null) throw new TypeError('String.prototype.trim called on null or undefined');
+                    return String.prototype.replace.call(this, /^\s+|\s+$/g, '');
+                };
+                e.exports = g;
+            });
+            __d("ES5Array", [], function (a, b, c, d, e, f) {
+                var g = {};
+                g.isArray = function (h) {
+                    return Object.prototype.toString.call(h) == '[object Array]';
+                };
+                e.exports = g;
+            });
+            __d("ES5Object", [], function (a, b, c, d, e, f) {
+                var g = {};
+                g.create = function (h) {
+                    var i = typeof h;
+                    if (i != 'object' && i != 'function') throw new TypeError('Object prototype may only be a Object or null');
+                    var j = new Function();
+                    j.prototype = h;
+                    return new j();
+                };
+                g.keys = function (h) {
+                    var i = typeof h;
+                    if (i != 'object' && i != 'function' || h === null) throw new TypeError('Object.keys called on non-object');
+                    var j = [];
+                    for (var k in h) if (Object.prototype.hasOwnProperty.call(h, k)) j.push(k);
+                    var l = !({
+                        toString: true
+                    }).propertyIsEnumerable('toString'),
+                        m = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'prototypeIsEnumerable', 'constructor'];
+                    if (l) for (var n = 0; n < m.length; n++) {
+                        var o = m[n];
+                        if (Object.prototype.hasOwnProperty.call(h, o)) j.push(o);
+                    }
+                    return j;
+                };
+                e.exports = g;
+            });
+            __d("ES5Date", [], function (a, b, c, d, e, f) {
+                var g = {};
+                g.now = function () {
+                    return new Date().getTime();
+                };
+                e.exports = g;
+            });
+            /**
+             * @providesModule JSON3
+             * @option preserve-header
+             *
+             *! JSON v3.1 | http://bestiejs.github.com/json3 | Copyright 2012, Kit Cambridge | http://kit.mit-license.org
+             */
+            __d("JSON3", [], function (a, b, c, d, e, f) {
+                var g = {}.toString,
+                    h = {}.hasOwnProperty,
+                    i, j, k;
+                j = typeof f.stringify == "function";
+                k = typeof f.parse == "function";
+                (function () {
+                    var l = '{"result":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}',
+                        m, n, o;
+                    if (j) {
+                        m = function q() {
+                            return 1;
                         };
-                        return k;
-                    };
-                    e.exports = g;
-                });
-                __d("ES5StringPrototype", [], function (a, b, c, d, e, f) {
-                    var g = {};
-                    g.trim = function () {
-                        if (this == null) throw new TypeError('String.prototype.trim called on null or undefined');
-                        return String.prototype.replace.call(this, /^\s+|\s+$/g, '');
-                    };
-                    e.exports = g;
-                });
-                __d("ES5Array", [], function (a, b, c, d, e, f) {
-                    var g = {};
-                    g.isArray = function (h) {
-                        return Object.prototype.toString.call(h) == '[object Array]';
-                    };
-                    e.exports = g;
-                });
-                __d("ES5Object", [], function (a, b, c, d, e, f) {
-                    var g = {};
-                    g.create = function (h) {
-                        var i = typeof h;
-                        if (i != 'object' && i != 'function') throw new TypeError('Object prototype may only be a Object or null');
-                        var j = new Function();
-                        j.prototype = h;
-                        return new j();
-                    };
-                    g.keys = function (h) {
-                        var i = typeof h;
-                        if (i != 'object' && i != 'function' || h === null) throw new TypeError('Object.keys called on non-object');
-                        var j = [];
-                        for (var k in h) if (Object.prototype.hasOwnProperty.call(h, k)) j.push(k);
-                        var l = !({
-                            toString: true
-                        }).propertyIsEnumerable('toString'),
-                            m = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'prototypeIsEnumerable', 'constructor'];
-                        if (l) for (var n = 0; n < m.length; n++) {
-                            var o = m[n];
-                            if (Object.prototype.hasOwnProperty.call(h, o)) j.push(o);
-                        }
-                        return j;
-                    };
-                    e.exports = g;
-                });
-                __d("ES5Date", [], function (a, b, c, d, e, f) {
-                    var g = {};
-                    g.now = function () {
-                        return new Date().getTime();
-                    };
-                    e.exports = g;
-                });
-                /**
-                 * @providesModule JSON3
-                 * @option preserve-header
-                 *
-                 *! JSON v3.1 | http://bestiejs.github.com/json3 | Copyright 2012, Kit Cambridge | http://kit.mit-license.org
-                 */
-                __d("JSON3", [], function (a, b, c, d, e, f) {
-                    var g = {}.toString,
-                        h = {}.hasOwnProperty,
-                        i, j, k;
-                    j = typeof f.stringify == "function";
-                    k = typeof f.parse == "function";
-                    (function () {
-                        var l = '{"result":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}',
-                            m, n, o;
-                        if (j) {
-                            m = function q() {
-                                return 1;
-                            };
-                            m.toJSON = m;
-                            try {
-                                switch (false) {
-                                case f.stringify(0) === "0":
-                                case f.stringify(new(0).constructor()) === "0":
-                                case f.stringify(new "".constructor()) == '""':
-                                case f.stringify(g) === void 0:
-                                case f.stringify(void 0) === void 0:
-                                case f.stringify() === void 0:
-                                case f.stringify(m) === "1":
-                                case f.stringify([m]) == "[1]":
-                                case f.stringify([void 0]) == "[null]":
-                                case f.stringify(null) == "null":
-                                case f.stringify([void 0, g, null]) == "[null,null,null]":
-                                case f.stringify({
-                                        result: [m, true, false, null, "\0\b\n\f\r\t"]
-                                    }) == l:
-                                case f.stringify(null, m) === "1":
-                                case f.stringify([1, 2], null, 1) == "[\n 1,\n 2\n]":
-                                case (m = new Date(-8.64e+15)).getUTCFullYear() != -271821 || f.stringify(m) == '"-271821-04-20T00:00:00.000Z"':
-                                case (m = new Date(8.64e+15)).getUTCFullYear() != 275760 || f.stringify(m) == '"+275760-09-13T00:00:00.000Z"':
-                                    j = false;
-                                }
-                            } catch (p) {
+                        m.toJSON = m;
+                        try {
+                            switch (false) {
+                            case f.stringify(0) === "0":
+                            case f.stringify(new(0).constructor()) === "0":
+                            case f.stringify(new "".constructor()) == '""':
+                            case f.stringify(g) === void 0:
+                            case f.stringify(void 0) === void 0:
+                            case f.stringify() === void 0:
+                            case f.stringify(m) === "1":
+                            case f.stringify([m]) == "[1]":
+                            case f.stringify([void 0]) == "[null]":
+                            case f.stringify(null) == "null":
+                            case f.stringify([void 0, g, null]) == "[null,null,null]":
+                            case f.stringify({
+                                    result: [m, true, false, null, "\0\b\n\f\r\t"]
+                                }) == l:
+                            case f.stringify(null, m) === "1":
+                            case f.stringify([1, 2], null, 1) == "[\n 1,\n 2\n]":
+                            case (m = new Date(-8.64e+15)).getUTCFullYear() != -271821 || f.stringify(m) == '"-271821-04-20T00:00:00.000Z"':
+                            case (m = new Date(8.64e+15)).getUTCFullYear() != 275760 || f.stringify(m) == '"+275760-09-13T00:00:00.000Z"':
                                 j = false;
                             }
-                        }
-                        if (k) try {
-                            if (f.parse("0") === 0 && !f.parse(false)) {
-                                o = f.parse(l);
-                                if ((k = o.result.length == 5 && o.result[0] == 1)) {
-                                    try {
-                                        k = !f.parse('"\t"');
-                                    } catch (p) {}
-                                    if (k) try {
-                                        k = f.parse("+1") != 1 && f.parse("01") != 1;
-                                    } catch (p) {}
-                                }
-                            }
                         } catch (p) {
-                            k = false;
+                            j = false;
                         }
-                    })();
-                    if (typeof h != "function") h = (function () {
-                        var l, m = {},
-                            n = m.constructor;
-                        if ((m.__proto__ = null, m.__proto__ = {
-                            toString: 1
-                        }, m).toString != g) {
-                            l = function o(p) {
-                                var q = this.__proto__,
-                                    r = p in (this.__proto__ = null, this);
-                                this.__proto__ = q;
-                                return r;
-                            };
-                        } else l = function o(p) {
-                            var q = (this.constructor || n).prototype;
-                            return p in this && !(p in q && this[p] === q[p]);
+                    }
+                    if (k) try {
+                        if (f.parse("0") === 0 && !f.parse(false)) {
+                            o = f.parse(l);
+                            if ((k = o.result.length == 5 && o.result[0] == 1)) {
+                                try {
+                                    k = !f.parse('"\t"');
+                                } catch (p) {}
+                                if (k) try {
+                                    k = f.parse("+1") != 1 && f.parse("01") != 1;
+                                } catch (p) {}
+                            }
+                        }
+                    } catch (p) {
+                        k = false;
+                    }
+                })();
+                if (typeof h != "function") h = (function () {
+                    var l, m = {},
+                        n = m.constructor;
+                    if ((m.__proto__ = null, m.__proto__ = {
+                        toString: 1
+                    }, m).toString != g) {
+                        l = function o(p) {
+                            var q = this.__proto__,
+                                r = p in (this.__proto__ = null, this);
+                            this.__proto__ = q;
+                            return r;
                         };
-                        m = null;
-                        return l;
-                    })();
-                    i = (function () {
-                        var l, m, n, o = 0;
+                    } else l = function o(p) {
+                        var q = (this.constructor || n).prototype;
+                        return p in this && !(p in q && this[p] === q[p]);
+                    };
+                    m = null;
+                    return l;
+                })();
+                i = (function () {
+                    var l, m, n, o = 0;
 
-                        function p() {
-                            this.valueOf = 0;
-                        }
-                        p.prototype.valueOf = 0;
-                        l = new p();
-                        for (m in l) if (h.call(l, m)) o += 1;
-                        l = null;
-                        if (!o) {
-                            l = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
-                            n = function q(r, s) {
-                                var t = g.call(r) == "[object Function]",
-                                    u, v;
-                                for (u in r) if (!(t && u == "prototype") && h.call(r, u)) s(u);
-                                for (v = l.length; v--;) {
-                                    u = l[v];
-                                    if (h.call(r, u)) s(u);
-                                }
-                            };
-                        } else if (o == 2) {
-                            n = function q(r, s) {
-                                var t = {},
-                                    u = g.call(r) == "[object Function]",
-                                    v;
-                                for (v in r) if (!(u && v == "prototype") && !h.call(t, v) && (t[v] = 1) && h.call(r, v)) s(v);
-                            };
-                        } else n = function q(r, s) {
+                    function p() {
+                        this.valueOf = 0;
+                    }
+                    p.prototype.valueOf = 0;
+                    l = new p();
+                    for (m in l) if (h.call(l, m)) o += 1;
+                    l = null;
+                    if (!o) {
+                        l = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
+                        n = function q(r, s) {
                             var t = g.call(r) == "[object Function]",
                                 u, v;
-                            for (u in r) if (!(t && u == "prototype") && h.call(r, u) && !(v = u === "constructor")) s(u);
-                            if (v || h.call(r, "constructor")) s("constructor");
+                            for (u in r) if (!(t && u == "prototype") && h.call(r, u)) s(u);
+                            for (v = l.length; v--;) {
+                                u = l[v];
+                                if (h.call(r, u)) s(u);
+                            }
                         };
-                        return n;
-                    })();
-                    if (!j) f.stringify = (function () {
-                        var l = {
-                            "\\": "\\\\",
-                            '"': '\\"',
-                            "\b": "\\b",
-                            "\f": "\\f",
-                            "\n": "\\n",
-                            "\r": "\\r",
-                            "\t": "\\t"
+                    } else if (o == 2) {
+                        n = function q(r, s) {
+                            var t = {},
+                                u = g.call(r) == "[object Function]",
+                                v;
+                            for (v in r) if (!(u && v == "prototype") && !h.call(t, v) && (t[v] = 1) && h.call(r, v)) s(v);
                         };
+                    } else n = function q(r, s) {
+                        var t = g.call(r) == "[object Function]",
+                            u, v;
+                        for (u in r) if (!(t && u == "prototype") && h.call(r, u) && !(v = u === "constructor")) s(u);
+                        if (v || h.call(r, "constructor")) s("constructor");
+                    };
+                    return n;
+                })();
+                if (!j) f.stringify = (function () {
+                    var l = {
+                        "\\": "\\\\",
+                        '"': '\\"',
+                        "\b": "\\b",
+                        "\f": "\\f",
+                        "\n": "\\n",
+                        "\r": "\\r",
+                        "\t": "\\t"
+                    };
 
-                        function m(q, r) {
-                            r = "000000" + (r || 0);
-                            return r.slice(r.length - q);
+                    function m(q, r) {
+                        r = "000000" + (r || 0);
+                        return r.slice(r.length - q);
+                    }
+                    function n(q) {
+                        var r = '"',
+                            s = 0,
+                            t;
+                        for (; t = q.charAt(s); s += 1) r += '\\"\b\f\n\r\t'.indexOf(t) > -1 ? l[t] : t < " " ? "\\u00" + m(2, t.charCodeAt(0).toString(16)) : t;
+                        return r + '"';
+                    }
+                    function o(q, r, s, t, u, v, w) {
+                        var x = r[q],
+                            y, z, aa, ba, ca, da, ea, fa;
+                        if (typeof x == "object" && x) if (g.call(x) == "[object Date]" && !h.call(x, "toJSON")) {
+                            if (x > -1 / 0 && x < 1 / 0) {
+                                z = x.getUTCFullYear();
+                                x = (z <= 0 || z >= 10000 ? (z < 0 ? "-" : "+") + m(6, z < 0 ? -z : z) : m(4, z)) + "-" + m(2, x.getUTCMonth() + 1) + "-" + m(2, x.getUTCDate()) + "T" + m(2, x.getUTCHours()) + ":" + m(2, x.getUTCMinutes()) + ":" + m(2, x.getUTCSeconds()) + "." + m(3, x.getUTCMilliseconds()) + "Z";
+                            } else x = null;
+                        } else if (typeof x.toJSON == "function") x = x.toJSON(q);
+                        if (s) x = s.call(r, q, x);
+                        if (x === null) return "null";
+                        y = g.call(x);
+                        switch (y) {
+                        case "[object Boolean]":
+                            return "" + x;
+                        case "[object Number]":
+                            return x > -1 / 0 && x < 1 / 0 ? "" + x : "null";
+                        case "[object String]":
+                            return n(x);
                         }
-                        function n(q) {
-                            var r = '"',
-                                s = 0,
-                                t;
-                            for (; t = q.charAt(s); s += 1) r += '\\"\b\f\n\r\t'.indexOf(t) > -1 ? l[t] : t < " " ? "\\u00" + m(2, t.charCodeAt(0).toString(16)) : t;
-                            return r + '"';
-                        }
-                        function o(q, r, s, t, u, v, w) {
-                            var x = r[q],
-                                y, z, aa, ba, ca, da, ea, fa;
-                            if (typeof x == "object" && x) if (g.call(x) == "[object Date]" && !h.call(x, "toJSON")) {
-                                if (x > -1 / 0 && x < 1 / 0) {
-                                    z = x.getUTCFullYear();
-                                    x = (z <= 0 || z >= 10000 ? (z < 0 ? "-" : "+") + m(6, z < 0 ? -z : z) : m(4, z)) + "-" + m(2, x.getUTCMonth() + 1) + "-" + m(2, x.getUTCDate()) + "T" + m(2, x.getUTCHours()) + ":" + m(2, x.getUTCMinutes()) + ":" + m(2, x.getUTCSeconds()) + "." + m(3, x.getUTCMilliseconds()) + "Z";
-                                } else x = null;
-                            } else if (typeof x.toJSON == "function") x = x.toJSON(q);
-                            if (s) x = s.call(r, q, x);
-                            if (x === null) return "null";
-                            y = g.call(x);
-                            switch (y) {
-                            case "[object Boolean]":
-                                return "" + x;
-                            case "[object Number]":
-                                return x > -1 / 0 && x < 1 / 0 ? "" + x : "null";
-                            case "[object String]":
-                                return n(x);
-                            }
-                            if (typeof x == "object") {
-                                for (da = w.length; da--;) if (w[da] == x) throw TypeError("Cyclic structures cannot be serialized.");
-                                w.push(x);
-                                aa = [];
-                                ea = v;
-                                v += u;
-                                if (y == "[object Array]") {
-                                    for (ca = 0, da = x.length; ca < da; fa || (fa = true), ca++) {
-                                        ba = o(ca, x, s, t, u, v, w);
-                                        aa.push(ba === void 0 ? "null" : ba);
-                                    }
-                                    return fa ? (u ? "[\n" + v + aa.join(",\n" + v) + "\n" + ea + "]" : ("[" + aa.join(",") + "]")) : "[]";
-                                } else {
-                                    i(t || x, function (ga) {
-                                        var ha = o(ga, x, s, t, u, v, w);
-                                        if (ha !== void 0) aa.push(n(ga) + ":" + (u ? " " : "") + ha);
-                                        fa || (fa = true);
-                                    });
-                                    return fa ? (u ? "{\n" + v + aa.join(",\n" + v) + "\n" + ea + "}" : ("{" + aa.join(",") + "}")) : "{}";
+                        if (typeof x == "object") {
+                            for (da = w.length; da--;) if (w[da] == x) throw TypeError("Cyclic structures cannot be serialized.");
+                            w.push(x);
+                            aa = [];
+                            ea = v;
+                            v += u;
+                            if (y == "[object Array]") {
+                                for (ca = 0, da = x.length; ca < da; fa || (fa = true), ca++) {
+                                    ba = o(ca, x, s, t, u, v, w);
+                                    aa.push(ba === void 0 ? "null" : ba);
                                 }
-                                w.pop();
+                                return fa ? (u ? "[\n" + v + aa.join(",\n" + v) + "\n" + ea + "]" : ("[" + aa.join(",") + "]")) : "[]";
+                            } else {
+                                i(t || x, function (ga) {
+                                    var ha = o(ga, x, s, t, u, v, w);
+                                    if (ha !== void 0) aa.push(n(ga) + ":" + (u ? " " : "") + ha);
+                                    fa || (fa = true);
+                                });
+                                return fa ? (u ? "{\n" + v + aa.join(",\n" + v) + "\n" + ea + "}" : ("{" + aa.join(",") + "}")) : "{}";
+                            }
+                            w.pop();
+                        }
+                    }
+                    function p(q, r, s) {
+                        var t = "",
+                            u, v, w, x;
+                        if (typeof r == "function" || typeof r == "object" && r) if (g.call(r) == "[object Function]") {
+                            u = r;
+                        } else if (g.call(r) == "[object Array]") {
+                            v = {};
+                            for (w = r.length; w--;) {
+                                x = r[w];
+                                if (x && (g.call(x) == "[object String]" || g.call(x) == "[object Number]")) v[x] = 1;
                             }
                         }
-                        function p(q, r, s) {
-                            var t = "",
-                                u, v, w, x;
-                            if (typeof r == "function" || typeof r == "object" && r) if (g.call(r) == "[object Function]") {
-                                u = r;
-                            } else if (g.call(r) == "[object Array]") {
-                                v = {};
-                                for (w = r.length; w--;) {
-                                    x = r[w];
-                                    if (x && (g.call(x) == "[object String]" || g.call(x) == "[object Number]")) v[x] = 1;
-                                }
-                            }
-                            if (s != null && s !== "") if (g.call(s) == "[object Number]") {
-                                if ((s -= s % 1) > 0) for (t = "", s > 10 && (s = 10); t.length < s;) t += " ";
-                            } else if (g.call(s) == "[object String]") t = s.length <= 10 ? s : s.slice(0, 10);
-                            return o("$", {
-                                $: q
-                            }, u, v, t, "", []);
-                        }
-                        return p;
-                    })();
-                    if (!k) f.parse = (function () {
-                        var l = {
-                            "\\": "\\",
-                            '"': '"',
-                            "/": "/",
-                            b: "\b",
-                            t: "\t",
-                            n: "\n",
-                            f: "\f",
-                            r: "\r"
-                        },
-                            m = "".constructor.fromCharCode;
+                        if (s != null && s !== "") if (g.call(s) == "[object Number]") {
+                            if ((s -= s % 1) > 0) for (t = "", s > 10 && (s = 10); t.length < s;) t += " ";
+                        } else if (g.call(s) == "[object String]") t = s.length <= 10 ? s : s.slice(0, 10);
+                        return o("$", {
+                            $: q
+                        }, u, v, t, "", []);
+                    }
+                    return p;
+                })();
+                if (!k) f.parse = (function () {
+                    var l = {
+                        "\\": "\\",
+                        '"': '"',
+                        "/": "/",
+                        b: "\b",
+                        t: "\t",
+                        n: "\n",
+                        f: "\f",
+                        r: "\r"
+                    },
+                        m = "".constructor.fromCharCode;
 
-                        function n(s) {
-                            this.source = s;
-                            this.index = 0;
-                        }
-                        n.prototype.lex = o;
+                    function n(s) {
+                        this.source = s;
+                        this.index = 0;
+                    }
+                    n.prototype.lex = o;
 
-                        function o() {
-                            for (var s = this.source, t = this.source.length, u, v, w, x, y; this.index < t;) {
-                                u = s.charAt(this.index);
-                                switch (u) {
-                                case "\t":
-                                case "\r":
-                                case "\n":
-                                case " ":
-                                    this.index += 1;
-                                    break;
-                                case "{":
-                                case "}":
-                                case "[":
-                                case "]":
-                                case ":":
-                                case ",":
-                                    this.index += 1;
-                                    return u;
-                                case '"':
-                                    v = "@";
-                                    this.index += 1;
-                                    while (this.index < t) {
-                                        u = s.charAt(this.index);
-                                        if (u < " ") {
-                                            throw SyntaxError("Unescaped control character in string.");
-                                        } else if (u == "\\") {
-                                            this.index += 1;
-                                            u = s.charAt(this.index);
-                                            if ('\\"/btnfr'.indexOf(u) > -1) {
-                                                v += l[u];
-                                                this.index += 1;
-                                            } else if (u == "u") {
-                                                w = this.index += 1;
-                                                for (x = this.index + 4; this.index < x; this.index += 1) {
-                                                    u = s.charAt(this.index);
-                                                    if (!(u >= "0" && u <= "9" || u >= "a" && u <= "f" || u >= "A" && u <= "F")) throw SyntaxError("Invalid Unicode escape sequence in string.");
-                                                }
-                                                v += m("0x" + s.slice(w, this.index));
-                                            } else throw SyntaxError("Invalid escape sequence in string.");
-                                        } else {
-                                            if (u == '"') break;
-                                            v += u;
-                                            this.index += 1;
-                                        }
-                                    }
-                                    if (s.charAt(this.index) == '"') {
+                    function o() {
+                        for (var s = this.source, t = this.source.length, u, v, w, x, y; this.index < t;) {
+                            u = s.charAt(this.index);
+                            switch (u) {
+                            case "\t":
+                            case "\r":
+                            case "\n":
+                            case " ":
+                                this.index += 1;
+                                break;
+                            case "{":
+                            case "}":
+                            case "[":
+                            case "]":
+                            case ":":
+                            case ",":
+                                this.index += 1;
+                                return u;
+                            case '"':
+                                v = "@";
+                                this.index += 1;
+                                while (this.index < t) {
+                                    u = s.charAt(this.index);
+                                    if (u < " ") {
+                                        throw SyntaxError("Unescaped control character in string.");
+                                    } else if (u == "\\") {
                                         this.index += 1;
-                                        return v;
-                                    }
-                                    throw SyntaxError("Unterminated string.");
-                                default:
-                                    w = this.index;
-                                    if (u == "-") {
-                                        y = true;
-                                        u = s.charAt(this.index += 1);
-                                    }
-                                    if (u >= "0" && u <= "9") {
-                                        if (u == "0" && (u = s.charAt(this.index + 1), u >= "0" && u <= "9")) throw SyntaxError("Illegal octal literal.");
-                                        y = false;
-                                        for (; this.index < t && (u = s.charAt(this.index), u >= "0" && u <= "9"); this.index += 1);
-                                        if (s.charAt(this.index) == ".") {
-                                            x = this.index += 1;
-                                            for (; x < t && (u = s.charAt(x), u >= "0" && u <= "9"); x += 1);
-                                            if (x == this.index) throw SyntaxError("Illegal trailing decimal.");
-                                            this.index = x;
-                                        }
                                         u = s.charAt(this.index);
-                                        if (u == "e" || u == "E") {
-                                            u = s.charAt(this.index += 1);
-                                            if (u == "+" || u == "-") this.index += 1;
-                                            for (x = this.index; x < t && (u = s.charAt(x), u >= "0" && u <= "9"); x += 1);
-                                            if (x == this.index) throw SyntaxError("Illegal empty exponent.");
-                                            this.index = x;
-                                        }
-                                        return +s.slice(w, this.index);
+                                        if ('\\"/btnfr'.indexOf(u) > -1) {
+                                            v += l[u];
+                                            this.index += 1;
+                                        } else if (u == "u") {
+                                            w = this.index += 1;
+                                            for (x = this.index + 4; this.index < x; this.index += 1) {
+                                                u = s.charAt(this.index);
+                                                if (!(u >= "0" && u <= "9" || u >= "a" && u <= "f" || u >= "A" && u <= "F")) throw SyntaxError("Invalid Unicode escape sequence in string.");
+                                            }
+                                            v += m("0x" + s.slice(w, this.index));
+                                        } else throw SyntaxError("Invalid escape sequence in string.");
+                                    } else {
+                                        if (u == '"') break;
+                                        v += u;
+                                        this.index += 1;
                                     }
-                                    if (y) throw SyntaxError("Unexpected `-`.");
-                                    if (u == "t" && s.slice(this.index, this.index + 4) == "true") {
-                                        this.index += 4;
-                                        return true;
-                                    } else if (u == "f" && s.slice(this.index, this.index + 5) == "false") {
-                                        this.index += 5;
-                                        return false;
-                                    } else if (u == "n" && s.slice(this.index, this.index + 4) == "null") {
-                                        this.index += 4;
-                                        return null;
-                                    }
-                                    throw SyntaxError("Unrecognized token.");
                                 }
+                                if (s.charAt(this.index) == '"') {
+                                    this.index += 1;
+                                    return v;
+                                }
+                                throw SyntaxError("Unterminated string.");
+                            default:
+                                w = this.index;
+                                if (u == "-") {
+                                    y = true;
+                                    u = s.charAt(this.index += 1);
+                                }
+                                if (u >= "0" && u <= "9") {
+                                    if (u == "0" && (u = s.charAt(this.index + 1), u >= "0" && u <= "9")) throw SyntaxError("Illegal octal literal.");
+                                    y = false;
+                                    for (; this.index < t && (u = s.charAt(this.index), u >= "0" && u <= "9"); this.index += 1);
+                                    if (s.charAt(this.index) == ".") {
+                                        x = this.index += 1;
+                                        for (; x < t && (u = s.charAt(x), u >= "0" && u <= "9"); x += 1);
+                                        if (x == this.index) throw SyntaxError("Illegal trailing decimal.");
+                                        this.index = x;
+                                    }
+                                    u = s.charAt(this.index);
+                                    if (u == "e" || u == "E") {
+                                        u = s.charAt(this.index += 1);
+                                        if (u == "+" || u == "-") this.index += 1;
+                                        for (x = this.index; x < t && (u = s.charAt(x), u >= "0" && u <= "9"); x += 1);
+                                        if (x == this.index) throw SyntaxError("Illegal empty exponent.");
+                                        this.index = x;
+                                    }
+                                    return +s.slice(w, this.index);
+                                }
+                                if (y) throw SyntaxError("Unexpected `-`.");
+                                if (u == "t" && s.slice(this.index, this.index + 4) == "true") {
+                                    this.index += 4;
+                                    return true;
+                                } else if (u == "f" && s.slice(this.index, this.index + 5) == "false") {
+                                    this.index += 5;
+                                    return false;
+                                } else if (u == "n" && s.slice(this.index, this.index + 4) == "null") {
+                                    this.index += 4;
+                                    return null;
+                                }
+                                throw SyntaxError("Unrecognized token.");
                             }
-                            return "$";
                         }
-                        n.prototype.get = p;
+                        return "$";
+                    }
+                    n.prototype.get = p;
 
-                        function p(s) {
-                            var t, u, v;
-                            if (s == "$") throw SyntaxError("Unexpected end-of-file.");
-                            if (typeof s == "string") {
-                                if (s.charAt(0) == "@") return s.slice(1);
-                                switch (s) {
-                                case "[":
-                                    t = [];
-                                    for (;; u || (u = true)) {
+                    function p(s) {
+                        var t, u, v;
+                        if (s == "$") throw SyntaxError("Unexpected end-of-file.");
+                        if (typeof s == "string") {
+                            if (s.charAt(0) == "@") return s.slice(1);
+                            switch (s) {
+                            case "[":
+                                t = [];
+                                for (;; u || (u = true)) {
+                                    s = this.lex();
+                                    if (s == "]") break;
+                                    if (u) if (s == ",") {
                                         s = this.lex();
-                                        if (s == "]") break;
-                                        if (u) if (s == ",") {
-                                            s = this.lex();
-                                            if (s == "]") throw SyntaxError("Unexpected trailing `,` in array literal.");
-                                        } else throw SyntaxError("A comma (`,`) must separate the previous array element from the next.");
-                                        if (s == ",") throw SyntaxError("Unexpected `,` in array literal.");
-                                        t.push(this.get(s));
-                                    }
-                                    return t;
-                                case "{":
-                                    t = {};
-                                    for (;; u || (u = true)) {
+                                        if (s == "]") throw SyntaxError("Unexpected trailing `,` in array literal.");
+                                    } else throw SyntaxError("A comma (`,`) must separate the previous array element from the next.");
+                                    if (s == ",") throw SyntaxError("Unexpected `,` in array literal.");
+                                    t.push(this.get(s));
+                                }
+                                return t;
+                            case "{":
+                                t = {};
+                                for (;; u || (u = true)) {
+                                    s = this.lex();
+                                    if (s == "}") break;
+                                    if (u) if (s == ",") {
                                         s = this.lex();
-                                        if (s == "}") break;
-                                        if (u) if (s == ",") {
-                                            s = this.lex();
-                                            if (s == "}") throw SyntaxError("Unexpected trailing `,`. in object literal.");
-                                        } else throw SyntaxError("A comma (`,`) must separate the previous object member from the next.");
-                                        if (s == ",") throw SyntaxError("Unexpected `,` in object literal.");
-                                        if (typeof s != "string" || s.charAt(0) != "@") throw SyntaxError("Object property names must be double-quoted strings.");
-                                        if (this.lex() != ":") throw SyntaxError("A single colon (`:`) must separate each object property name from the value.");
-                                        t[s.slice(1)] = this.get(this.lex());
-                                    }
-                                    return t;
+                                        if (s == "}") throw SyntaxError("Unexpected trailing `,`. in object literal.");
+                                    } else throw SyntaxError("A comma (`,`) must separate the previous object member from the next.");
+                                    if (s == ",") throw SyntaxError("Unexpected `,` in object literal.");
+                                    if (typeof s != "string" || s.charAt(0) != "@") throw SyntaxError("Object property names must be double-quoted strings.");
+                                    if (this.lex() != ":") throw SyntaxError("A single colon (`:`) must separate each object property name from the value.");
+                                    t[s.slice(1)] = this.get(this.lex());
                                 }
-                                throw SyntaxError("Expected `[` or `{`.");
+                                return t;
                             }
-                            return s;
+                            throw SyntaxError("Expected `[` or `{`.");
                         }
-                        function q(s, t, u) {
-                            var v = s[t],
-                                w, x;
-                            if (typeof v == "object" && v) if (g.call(v) == "[object Array]") {
-                                for (w = v.length; w--;) {
-                                    x = q(v, w, u);
-                                    if (x === void 0) {
-                                        v.splice(w, 1);
-                                    } else v[w] = x;
-                                }
-                            } else i(v, function (y) {
-                                var z = q(v, y, u);
-                                if (z === void 0) {
-                                    delete v[y];
-                                } else v[y] = z;
-                            });
-                            return u.call(s, t, v);
-                        }
-                        function r(s, t) {
-                            var u = new n("" + s),
-                                v = u.get(u.lex());
-                            if (u.lex() != "$") throw SyntaxError("Expected end-of-file.");
-                            return t && g.call(t) == "[object Function]" ? q({
-                                $: v
-                            }, "$", t) : v;
-                        }
-                        return r;
-                    })();
-                    e.exports = f;
-                });
-                __d("ES5", ["ES5ArrayPrototype", "ES5FunctionPrototype", "ES5StringPrototype", "ES5Array", "ES5Object", "ES5Date", "JSON3"], function (a, b, c, d, e, f) {
-                    var g = b('ES5ArrayPrototype'),
-                        h = b('ES5FunctionPrototype'),
-                        i = b('ES5StringPrototype'),
-                        j = b('ES5Array'),
-                        k = b('ES5Object'),
-                        l = b('ES5Date'),
-                        m = b('JSON3'),
-                        n = Array.prototype.slice,
-                        o = Object.prototype.toString,
-                        p = {},
-                        q = {
-                            array: g,
-                            'function': h,
-                            string: i,
-                            Object: k,
-                            Array: j,
-                            Date: l,
-                            JSON: m
-                        };
-                    for (var r in q) {
-                        if (!q.hasOwnProperty(r)) continue;
-                        var s = q[r],
-                            t = r === r.toLowerCase() ? window[r.replace(/^\w/, function (x) {
-                                return x.toUpperCase();
-                            })].prototype : window[r];
-                        for (var u in s) {
-                            if (!s.hasOwnProperty(u)) continue;
-                            if (!t) {
-                                p[r + '.' + u] = s[u];
-                                continue;
+                        return s;
+                    }
+                    function q(s, t, u) {
+                        var v = s[t],
+                            w, x;
+                        if (typeof v == "object" && v) if (g.call(v) == "[object Array]") {
+                            for (w = v.length; w--;) {
+                                x = q(v, w, u);
+                                if (x === void 0) {
+                                    v.splice(w, 1);
+                                } else v[w] = x;
                             }
-                            var v = t[u];
-                            p[r + '.' + u] = v && /\{\s+\[native code\]\s\}/.test(v) ? v : s[u];
+                        } else i(v, function (y) {
+                            var z = q(v, y, u);
+                            if (z === void 0) {
+                                delete v[y];
+                            } else v[y] = z;
+                        });
+                        return u.call(s, t, v);
+                    }
+                    function r(s, t) {
+                        var u = new n("" + s),
+                            v = u.get(u.lex());
+                        if (u.lex() != "$") throw SyntaxError("Expected end-of-file.");
+                        return t && g.call(t) == "[object Function]" ? q({
+                            $: v
+                        }, "$", t) : v;
+                    }
+                    return r;
+                })();
+                e.exports = f;
+            });
+            __d("ES5", ["ES5ArrayPrototype", "ES5FunctionPrototype", "ES5StringPrototype", "ES5Array", "ES5Object", "ES5Date", "JSON3"], function (a, b, c, d, e, f) {
+                var g = b('ES5ArrayPrototype'),
+                    h = b('ES5FunctionPrototype'),
+                    i = b('ES5StringPrototype'),
+                    j = b('ES5Array'),
+                    k = b('ES5Object'),
+                    l = b('ES5Date'),
+                    m = b('JSON3'),
+                    n = Array.prototype.slice,
+                    o = Object.prototype.toString,
+                    p = {},
+                    q = {
+                        array: g,
+                        'function': h,
+                        string: i,
+                        Object: k,
+                        Array: j,
+                        Date: l,
+                        JSON: m
+                    };
+                for (var r in q) {
+                    if (!q.hasOwnProperty(r)) continue;
+                    var s = q[r],
+                        t = r === r.toLowerCase() ? window[r.replace(/^\w/, function (x) {
+                            return x.toUpperCase();
+                        })].prototype : window[r];
+                    for (var u in s) {
+                        if (!s.hasOwnProperty(u)) continue;
+                        if (!t) {
+                            p[r + '.' + u] = s[u];
+                            continue;
                         }
+                        var v = t[u];
+                        p[r + '.' + u] = v && /\{\s+\[native code\]\s\}/.test(v) ? v : s[u];
                     }
-                    function w(x, y, z) {
-                        var aa = n.call(arguments, 3),
-                            ba = z ? /\s(.*)\]/.exec(o.call(x).toLowerCase())[1] : x,
-                            ca = p[ba + '.' + y] || x[y];
-                        if (typeof ca === 'function') return ca.apply(x, aa);
-                    }
-                    e.exports = w;
-                });
-                ES5 = require('ES5');
-                return ES5.apply(null, arguments);
-            };;
+                }
+                function w(x, y, z) {
+                    var aa = n.call(arguments, 3),
+                        ba = z ? /\s(.*)\]/.exec(o.call(x).toLowerCase())[1] : x,
+                        ca = p[ba + '.' + y] || x[y];
+                    if (typeof ca === 'function') return ca.apply(x, aa);
+                }
+                e.exports = w;
+            });
+            ES5 = require('ES5');
+            return ES5.apply(null, arguments);
+        };;
+    var FB = {};
+    var __DEV__ = 0;
+
+    function bagofholding() {};
+
+    function __c() {
+        __d("UrlMapConfig", [], {
+            "www": "www.facebook.com",
+            "m": "m.facebook.com",
+            "connect": "connect.facebook.net",
+            "api_https": "api.facebook.com",
+            "api_read_https": "api-read.facebook.com",
+            "graph_https": "graph.facebook.com",
+            "fbcdn_http": "static.ak.fbcdn.net",
+            "fbcdn_https": "s-static.ak.fbcdn.net",
+            "cdn_http": "static.ak.facebook.com",
+            "cdn_https": "s-static.ak.facebook.com"
+        });
+        __d("ApiClientConfig", [], {
+            "FlashRequest": {
+                "swfUrl": "https:\/\/s-static.ak.fbcdn.net\/rsrc.php\/v1\/y5\/r\/SrnvQJBTxo-.swf"
+            }
+        });
+        __d("SDKConfig", [], {
+            "migrate": true,
+            "seal": false,
+            "errorHandling": {
+                "rate": 0.01
+            }
+        });
+        __d("XDConfig", [], {
+            "XdUrl": "connect\/xd_arbiter.php?version=6",
+            "Flash": {
+                "path": "https:\/\/s-static.ak.fbcdn.net\/rsrc.php\/v1\/ys\/r\/WON-TVLCpDP.swf"
+            },
+            "useCdn": true
+        });
+    }
+
+    function __d() {
+        FB.__d.apply(FB, arguments);
+    }
+
+    function require() {
+        return FB.require.apply(null, arguments);
+    }
+    (function () {
         (function (a) {
             if (a.require) return;
             var b = {},
@@ -716,150 +750,6 @@ if (!FB) {
             };
             a.__e = a.__d;
         })(this);
-        if (window.FB && !window.FB.copy)(function () {
-            var a = /iframe_canvas|app_runner|dialog/.test(window.name);
-
-            function b(c, d, e, f) {
-                for (var g in d) if (e || typeof c[g] === 'undefined') c[g] = f ? f(d[g]) : d[g];
-                return c;
-            }
-            b(window.FB, {
-                _apiKey: null,
-                _authResponse: null,
-                _userStatus: 'unknown',
-                _logging: true,
-                _inCanvas: a,
-                _https: (function () {
-                    if (location.protocol == 'https:' && (window == top || !a)) return true;
-                    if (/_fb_https?/.test(window.name)) return ES5(window.name, 'indexOf', true, '_fb_https') != -1;
-                })(),
-                onlyUseHttps: function () {
-                    return FB._https === true;
-                },
-                onlyUseHttp: function () {
-                    return FB._https === false && location.protocol == 'http:';
-                },
-                _domain: {
-                    api: 'https://api.facebook.com/',
-                    api_read: 'https://api-read.facebook.com/',
-                    cdn: 'http://static.ak.fbcdn.net/',
-                    https_cdn: 'https://s-static.ak.fbcdn.net/',
-                    graph: 'https://graph.facebook.com/',
-                    staticfb: 'http://static.ak.facebook.com/',
-                    https_staticfb: 'https://s-static.ak.facebook.com/',
-                    www: 'http://www.facebook.com/',
-                    https_www: 'https://www.facebook.com/',
-                    m: 'http://m.facebook.com/',
-                    https_m: 'https://m.facebook.com/'
-                },
-                _locale: null,
-                _localeIsRtl: false,
-                getDomain: function (c, d) {
-                    var e = !d && (window.location.protocol == 'https:' || FB._https);
-                    switch (c) {
-                    case 'api':
-                        return FB._domain.api;
-                    case 'api_read':
-                        return FB._domain.api_read;
-                    case 'cdn':
-                        return e ? FB._domain.https_cdn : FB._domain.cdn;
-                    case 'cdn_foreign':
-                        return FB._domain.cdn_foreign;
-                    case 'https_cdn':
-                        return FB._domain.https_cdn;
-                    case 'graph':
-                        return FB._domain.graph;
-                    case 'staticfb':
-                        return e ? FB._domain.https_staticfb : FB._domain.staticfb;
-                    case 'https_staticfb':
-                        return FB._domain.https_staticfb;
-                    case 'www':
-                        return e ? FB._domain.https_www : FB._domain.www;
-                    case 'https_www':
-                        return FB._domain.https_www;
-                    case 'm':
-                        return e ? FB._domain.https_m : FB._domain.m;
-                    case 'https_m':
-                        return FB._domain.https_m;
-                    }
-                },
-                copy: b,
-                create: function (c, d) {
-                    var e = window.FB,
-                        f = c ? c.split('.') : [],
-                        g = f.length;
-                    for (var h = 0; h < g; h++) {
-                        var i = f[h],
-                            j = e[i];
-                        if (!j) {
-                            j = (d && h + 1 == g) ? d : {};
-                            e[i] = j;
-                        }
-                        e = j;
-                    }
-                    return e;
-                },
-                provide: function (c, d, e) {
-                    return FB.copy(typeof c == 'string' ? FB.create(c) : c, d, e);
-                },
-                guid: function () {
-                    return 'f' + (Math.random() * (1 << 30)).toString(16).replace('.', '');
-                },
-                log: function (c) {
-                    if (FB._logging) if (window.Debug && window.Debug.writeln) {
-                        window.Debug.writeln(c);
-                    } else if (window.console) window.console.log(c);
-                    if (FB.Event) FB.Event.fire('fb.log', c);
-                },
-                $: function (c) {
-                    return document.getElementById(c);
-                }
-            });
-        })();
-        FB.provide('Array', {
-            merge: function (a, b) {
-                for (var c = 0; c < b.length; c++) if (ES5(a, 'indexOf', true, b[c]) < 0) a.push(b[c]);
-                return a;
-            },
-            forEach: function (a, b, c) {
-                if (!a) return;
-                if (Object.prototype.toString.apply(a) === '[object Array]' || (!(a instanceof Function) && typeof a.length == 'number')) {
-                    if (a.forEach) {
-                        ES5(a, 'forEach', true, b);
-                    } else for (var d = 0, e = a.length; d < e; d++) b(a[d], d, a);
-                } else for (var f in a) if (c || a.hasOwnProperty(f)) b(a[f], f, a);
-            },
-            toArray: function (a) {
-                for (var b = 0, c = [], d = a.length; b < d; b++) c[b] = a[b];
-                return c;
-            }
-        });
-        FB.provide('QS', {
-            encode: function (a, b, c) {
-                b = b === undefined ? '&' : b;
-                c = c === false ?
-                function (e) {
-                    return e;
-                } : encodeURIComponent;
-                var d = [];
-                ES5(FB.Array, 'forEach', true, a, function (e, f) {
-                    if (e !== null && typeof e != 'undefined') d.push(c(f) + '=' + c(e));
-                });
-                d.sort();
-                return d.join(b);
-            },
-            decode: function (a) {
-                var b = decodeURIComponent,
-                    c = {},
-                    d = a.split('&'),
-                    e, f;
-                for (e = 0; e < d.length; e++) {
-                    f = d[e].split('=', 2);
-                    if (f && f[0]) c[b(f[0])] = b(f[1] || '');
-                }
-                return c;
-            }
-        });
         __d("copyProperties", [], function (a, b, c, d, e, f) {
             function g(h, i, j, k, l, m, n) {
                 h = h || {};
@@ -875,8 +765,29 @@ if (!FB) {
             }
             e.exports = g;
         });
-        __d("FB", [], function (a, b, c, d, e, f) {
-            var g = window.FB;
+        __d("flattenObject", [], function (a, b, c, d, e, f) {
+            function g(h) {
+                var i = {};
+                for (var j in h) if (h.hasOwnProperty(j)) {
+                    var k = h[j];
+                    if (null === k || undefined === k) {
+                        continue;
+                    } else if (typeof k == 'string') {
+                        i[j] = k;
+                    } else i[j] = ES5('JSON', 'stringify', false, k);
+                }
+                return i;
+            }
+            e.exports = g;
+        });
+        __d("sprintf", [], function (a, b, c, d, e, f) {
+            function g(h, i) {
+                i = Array.prototype.slice.call(arguments, 1);
+                var j = 0;
+                return h.replace(/%s/g, function (k) {
+                    return i[j++];
+                });
+            }
             e.exports = g;
         });
         __d("UserAgent", [], function (a, b, c, d, e, f) {
@@ -961,445 +872,38 @@ if (!FB) {
             };
             e.exports = w;
         });
-        __d("legacy:fb.ua", ["copyProperties", "FB", "UserAgent"], function (a, b, c, d) {
-            var e = b('copyProperties'),
-                f = b('FB'),
-                g = b('UserAgent'),
-                h = e({}, g);
-            h.mobile = function () {
-                return !f._inCanvas && g.mobile();
+        __d("applyWithGuard", ["UserAgent"], function (a, b, c, d, e, f) {
+            var g = b('UserAgent'),
+                h;
+
+            function i(k) {
+                var l = {
+                    line: k.lineNumber || k.line,
+                    message: k.message,
+                    name: k.name,
+                    script: k.fileName || k.sourceURL || k.script,
+                    stack: k.stackTrace || k.stack
+                };
+                l._originalError = k;
+                if (g.chrome() && /([\w:\.\/]+\.js):(\d+)/.test(k.stack)) {
+                    l.script = RegExp.$1;
+                    l.line = parseInt(RegExp.$2, 10);
+                }
+                for (var m in l)(l[m] == null && delete l[m]);
+                return l;
+            }
+            function j(k, l, m) {
+                if (!h) return k.apply(l, m || []);
+                try {
+                    return k.apply(l, m || []);
+                } catch (n) {
+                    h(i(n));
+                }
+            }
+            j.setErrorHandler = function (k) {
+                h = k;
             };
-            f.provide('UA', h);
-        }, 3);
-        FB.provide('Content', {
-            _root: null,
-            _hiddenRoot: null,
-            _callbacks: {},
-            append: function (a, b) {
-                if (!b) if (!FB.Content._root) {
-                    FB.Content._root = b = FB.$('fb-root');
-                    if (!b) {
-                        FB.log('The "fb-root" div has not been created, auto-creating');
-                        FB.Content._root = b = document.createElement('div');
-                        b.id = 'fb-root';
-                        if (FB.UA.ie() || !document.body) {
-                            FB.Dom.ready(function () {
-                                document.body.appendChild(b);
-                            });
-                        } else document.body.appendChild(b);
-                    }
-                    b.className += ' fb_reset';
-                } else b = FB.Content._root;
-                if (typeof a == 'string') {
-                    var c = document.createElement('div');
-                    b.appendChild(c).innerHTML = a;
-                    return c;
-                } else return b.appendChild(a);
-            },
-            appendHidden: function (a) {
-                if (!FB.Content._hiddenRoot) {
-                    var b = document.createElement('div'),
-                        c = b.style;
-                    c.position = 'absolute';
-                    c.top = '-10000px';
-                    c.width = c.height = 0;
-                    FB.Content._hiddenRoot = FB.Content.append(b);
-                }
-                return FB.Content.append(a, FB.Content._hiddenRoot);
-            },
-            insertIframe: function (a) {
-                a.id = a.id || FB.guid();
-                a.name = a.name || FB.guid();
-                var b = FB.guid(),
-                    c = false,
-                    d = false;
-                FB.Content._callbacks[b] = function () {
-                    if (c && !d) {
-                        d = true;
-                        a.onload && a.onload(a.root.firstChild);
-                    }
-                };
-                if (document.attachEvent) {
-                    var e = ('<iframe' + ' id="' + a.id + '"' + ' name="' + a.name + '"' + (a.title ? ' title="' + a.title + '"' : '') + (a.className ? ' class="' + a.className + '"' : '') + ' style="border:none;' + (a.width ? 'width:' + a.width + 'px;' : '') + (a.height ? 'height:' + a.height + 'px;' : '') + '"' + ' src="javascript:false;"' + ' frameborder="0"' + ' scrolling="no"' + ' allowtransparency="true"' + ' onload="FB.Content._callbacks.' + b + '()"' + '></iframe>');
-                    a.root.innerHTML = '<iframe src="javascript:false"' + ' frameborder="0"' + ' scrolling="no"' + ' style="height:1px"></iframe>';
-                    c = true;
-                    window.setTimeout(function () {
-                        a.root.innerHTML = e;
-                        a.root.firstChild.src = a.url;
-                        a.onInsert && a.onInsert(a.root.firstChild);
-                    }, 0);
-                } else {
-                    var f = document.createElement('iframe');
-                    f.id = a.id;
-                    f.name = a.name;
-                    f.onload = FB.Content._callbacks[b];
-                    f.scrolling = 'no';
-                    f.style.border = 'none';
-                    f.style.overflow = 'hidden';
-                    if (a.title) f.title = a.title;
-                    if (a.className) f.className = a.className;
-                    if (a.height) f.style.height = a.height + 'px';
-                    if (a.width) if (a.width == '100%') {
-                        f.style.width = a.width;
-                    } else f.style.width = a.width + 'px';
-                    a.root.appendChild(f);
-                    c = true;
-                    f.src = a.url;
-                    a.onInsert && a.onInsert(f);
-                }
-            },
-            submitToTarget: function (a, b) {
-                var c = document.createElement('form');
-                c.action = a.url;
-                c.target = a.target;
-                c.method = (b) ? 'GET' : 'POST';
-                FB.Content.appendHidden(c);
-                ES5(FB.Array, 'forEach', true, a.params, function (d, e) {
-                    if (d !== null && d !== undefined) {
-                        var f = document.createElement('input');
-                        f.name = e;
-                        f.value = d;
-                        c.appendChild(f);
-                    }
-                });
-                c.submit();
-                c.parentNode.removeChild(c);
-            }
-        });
-        FB.provide('Flash', {
-            _minVersions: [
-                [9, 0, 159, 0],
-                [10, 0, 22, 87]
-            ],
-            _swfPath: 'swf/XdComm.swf',
-            _callbacks: [],
-            _names: {},
-            _unloadRegistered: false,
-            init: function () {
-                if (FB.Flash._init) return;
-                FB.Flash._init = true;
-                window.FB_OnFlashXdCommReady = function () {
-                    FB.Flash._ready = true;
-                    for (var a = 0, b = FB.Flash._callbacks.length; a < b; a++) FB.Flash._callbacks[a]();
-                    FB.Flash._callbacks = [];
-                };
-                FB.Flash.embedSWF('XdComm', FB.getDomain('cdn_foreign') + FB.Flash._swfPath);
-            },
-            embedSWF: function (a, b, c) {
-                var d = !! document.attachEvent,
-                    e = ('<object ' + 'type="application/x-shockwave-flash" ' + 'id="' + a + '" ' + (c ? 'flashvars="' + c + '" ' : '') + (d ? 'name="' + a + '" ' : '') + (d ? '' : 'data="' + b + '" ') + (d ? 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" ' : '') + 'allowscriptaccess="always">' + '<param name="movie" value="' + b + '"></param>' + '<param name="allowscriptaccess" value="always"></param>' + '</object>');
-                FB.Content.appendHidden(e);
-                if (FB.UA.ie() >= 9) {
-                    if (!FB.Flash._unloadRegistered) {
-                        var f = function () {
-                                ES5(FB.Array, 'forEach', true, FB.Flash._names, function (g, h) {
-                                    var i = document.getElementById(h);
-                                    if (i) i.removeNode(true);
-                                });
-                            };
-                        window.attachEvent('onunload', f);
-                        FB.Flash._unloadRegistered = true;
-                    }
-                    FB.Flash._names[a] = true;
-                }
-            },
-            hasMinVersion: function () {
-                try {
-                    if (typeof FB.Flash._hasMinVersion === 'undefined') {
-                        var b, c, d, e = [];
-                        try {
-                            b = new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version');
-                        } catch (f) {
-                            if (navigator.mimeTypes.length > 0) {
-                                var g = 'application/x-shockwave-flash';
-                                if (navigator.mimeTypes[g] && navigator.mimeTypes[g].enabledPlugin) {
-                                    var h = 'Shockwave Flash';
-                                    b = (navigator.plugins[h + ' 2.0'] || navigator.plugins[h]).description;
-                                }
-                            }
-                        }
-                        if (b) {
-                            var i = b.replace(/\D+/g, ',').match(/^,?(.+),?$/)[1].split(',');
-                            for (c = 0, d = i.length; c < d; c++) e.push(parseInt(i[c], 10));
-                        }
-                        FB.Flash._hasMinVersion = false;
-                        majorVersion: for (c = 0, d = FB.Flash._minVersions.length; c < d; c++) {
-                            var j = FB.Flash._minVersions[c];
-                            if (j[0] != e[0]) continue;
-                            for (var k = 1, l = j.length, m = e.length;
-                            (k < l && k < m); k++) if (e[k] < j[k]) {
-                                FB.Flash._hasMinVersion = false;
-                                continue majorVersion;
-                            } else {
-                                FB.Flash._hasMinVersion = true;
-                                if (e[k] > j[k]) break majorVersion;
-                            }
-                        };
-                    }
-                } catch (a) {
-                    FB.Flash._hasMinVersion = false;
-                }
-                return FB.Flash._hasMinVersion;
-            },
-            onReady: function (a) {
-                FB.Flash.init();
-                if (FB.Flash._ready) {
-                    window.setTimeout(a, 0);
-                } else FB.Flash._callbacks.push(a);
-            }
-        });
-        FB.provide('JSON', {
-            stringify: function (a) {
-                return ES5('JSON', 'stringify', false, a);
-            },
-            parse: function (a) {
-                return ES5('JSON', 'parse', false, a);
-            },
-            flatten: function (a) {
-                var b = {};
-                for (var c in a) if (a.hasOwnProperty(c)) {
-                    var d = a[c];
-                    if (null === d || undefined === d) {
-                        continue;
-                    } else if (typeof d == 'string') {
-                        b[c] = d;
-                    } else b[c] = ES5('JSON', 'stringify', false, d);
-                }
-                return b;
-            }
-        });
-        FB.provide('', {
-            api: function () {
-                if (typeof arguments[0] === 'string') {
-                    FB.ApiServer.graph.apply(FB.ApiServer, arguments);
-                } else FB.ApiServer.rest.apply(FB.ApiServer, arguments);
-            }
-        });
-        FB.provide('ApiServer', {
-            METHODS: ['get', 'post', 'delete', 'put'],
-            _callbacks: {},
-            _readOnlyCalls: {
-                fql_query: true,
-                fql_multiquery: true,
-                friends_get: true,
-                notifications_get: true,
-                stream_get: true,
-                users_getinfo: true
-            },
-            graph: function () {
-                var a = Array.prototype.slice.call(arguments),
-                    b = a.shift().match(/\/?([^?]*)\??([^#]*)/),
-                    c = b[1],
-                    d = a.shift(),
-                    e, f, g;
-                while (d) {
-                    var h = typeof d;
-                    if (h === 'string' && !e) {
-                        e = d.toLowerCase();
-                    } else if (h === 'function' && !g) {
-                        g = d;
-                    } else if (h === 'object' && !f) {
-                        f = d;
-                    } else {
-                        FB.log('Invalid argument passed to FB.api(): ' + d);
-                        return;
-                    }
-                    d = a.shift();
-                }
-                e = e || 'get';
-                f = FB.copy(f || {}, FB.QS.decode(b[2]));
-                if (ES5(FB.ApiServer.METHODS, 'indexOf', true, e) < 0) {
-                    FB.log('Invalid method passed to FB.api(): ' + e);
-                    return;
-                }
-                FB.ApiServer.oauthRequest('graph', c, e, f, g);
-            },
-            rest: function (a, b) {
-                var c = a.method.toLowerCase().replace('.', '_');
-                if (FB.Auth && c === 'auth_revokeauthorization') {
-                    var d = b;
-                    b = function (f) {
-                        if (f === true) FB.Auth.setAuthResponse(null, 'not_authorized');
-                        d && d(f);
-                    };
-                }
-                a.format = 'json-strings';
-                a.api_key = FB._apiKey;
-                var e = FB.ApiServer._readOnlyCalls[c] ? 'api_read' : 'api';
-                FB.ApiServer.oauthRequest(e, 'restserver.php', 'get', a, b);
-            },
-            oauthRequest: function (a, b, c, d, e) {
-                if (!d.access_token && FB.getAccessToken()) d.access_token = FB.getAccessToken();
-                d.sdk = 'joey';
-                d.pretty = 0;
-                var f = e;
-                e = function (i) {
-                    if (FB.Auth && i && FB.getAccessToken() == d.access_token) if (i.error == 'invalid_token' || i.error_code == '190' || (i.error && i.error.type == 'OAuthException' && i.error.code == 190)) FB.getLoginStatus(null, true);
-                    f && f(i);
-                };
-                d = FB.JSON.flatten(d);
-                try {
-                    FB.ApiServer.jsonp(a, b, c, d, e);
-                    return;
-                } catch (g) {}
-                try {
-                    if (FB.ApiServer.corsPost(a, b, c, d, e)) return;
-                } catch (h) {}
-                if (FB.Flash.hasMinVersion()) {
-                    FB.ApiServer.flash(a, b, c, d, e);
-                    return;
-                }
-                e({
-                    error: 'no-transport'
-                });
-            },
-            corsPost: function (a, b, c, d, e) {
-                var f = FB.getDomain(a) + b;
-                d = FB.copy({}, d);
-                if (a == 'graph') d.method = c;
-                var g = FB.QS.encode(d),
-                    h = 'application/x-www-form-urlencoded',
-                    i = FB.ApiServer._createCORSRequest('POST', f, h);
-                if (i) {
-                    if (e) {
-                        i.onload = function (j) {
-                            e(ES5('JSON', 'parse', false, j.responseText));
-                        };
-                        i.onerror = function (j) {
-                            var k;
-                            try {
-                                k = ES5('JSON', 'parse', false, j.responseText);
-                            } catch (l) {}
-                            if (!k || !k.error) k = {
-                                error: 'load-error: status ' + j.status,
-                                raw: j.responseText
-                            };
-                            e(k);
-                        };
-                    }
-                    i.send(g);
-                    return true;
-                } else return false;
-            },
-            _createCORSRequest: function (a, b, c) {
-                if (!window.XMLHttpRequest) return null;
-                var d = new XMLHttpRequest();
-                if ("withCredentials" in d) {
-                    d.open(a, b, true);
-                    d.setRequestHeader('Content-type', c);
-                } else if (window.XDomainRequest) {
-                    d = new XDomainRequest();
-                    d.open(a, b);
-                } else return null;
-                var e = {
-                    send: function (f) {
-                        d.send(f);
-                    }
-                };
-                d.onload = function () {
-                    d.onload = Function.prototype;
-                    if ('onload' in e) e.onload(d);
-                };
-                d.onerror = function () {
-                    d.onerror = Function.prototype;
-                    if ('onerror' in e) e.onerror(d);
-                };
-                d.onreadystatechange = function () {
-                    if (d.readyState == 4) if (d.status == 200) {
-                        d.onload();
-                    } else d.onerror();
-                };
-                d.onprogress = Function.prototype;
-                d.ontimeout = Function.prototype;
-                return e;
-            },
-            jsonp: function (a, b, c, d, e) {
-                var f = FB.guid(),
-                    g = document.getElementsByTagName('script')[0],
-                    h = document.createElement('script');
-                d = FB.copy({}, d);
-                if (a === 'graph' && c !== 'get') d.method = c;
-                d.callback = 'FB.ApiServer._callbacks.' + f;
-                var i = (FB.getDomain(a) + b + (ES5(b, 'indexOf', true, '?') > -1 ? '&' : '?') + FB.QS.encode(d));
-                if (i.length > 2000) throw new Error('JSONP only support a maximum of 2000 bytes of input.');
-                FB.ApiServer._callbacks[f] = function (k) {
-                    e && e(k);
-                    delete FB.ApiServer._callbacks[f];
-                    h.parentNode.removeChild(h);
-                };
-                h.onerror = function () {
-                    if (f in FB.ApiServer._callbacks) FB.ApiServer._callbacks[f]({
-                        error: 'load-error: unknown'
-                    });
-                };
-                var j = function () {
-                        setTimeout(function () {
-                            if (f in FB.ApiServer._callbacks) h.onerror();
-                        }, 0);
-                    };
-                if (h.addEventListener) {
-                    h.addEventListener("load", j, false);
-                } else h.onreadystatechange = function () {
-                    if (/loaded|complete/.test(this.readyState)) j();
-                };
-                h.src = i;
-                g.parentNode.insertBefore(h, g);
-            },
-            flash: function (a, b, c, d, e) {
-                if (!window.FB_OnXdHttpResult) window.FB_OnXdHttpResult = function (f, g) {
-                    FB.ApiServer._callbacks[f](decodeURIComponent(g));
-                };
-                d = FB.copy({}, d);
-                FB.Flash.onReady(function () {
-                    if (a === 'graph') d.suppress_http_code = 1;
-                    var f = FB.getDomain(a) + b,
-                        g = FB.QS.encode(d);
-                    if (c === 'get') {
-                        if (f.length + g.length > 2000) {
-                            if (a === 'graph') d.method = 'get';
-                            c = 'post';
-                            g = FB.QS.encode(d);
-                        } else {
-                            f += (ES5(f, 'indexOf', true, '?') > -1 ? '&' : '?') + g;
-                            g = '';
-                        }
-                    } else if (c !== 'post') {
-                        if (a === 'graph') d.method = c;
-                        c = 'post';
-                        g = FB.QS.encode(d);
-                    }
-                    var h = document.XdComm.sendXdHttpRequest(c.toUpperCase(), f, g, null);
-                    FB.ApiServer._callbacks[h] = function (i) {
-                        e && e(ES5('JSON', 'parse', false, i));
-                        delete FB.ApiServer._callbacks[h];
-                    };
-                });
-            }
-        });
-        __d("flattenObject", [], function (a, b, c, d, e, f) {
-            function g(h) {
-                var i = {};
-                for (var j in h) if (h.hasOwnProperty(j)) {
-                    var k = h[j];
-                    if (null === k || undefined === k) {
-                        continue;
-                    } else if (typeof k == 'string') {
-                        i[j] = k;
-                    } else i[j] = ES5('JSON', 'stringify', false, k);
-                }
-                return i;
-            }
-            e.exports = g;
-        });
-        __d("sprintf", [], function (a, b, c, d, e, f) {
-            function g(h, i) {
-                i = Array.prototype.slice.call(arguments, 1);
-                var j = 0;
-                return h.replace(/%s/g, function (k) {
-                    return i[j++];
-                });
-            }
-            e.exports = g;
+            e.exports = j;
         });
         __d("QueryString", [], function (a, b, c, d, e, f) {
             var g = {
@@ -1433,75 +937,80 @@ if (!FB) {
             };
             e.exports = g;
         });
-        __d("CORSRequest", ["QueryString"], function (a, b, c, d, e, f) {
-            var g = b('QueryString');
+        __d("CORSRequest", ["applyWithGuard", "QueryString"], function (a, b, c, d, e, f) {
+            var g = b('applyWithGuard'),
+                h = b('QueryString');
 
-            function h(k, l) {
+            function i(l, m) {
                 if (!window.XMLHttpRequest) return null;
-                var m = new XMLHttpRequest();
-                if ('withCredentials' in m) {
-                    m.open(k, l, true);
-                    m.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                var n = new XMLHttpRequest(),
+                    o = function () {};
+                if ('withCredentials' in n) {
+                    n.open(l, m, true);
+                    n.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 } else if (window.XDomainRequest) {
-                    m = new XDomainRequest();
+                    n = new XDomainRequest();
                     try {
-                        m.open(k, l);
-                    } catch (n) {
+                        n.open(l, m);
+                    } catch (p) {
                         return null;
                     }
                 } else return null;
-                var o = {
-                    send: function (p) {
-                        m.send(p);
+                var q = {
+                    send: function (r) {
+                        n.send(r);
                     }
                 };
-                m.onload = function () {
-                    m.onload = Function.prototype;
-                    if ('onload' in o) o.onload(m);
+                n.onload = function () {
+                    g(function () {
+                        n.onload = o;
+                        if ('onload' in q) q.onload(n);
+                    });
                 };
-                m.onerror = function () {
-                    m.onerror = Function.prototype;
-                    if ('onerror' in o) o.onerror(m);
+                n.onerror = function () {
+                    g(function () {
+                        n.onerror = o;
+                        if ('onerror' in q) q.onerror(n);
+                    });
                 };
-                m.onreadystatechange = function () {
-                    if (m.readyState == 4) if (m.status == 200) {
-                        m.onload();
-                    } else m.onerror();
+                n.onreadystatechange = function () {
+                    if (n.readyState == 4) if (n.status == 200) {
+                        n.onload();
+                    } else n.onerror();
                 };
-                m.onprogress = Function.prototype;
-                m.ontimeout = Function.prototype;
-                return o;
+                n.onprogress = n.ontimeout = o;
+                return q;
             }
-            function i(k, l, m, n) {
-                m.suppress_http_code = 1;
-                var o = g.encode(m);
-                if (l != 'post') {
-                    k = g.appendToUrl(k, o);
-                    o = '';
+            function j(l, m, n, o) {
+                n.suppress_http_code = 1;
+                var p = h.encode(n);
+                if (m != 'post') {
+                    l = h.appendToUrl(l, p);
+                    p = '';
                 }
-                var p = h(l, k);
-                if (!p) return false;
-                p.onload = function (q) {
-                    n(ES5('JSON', 'parse', false, q.responseText));
+                var q = i(m, l);
+                if (!q) return false;
+                q.onload = function (r) {
+                    o(ES5('JSON', 'parse', false, r.responseText));
                 };
-                p.onerror = function (q) {
-                    if (q.responseText) {
-                        n(ES5('JSON', 'parse', false, q.responseText));
-                    } else n({
+                q.onerror = function (r) {
+                    if (r.responseText) {
+                        o(ES5('JSON', 'parse', false, r.responseText));
+                    } else o({
                         error: {
                             type: 'http',
                             message: 'unknown error',
-                            status: q.status
+                            status: r.status
                         }
                     });
                 };
-                p.send(o);
+                q.send(p);
                 return true;
             }
-            var j = {
-                execute: i
+            var k = {
+                execute: j
             };
-            e.exports = j;
+            e.exports = k;
         });
         __d("DOMWrapper", [], function (a, b, c, d, e, f) {
             var g, h, i = {
@@ -2012,7 +1521,13 @@ if (!FB) {
                     delete ca.transport;
                 } else fa = ['jsonp', 'cors', 'flash'];
                 var ga = function (ka) {
-                        if (r && ka && typeof ka == 'object') if ('error' in ka || 'error_code' in ka) if (ka.error_code == '190' || ka.error == 'invalid_token' || (ka.error.type == 'OAuthException' && ka.error.code == 190)) r();
+                        var la = false;
+                        if (r && ka && typeof ka == 'object') {
+                            if (ka.error) {
+                                if (ka.error == 'invalid_token' || (ka.error.type == 'OAuthException' && ka.error.code == 190)) la = true;
+                            } else if (ka.error_code) if (ka.error_code == '190') la = true;
+                            if (la) r();
+                        }
                         da(ka);
                     };
                 for (var ha = 0; ha < fa.length; ha++) {
@@ -2067,31 +1582,215 @@ if (!FB) {
             k.setSwfUrl(p.FlashRequest.swfUrl);
             e.exports = z;
         });
-        __d("legacy:fb.api", ["ApiClient", "FB", "GlobalCallback", "SDKConfig"], function (a, b, c, d) {
+        __d("safeEval", [], function (a, b, c, d, e, f) {
+            function g(h) {
+                if (h === null || typeof h === 'undefined') return;
+                if (typeof h !== 'string') return h;
+                return Function('return eval("' + h.replace(/"/g, '\\"') + '");')();
+            }
+            e.exports = g;
+        });
+        __d("FB", ["applyWithGuard", "guid", "dotAccess", "copyProperties", "safeEval", "GlobalCallback", "QueryString", "UrlMap", "SDKConfig"], function (a, b, c, d, e, f) {
+            var g = c('SDKConfig'),
+                h = b('applyWithGuard'),
+                i = b('guid'),
+                j = b('dotAccess'),
+                k = b('copyProperties'),
+                l = b('safeEval'),
+                m = b('GlobalCallback'),
+                n = b('QueryString'),
+                o = b('UrlMap'),
+                p, q;
+            if (g.seal) {
+                p = FB;
+                q = window.FB = {};
+            } else p = window.FB = FB;
+            m.setPrefix('FB._callbacks');
+            var r = g.errorHandling.rate;
+            if (r && Math.floor(Math.random() * 100) + 1 < r) h.setErrorHandler(function (w) {
+                var x = n.appendToUrl(o.resolve('www', true) + '/common/scribe_endpoint.php', {
+                    c: 'jssdk_error',
+                    d: ES5('JSON', 'stringify', false, {
+                        error: w.name || w.message,
+                        extra: w
+                    })
+                });
+                (new Image()).src = x;
+                throw w;
+            });
+
+            function s(w, x) {
+                var y = w ? j(p, w, true) : p;
+                if (g.seal) var z = w ? j(q, w, true) : q;
+                ES5(ES5('Object', 'keys', false, x), 'forEach', true, function (aa) {
+                    var ba = x[aa];
+                    y[aa] = ba;
+                    if (g.seal) if (typeof ba === 'function' && !/^_/.test(aa)) z[aa] = function () {
+                        var ca = ES5(Array.prototype.slice.call(arguments), 'map', true, function (da) {
+                            return typeof da === 'function' ?
+                            function () {
+                                var ea = arguments;
+                                setTimeout(function () {
+                                    da.apply(null, ea);
+                                }, 0);
+                            } : da;
+                        });
+                        return h(ba, y, ca);
+                    };
+                });
+            }
+            var t = /iframe_canvas|app_runner|dialog/.test(window.name),
+                u = (function () {
+                    if (location.protocol == 'https:' && (window == top || !t)) return true;
+                    if (/_fb_https?/.test(window.name)) return ES5(window.name, 'indexOf', true, '_fb_https') != -1;
+                })();
+
+            function v(w, x, y, z) {
+                for (var aa in x) if (y || typeof w[aa] === 'undefined') w[aa] = z ? z(x[aa]) : x[aa];
+                return w;
+            }
+            k(p, {
+                _apiKey: null,
+                _authResponse: null,
+                _userStatus: 'unknown',
+                _logging: true,
+                _inCanvas: t,
+                _https: u,
+                onlyUseHttps: function () {
+                    return p._https === true;
+                },
+                onlyUseHttp: function () {
+                    return p._https === false && location.protocol == 'http:';
+                },
+                _locale: null,
+                _localeIsRtl: false,
+                getDomain: function (w, x) {
+                    var y = !x && (window.location.protocol == 'https:' || p._https);
+                    switch (w) {
+                    case 'api':
+                        return p._domain.api;
+                    case 'api_read':
+                        return p._domain.api_read;
+                    case 'cdn':
+                        return y ? p._domain.https_cdn : p._domain.cdn;
+                    case 'cdn_foreign':
+                        return p._domain.cdn_foreign;
+                    case 'https_cdn':
+                        return p._domain.https_cdn;
+                    case 'graph':
+                        return p._domain.graph;
+                    case 'staticfb':
+                        return y ? p._domain.https_staticfb : p._domain.staticfb;
+                    case 'https_staticfb':
+                        return p._domain.https_staticfb;
+                    case 'www':
+                        return y ? p._domain.https_www : p._domain.www;
+                    case 'https_www':
+                        return p._domain.https_www;
+                    case 'm':
+                        return y ? p._domain.https_m : p._domain.m;
+                    case 'https_m':
+                        return p._domain.https_m;
+                    }
+                },
+                copy: v,
+                create: function (w, x) {
+                    var y = w.split('.');
+                    w = y.pop();
+                    var z = y.length ? j(p, y.join('.'), true) : p;
+                    return w in z ? z[w] : z[w] = (x || {});
+                },
+                provide: s,
+                guid: i,
+                log: function (w) {
+                    if (p._logging) if (window.Debug && window.Debug.writeln) {
+                        window.Debug.writeln(w);
+                    } else if (window.console) window.console.log(w);
+                    if (p.Event) p.Event.fire('fb.log', w);
+                },
+                $: function (w) {
+                    return document.getElementById(w);
+                },
+                dotAccess: j,
+                applyWithGuard: h,
+                safeEval: l
+            });
+            if (q) k(q, {
+                provide: s
+            });
+            e.exports = p;
+        });
+        __d("legacy:fb.api", ["ApiClient", "FB", "SDKConfig"], function (a, b, c, d) {
             var e = c('SDKConfig'),
                 f = b('ApiClient'),
-                g = b('FB'),
-                h = b('GlobalCallback');
+                g = b('FB');
             f.setDefaultParams({
                 sdk: 'joey'
             });
-            h.setPrefix('FB._callbacks');
 
-            function i() {
-                var j = g.getAccessToken(),
-                    k = function () {
-                        if (j == g.getAccessToken()) g.getLoginStatus(null, true);
+            function h() {
+                var i = g.getAccessToken(),
+                    j = function () {
+                        if (i == g.getAccessToken()) g.getLoginStatus(null, true);
                     };
                 f.setClientID(g._apiKey);
-                f.setAccessToken(j, k);
+                f.setAccessToken(i, j);
                 if (typeof arguments[0] === 'string') {
                     f.graph.apply(f, arguments);
                 } else f.rest.apply(f, arguments);
             }
-            if (e.migrate) g.provide('', {
-                api: i
+            g.provide('', {
+                api: h
             }, true);
         }, 3);
+        if (typeof __c === "function") __c();
+        __d("legacy:fb.prelude", ["FB"], function (a, b, c, d) {
+            var e = b('FB');
+        }, 3);
+        FB.provide('Array', {
+            merge: function (a, b) {
+                for (var c = 0; c < b.length; c++) if (ES5(a, 'indexOf', true, b[c]) < 0) a.push(b[c]);
+                return a;
+            },
+            forEach: function (a, b, c) {
+                if (!a) return;
+                if (Object.prototype.toString.apply(a) === '[object Array]' || (!(a instanceof Function) && typeof a.length == 'number')) {
+                    if (a.forEach) {
+                        ES5(a, 'forEach', true, b);
+                    } else for (var d = 0, e = a.length; d < e; d++) b(a[d], d, a);
+                } else for (var f in a) if (c || a.hasOwnProperty(f)) b(a[f], f, a);
+            },
+            toArray: function (a) {
+                for (var b = 0, c = [], d = a.length; b < d; b++) c[b] = a[b];
+                return c;
+            }
+        });
+        FB.provide('QS', {
+            encode: function (a, b, c) {
+                b = b === undefined ? '&' : b;
+                c = c === false ?
+                function (e) {
+                    return e;
+                } : encodeURIComponent;
+                var d = [];
+                ES5(FB.Array, 'forEach', true, a, function (e, f) {
+                    if (e !== null && typeof e != 'undefined') d.push(c(f) + '=' + c(e));
+                });
+                d.sort();
+                return d.join(b);
+            },
+            decode: function (a) {
+                var b = decodeURIComponent,
+                    c = {},
+                    d = a.split('&'),
+                    e, f;
+                for (e = 0; e < d.length; e++) {
+                    f = d[e].split('=', 2);
+                    if (f && f[0]) c[b(f[0])] = b(f[1] || '');
+                }
+                return c;
+            }
+        });
         FB.provide('EventProvider', {
             subscribers: function () {
                 if (!this._subscribersMap) this._subscribersMap = {};
@@ -2130,14 +1829,17 @@ if (!FB) {
                 });
             },
             listen: function (a, event, b) {
+                b.wrapper = function () {
+                    FB.applyWithGuard(b, this, arguments);
+                };
                 if (a.addEventListener) {
-                    a.addEventListener(event, b, false);
-                } else if (a.attachEvent) a.attachEvent('on' + event, b);
+                    a.addEventListener(event, b.wrapper, false);
+                } else if (a.attachEvent) a.attachEvent('on' + event, b.wrapper);
             },
             unlisten: function (a, event, b) {
                 if (a.removeEventListener) {
-                    a.removeEventListener(event, b, false);
-                } else if (a.detachEvent) a.detachEvent('on' + event, b);
+                    a.removeEventListener(event, b.wrapper, false);
+                } else if (a.detachEvent) a.detachEvent('on' + event, b.wrapper);
             }
         });
         FB.provide('Event', FB.EventProvider);
@@ -2157,6 +1859,27 @@ if (!FB) {
                 }
             });
         }, 3);
+        __d("resolveWindow", [], function (a, b, c, d, e, f) {
+            function g(h) {
+                var i = window,
+                    j = h.split('.');
+                try {
+                    for (var l = 0; l < j.length; l++) {
+                        var m = j[l],
+                            n = /^frames\[['"]?([a-zA-Z0-9\-_]+)['"]?\]$/.exec(m);
+                        if (n) {
+                            i = i.frames[n[1]];
+                        } else if (m === 'opener' || m === 'parent' || m === 'top') {
+                            i = i[m];
+                        } else return null;
+                    }
+                } catch (k) {
+                    return null;
+                }
+                return i;
+            }
+            e.exports = g;
+        });
         __d("DOMEventListener", [], function (a, b, c, d, e, f) {
             var g, h;
             if (window.addEventListener) {
@@ -2371,217 +2094,200 @@ if (!FB) {
             })());
             e.exports = q;
         });
-        __d("resolveWindow", [], function (a, b, c, d, e, f) {
-            function g(h) {
-                var i = window,
-                    j = h.split('.');
-                try {
-                    for (var l = 0; l < j.length; l++) {
-                        var m = j[l],
-                            n = /^frames\[['"]?([a-zA-Z0-9\-_]+)['"]?\]$/.exec(m);
-                        if (n) {
-                            i = i.frames[n[1]];
-                        } else if (m === 'opener' || m === 'parent' || m === 'top') {
-                            i = i[m];
-                        } else return null;
-                    }
-                } catch (k) {
-                    return null;
-                }
-                return i;
-            }
-            e.exports = g;
-        });
-        __d("SDK_XD", ["XDM", "Log", "QueryString", "Queue", "resolveWindow", "guid", "XDConfig"], function (a, b, c, d, e, f) {
+        __d("SDK_XD", ["applyWithGuard", "guid", "resolveWindow", "FB", "XDM", "Log", "QueryString", "Queue", "XDConfig"], function (a, b, c, d, e, f) {
             var g = c('XDConfig'),
-                h = b('XDM'),
-                i = b('Log'),
-                j = b('QueryString'),
-                k = b('Queue'),
-                l = b('resolveWindow'),
-                m = b('guid'),
-                n = new k(),
-                o = new k(),
-                p = new k(),
-                q, r, s = m(),
-                t = m(),
-                u = location.protocol + '//' + location.host,
-                v, w = false,
-                x = {};
+                h = b('applyWithGuard'),
+                i = b('guid'),
+                j = b('resolveWindow'),
+                k = b('FB'),
+                l = b('XDM'),
+                m = b('Log'),
+                n = b('QueryString'),
+                o = b('Queue'),
+                p = new o(),
+                q = new o(),
+                r = new o(),
+                s, t, u = i(),
+                v = i(),
+                w = location.protocol + '//' + location.host,
+                x, y = false,
+                z = {};
 
-            function y(ea) {
-                i.info('Remote XD can talk to facebook.com (%s)', ea);
-                if (ea == 'canvas') {
-                    FB._inCanvas = true;
-                } else FB.Canvas._isTabIframe = true;
+            function aa(ga) {
+                m.info('Remote XD can talk to facebook.com (%s)', ga);
+                if (ga == 'canvas') {
+                    k._inCanvas = true;
+                } else k.Canvas._isTabIframe = true;
             }
-            function z(ea, fa) {
-                if (!fa) {
-                    i.error('No senderOrigin');
+            function ba(ga, ha) {
+                if (!ha) {
+                    m.error('No senderOrigin');
                     throw new Error();
                 }
-                var ga = /^https?/.exec(fa)[0];
-                switch (ea.xd_action) {
+                var ia = /^https?/.exec(ha)[0];
+                switch (ga.xd_action) {
                 case 'proxy_ready':
-                    var ha, ia;
-                    if (ga == 'https') {
-                        ha = p;
-                        ia = r;
+                    var ja, ka;
+                    if (ia == 'https') {
+                        ja = r;
+                        ka = t;
                     } else {
-                        ha = o;
-                        ia = q;
+                        ja = q;
+                        ka = s;
                     }
-                    if (ea.registered) {
-                        y(ea.registered);
-                        n = ha.merge(n);
+                    if (ga.registered) {
+                        aa(ga.registered);
+                        p = ja.merge(p);
                     }
-                    i.info('Proxy ready, starting queue %s containing %s messages', ga + 'ProxyQueue', ha.getLength());
-                    ha.start(function (ka) {
-                        v.send(j.encode(ka), fa, ia.contentWindow, t + '_' + ga);
+                    m.info('Proxy ready, starting queue %s containing %s messages', ia + 'ProxyQueue', ja.getLength());
+                    ja.start(function (ma) {
+                        x.send(n.encode(ma), ha, ka.contentWindow, v + '_' + ia);
                     });
                     break;
                 case 'plugin_ready':
-                    i.info('Plugin %s ready, protocol: %s', ea.name, ga);
-                    x[ea.name] = {
-                        protocol: ga
+                    m.info('Plugin %s ready, protocol: %s', ga.name, ia);
+                    z[ga.name] = {
+                        protocol: ia
                     };
-                    if (k.exists(ea.name)) {
-                        var ja = k.get(ea.name);
-                        i.debug('Enqueuing %s messages for %s in %s', ja.getLength(), ea.name, ga + 'ProxyQueue');
-                        (ga == 'https' ? p : o).merge(ja);
+                    if (o.exists(ga.name)) {
+                        var la = o.get(ga.name);
+                        m.debug('Enqueuing %s messages for %s in %s', la.getLength(), ga.name, ia + 'ProxyQueue');
+                        (ia == 'https' ? r : q).merge(la);
                     }
                     break;
                 }
-                if (ea.data) aa(ea.data, fa);
+                if (ga.data) ca(ga.data, ha);
             }
-            function aa(ea, fa) {
-                if (typeof ea == 'string') if (ea.substring(0, 1) == '{') {
-                    try {
-                        ea = ES5('JSON', 'parse', false, ea);
-                    } catch (ga) {
-                        i.warn('Failed to decode %s as JSON', ea);
+            function ca(ga, ha) {
+                h(function () {
+                    if (typeof ga == 'string') if (ga.substring(0, 1) == '{') {
+                        try {
+                            ga = ES5('JSON', 'parse', false, ga);
+                        } catch (ia) {
+                            m.warn('Failed to decode %s as JSON', ga);
+                            return;
+                        }
+                    } else ga = n.decode(ga);
+                    if (!ha) if (ga.xd_sig == u) ha = ga.xd_origin;
+                    if (ga.xd_action) {
+                        ba(ga, ha);
                         return;
                     }
-                } else ea = j.decode(ea);
-                if (!fa) if (ea.xd_sig == s) fa = ea.xd_origin;
-                if (ea.xd_action) {
-                    z(ea, fa);
-                    return;
-                }
-                if (ea.access_token) FB._https = /^https/.test(u);
-                if (ea.cb) {
-                    var ha = FB.XD._callbacks[ea.cb];
-                    if (!FB.XD._forever[ea.cb]) delete FB.XD._callbacks[ea.cb];
-                    if (ha) ha(ea);
-                }
+                    if (ga.access_token) k._https = /^https/.test(w);
+                    if (ga.cb) {
+                        var ja = k.XD._callbacks[ga.cb];
+                        if (!k.XD._forever[ga.cb]) delete k.XD._callbacks[ga.cb];
+                        if (ja) ja(ga);
+                    }
+                });
             }
-            var ba = function () {
-                    var ea = document.createElement("form"),
-                        fa = ea.appendChild(document.createElement("input")),
-                        ga;
-                    fa.name = m();
-                    ga = fa !== ea.elements[fa.name];
-                    ea = fa = null;
-                    ba = function () {
-                        return ga;
+            var da = function () {
+                    var ga = document.createElement("form"),
+                        ha = ga.appendChild(document.createElement("input")),
+                        ia;
+                    ha.name = i();
+                    ia = ha !== ga.elements[ha.name];
+                    ga = ha = null;
+                    da = function () {
+                        return ia;
                     };
-                    return ga;
+                    return ia;
                 };
 
-            function ca(ea) {
-                var fa = ba() ? document.createElement('<iframe name="' + ea.name + '"/>') : document.createElement("IFRAME");
-                fa.name = fa.id = ea.name;
-                fa.src = "javascript:false";
-                ea.root.appendChild(fa);
-                fa.src = ea.url;
-                return fa;
+            function ea(ga) {
+                var ha = da() ? document.createElement('<iframe name="' + ga.name + '"/>') : document.createElement("iframe");
+                ha.name = ha.id = ga.name;
+                ha.src = "javascript:false";
+                ga.root.appendChild(ha);
+                ha.src = ga.url;
+                return ha;
             }
-            var da = {
+            var fa = {
                 _callbacks: {},
                 _forever: {},
-                _channel: t,
-                _origin: u,
-                onMessage: aa,
-                recv: aa,
-                init: function (ea) {
-                    if (w) return;
-                    var fa = ea ? /\/\/.*?(\/[^#]*)/.exec(ea)[1] : location.pathname + location.search;
-                    fa += (~ES5(fa, 'indexOf', true, '?') ? '&' : '?') + 'fb_xd_fragment#xd_sig=' + s + '&';
-                    var ga = FB.Content.appendHidden(document.createElement('div')),
-                        ha = h.create({
-                            root: ga,
-                            channel: t,
+                _channel: v,
+                _origin: w,
+                onMessage: ca,
+                recv: ca,
+                init: function (ga) {
+                    if (y) return;
+                    var ha = ga ? /\/\/.*?(\/[^#]*)/.exec(ga)[1] : location.pathname + location.search;
+                    ha += (~ES5(ha, 'indexOf', true, '?') ? '&' : '?') + 'fb_xd_fragment#xd_sig=' + u + '&';
+                    var ia = k.Content.appendHidden(document.createElement('div')),
+                        ja = l.create({
+                            root: ia,
+                            channel: v,
                             channelPath: '/' + g.XdUrl + '#',
                             flashUrl: g.Flash.path,
-                            whenReady: function (ma) {
-                                v = ma;
+                            whenReady: function (oa) {
+                                x = oa;
                             },
-                            onMessage: aa
+                            onMessage: ca
                         }),
-                        ia = {
-                            channel: t,
+                        ka = {
+                            channel: v,
                             origin: location.protocol + '//' + location.host,
-                            channel_path: fa,
-                            transport: ha
+                            channel_path: ha,
+                            transport: ja
                         },
-                        ja = g.XdUrl + '#' + j.encode(ia),
-                        ka = g.useCdn ? FB._domain.staticfb : 'http://www.facebook.com/',
-                        la = g.useCdn ? FB._domain.https_staticfb : 'https://www.facebook.com/';
-                    if (!FB.onlyUseHttps()) q = ca({
-                        url: ka + ja,
+                        la = g.XdUrl + '#' + n.encode(ka),
+                        ma = g.useCdn ? k._domain.staticfb : 'http://www.facebook.com/',
+                        na = g.useCdn ? k._domain.https_staticfb : 'https://www.facebook.com/';
+                    if (!k.onlyUseHttps()) s = ea({
+                        url: ma + la,
                         name: 'fb_xdm_frame_http',
-                        root: ga
+                        root: ia
                     });
-                    r = ca({
-                        url: la + ja,
+                    t = ea({
+                        url: na + la,
                         name: 'fb_xdm_frame_https',
-                        root: ga
+                        root: ia
                     });
-                    w = true;
+                    y = true;
                 },
-                sendToFacebook: function (ea, fa) {
-                    if (ea == 'facebook') {
-                        fa.relation = 'parent.parent';
-                        n.enqueue(fa);
+                sendToFacebook: function (ga, ha) {
+                    if (ga == 'facebook') {
+                        ha.relation = 'parent.parent';
+                        p.enqueue(ha);
                     } else {
-                        fa.relation = 'parent.frames["' + ea + '"]';
-                        var ga = x[ea];
-                        if (ga) {
-                            i.debug('Enqueuing message for plugin %s in %s', ea, ga.protocol + 'ProxyQueue');
-                            (ga.protocol == 'https' ? p : o).enqueue(fa);
+                        ha.relation = 'parent.frames["' + ga + '"]';
+                        var ia = z[ga];
+                        if (ia) {
+                            m.debug('Enqueuing message for plugin %s in %s', ga, ia.protocol + 'ProxyQueue');
+                            (ia.protocol == 'https' ? r : q).enqueue(ha);
                         } else {
-                            i.debug('Buffering message for plugin %s', ea);
-                            k.get(ea).enqueue(fa);
+                            m.debug('Buffering message for plugin %s', ga);
+                            o.get(ga).enqueue(ha);
                         }
                     }
                 },
-                handler: function (ea, fa, ga, ha) {
-                    ha = ha || m();
-                    if (ga) FB.XD._forever[ha] = true;
-                    FB.XD._callbacks[ha] = ea;
-                    var ia = location.protocol == 'https:' ? FB._domain.https_staticfb : FB._domain.staticfb,
-                        ja = g.useCdn ? ia : location.protocol + '//www.facebook.com/';
-                    return ja + g.XdUrl + '#' + j.encode({
-                        cb: ha,
-                        origin: u + '/' + t,
+                handler: function (ga, ha, ia, ja) {
+                    ja = ja || i();
+                    if (ia) k.XD._forever[ja] = true;
+                    k.XD._callbacks[ja] = ga;
+                    var ka = location.protocol == 'https:' ? k._domain.https_staticfb : k._domain.staticfb,
+                        la = g.useCdn ? ka : location.protocol + '//www.facebook.com/';
+                    return la + g.XdUrl + '#' + n.encode({
+                        cb: ja,
+                        origin: w + '/' + v,
                         domain: location.hostname,
-                        relation: fa || 'opener'
+                        relation: ha || 'opener'
                     });
                 }
             };
             (function () {
-                var ea = location.href.match(/[?&]fb_xd_fragment#(.*)$/);
-                if (ea) {
+                var ga = location.href.match(/[?&]fb_xd_fragment#(.*)$/);
+                if (ga) {
                     document.documentElement.style.display = 'none';
-                    var fa = j.decode(ea[1]),
-                        ga = l(fa.xd_rel);
-                    i.debug('Passing fragment based message: %s', ea[1]);
-                    ga.FB.XD.onMessage(fa);
+                    var ha = n.decode(ga[1]),
+                        ia = j(ha.xd_rel);
+                    m.debug('Passing fragment based message: %s', ga[1]);
+                    ia.FB.XD.onMessage(ha);
                     document.open();
                     document.close();
                 }
             })();
-            e.exports = da;
+            e.exports = fa;
         });
         __d("legacy:fb.xd", ["FB", "SDK_XD"], function (a, b, c, d) {
             var e = b('FB'),
@@ -2753,20 +2459,125 @@ if (!FB) {
                     f = a.scrollHeight + d,
                     g = a.offsetHeight + d,
                     h = b.scrollHeight + e,
-                    i = b.offsetHeight + e;
-                bottom = Math.max(f, g, h, i);
+                    i = b.offsetHeight + e,
+                    j = Math.max(f, g, h, i);
                 if (a.offsetWidth < a.scrollWidth) {
                     c = a.scrollWidth + a.offsetLeft;
-                } else ES5(FB.Array.toArray(a.childNodes), 'forEach', true, function (j) {
-                    var k = j.offsetWidth + j.offsetLeft;
-                    if (k > c) c = k;
+                } else ES5(FB.Array.toArray(a.childNodes), 'forEach', true, function (k) {
+                    var l = k.offsetWidth + k.offsetLeft;
+                    if (l > c) c = l;
                 });
                 if (b.clientLeft > 0) c += (b.clientLeft * 2);
-                if (b.clientTop > 0) bottom += (b.clientTop * 2);
+                if (b.clientTop > 0) j += (b.clientTop * 2);
                 return {
-                    height: bottom,
+                    height: j,
                     width: c
                 };
+            }
+        });
+        __d("legacy:fb.ua", ["copyProperties", "FB", "UserAgent"], function (a, b, c, d) {
+            var e = b('copyProperties'),
+                f = b('FB'),
+                g = b('UserAgent'),
+                h = e({}, g);
+            h.mobile = function () {
+                return !f._inCanvas && g.mobile();
+            };
+            f.provide('UA', h);
+        }, 3);
+        FB.provide('Content', {
+            _root: null,
+            _hiddenRoot: null,
+            append: function (a, b) {
+                if (!b) if (!FB.Content._root) {
+                    FB.Content._root = b = FB.$('fb-root');
+                    if (!b) {
+                        FB.log('The "fb-root" div has not been created, auto-creating');
+                        FB.Content._root = b = document.createElement('div');
+                        b.id = 'fb-root';
+                        if (FB.UA.ie() || !document.body) {
+                            FB.Dom.ready(function () {
+                                document.body.appendChild(b);
+                            });
+                        } else document.body.appendChild(b);
+                    }
+                    b.className += ' fb_reset';
+                } else b = FB.Content._root;
+                if (typeof a == 'string') {
+                    var c = document.createElement('div');
+                    b.appendChild(c).innerHTML = a;
+                    return c;
+                } else return b.appendChild(a);
+            },
+            appendHidden: function (a) {
+                if (!FB.Content._hiddenRoot) {
+                    var b = document.createElement('div'),
+                        c = b.style;
+                    c.position = 'absolute';
+                    c.top = '-10000px';
+                    c.width = c.height = 0;
+                    FB.Content._hiddenRoot = FB.Content.append(b);
+                }
+                return FB.Content.append(a, FB.Content._hiddenRoot);
+            },
+            insertIframe: function (a) {
+                a.id = a.id || FB.guid();
+                a.name = a.name || FB.guid();
+                var b = FB.guid(),
+                    c = false,
+                    d = false,
+                    e = window.FB._callbacks || (window.FB._callbacks = {});
+                e[b] = function () {
+                    if (c && !d) {
+                        d = true;
+                        a.onload && a.onload(a.root.firstChild);
+                    }
+                };
+                if (document.attachEvent) {
+                    var f = ('<iframe' + ' id="' + a.id + '"' + ' name="' + a.name + '"' + (a.title ? ' title="' + a.title + '"' : '') + (a.className ? ' class="' + a.className + '"' : '') + ' style="border:none;' + (a.width ? 'width:' + a.width + 'px;' : '') + (a.height ? 'height:' + a.height + 'px;' : '') + '"' + ' src="javascript:false;"' + ' frameborder="0"' + ' scrolling="no"' + ' allowtransparency="true"' + ' onload="FB._callbacks.' + b + '()"' + '></iframe>');
+                    a.root.innerHTML = '<iframe src="javascript:false"' + ' frameborder="0"' + ' scrolling="no"' + ' style="height:1px"></iframe>';
+                    c = true;
+                    window.setTimeout(function () {
+                        a.root.innerHTML = f;
+                        a.root.firstChild.src = a.url;
+                        a.onInsert && a.onInsert(a.root.firstChild);
+                    }, 0);
+                } else {
+                    var g = document.createElement('iframe');
+                    g.id = a.id;
+                    g.name = a.name;
+                    g.onload = e[b];
+                    g.scrolling = 'no';
+                    g.style.border = 'none';
+                    g.style.overflow = 'hidden';
+                    if (a.title) g.title = a.title;
+                    if (a.className) g.className = a.className;
+                    if (a.height) g.style.height = a.height + 'px';
+                    if (a.width) if (a.width == '100%') {
+                        g.style.width = a.width;
+                    } else g.style.width = a.width + 'px';
+                    a.root.appendChild(g);
+                    c = true;
+                    g.src = a.url;
+                    a.onInsert && a.onInsert(g);
+                }
+            },
+            submitToTarget: function (a, b) {
+                var c = document.createElement('form');
+                c.action = a.url;
+                c.target = a.target;
+                c.method = (b) ? 'GET' : 'POST';
+                FB.Content.appendHidden(c);
+                ES5(FB.Array, 'forEach', true, a.params, function (d, e) {
+                    if (d !== null && d !== undefined) {
+                        var f = document.createElement('input');
+                        f.name = e;
+                        f.value = d;
+                        c.appendChild(f);
+                    }
+                });
+                c.submit();
+                c.parentNode.removeChild(c);
             }
         });
         FB.provide('String', {
@@ -2918,30 +2729,30 @@ if (!FB) {
             }
         });
         (function () {
-            function domReady() {
+            function a() {
                 FB.Dom._isReady = true;
                 FB.Event.fire('dom.ready');
                 FB.Event.clear('dom.ready');
             }
-            if (FB.Dom._isReady || document.readyState == 'complete') return domReady();
+            if (FB.Dom._isReady || document.readyState == 'complete') return a();
             if (document.addEventListener) {
-                document.addEventListener('DOMContentLoaded', domReady, false);
-            } else if (document.attachEvent) document.attachEvent('onreadystatechange', domReady);
+                document.addEventListener('DOMContentLoaded', a, false);
+            } else if (document.attachEvent) document.attachEvent('onreadystatechange', a);
             if (FB.UA.ie() && window === top)(function () {
                 try {
                     document.documentElement.doScroll('left');
-                } catch (error) {
+                } catch (c) {
                     setTimeout(arguments.callee, 0);
                     return;
                 }
-                domReady();
+                a();
             })();
-            var oldonload = window.onload;
+            var b = window.onload;
             window.onload = function () {
-                domReady();
-                if (oldonload) if (typeof oldonload == 'string') {
-                    eval(oldonload);
-                } else oldonload();
+                a();
+                if (b) if (typeof b == 'string') {
+                    FB.safeEval(b);
+                } else b();
             };
         })();
         FB.provide('Intl', (function () {
@@ -3248,6 +3059,26 @@ if (!FB) {
             isActive: function (a) {
                 var b = FB.Dialog._findRoot(a);
                 return b && b === FB.Dialog._active;
+            }
+        });
+        FB.provide('JSON', {
+            stringify: function (a) {
+                return ES5('JSON', 'stringify', false, a);
+            },
+            parse: function (a) {
+                return ES5('JSON', 'parse', false, a);
+            },
+            flatten: function (a) {
+                var b = {};
+                for (var c in a) if (a.hasOwnProperty(c)) {
+                    var d = a[c];
+                    if (null === d || undefined === d) {
+                        continue;
+                    } else if (typeof d == 'string') {
+                        b[c] = d;
+                    } else b[c] = ES5('JSON', 'stringify', false, d);
+                }
+                return b;
             }
         });
         FB.provide('', {
@@ -4310,47 +4141,47 @@ if (!FB) {
             getAttr: function (a, b) {
                 return (a.getAttribute(b) || a.getAttribute(b.replace(/_/g, '-')) || a.getAttribute(b.replace(/-/g, '_')) || a.getAttribute(b.replace(/-/g, '')) || a.getAttribute(b.replace(/_/g, '')) || a.getAttribute('data-' + b) || a.getAttribute('data-' + b.replace(/_/g, '-')) || a.getAttribute('data-' + b.replace(/-/g, '_')) || a.getAttribute('data-' + b.replace(/-/g, '')) || a.getAttribute('data-' + b.replace(/_/g, '')) || null);
             },
-            _processElement: function (dom, tagInfo, cb) {
-                var element = dom._element;
-                if (element) {
-                    element.subscribe('render', cb);
-                    element.process();
+            _processElement: function (a, b, c) {
+                var d = a._element;
+                if (d) {
+                    d.subscribe('render', c);
+                    d.process();
                 } else {
-                    var processor = function () {
-                            var fn = eval(tagInfo.className),
-                                isLogin = false,
-                                showFaces = true,
-                                showLoginFace = false,
-                                renderInIframe = false,
-                                addToTimeline = (tagInfo.className === 'FB.XFBML.AddToTimeline');
-                            if ((tagInfo.className === 'FB.XFBML.LoginButton') || addToTimeline) {
-                                renderInIframe = FB.XFBML.getBoolAttr(dom, 'render-in-iframe');
-                                mode = FB.XFBML.getAttr(dom, 'mode');
-                                showFaces = (addToTimeline && mode != 'button') || FB.XFBML.getBoolAttr(dom, 'show-faces');
-                                showLoginFace = FB.XFBML.getBoolAttr(dom, 'show-login-face');
-                                isLogin = addToTimeline || renderInIframe || FB._iframeLoginButton || showFaces || showLoginFace || FB.XFBML.getBoolAttr(dom, 'oneclick');
-                                if (isLogin && !addToTimeline) fn = FB.XFBML.Login;
+                    var e = function () {
+                            var f = FB.dotAccess(FB, b.className.replace(/^FB\./, '')),
+                                g = false,
+                                h = true,
+                                i = false,
+                                j = false,
+                                k = (b.className === 'FB.XFBML.AddToTimeline');
+                            if ((b.className === 'FB.XFBML.LoginButton') || k) {
+                                j = FB.XFBML.getBoolAttr(a, 'render-in-iframe');
+                                mode = FB.XFBML.getAttr(a, 'mode');
+                                h = (k && mode != 'button') || FB.XFBML.getBoolAttr(a, 'show-faces');
+                                i = FB.XFBML.getBoolAttr(a, 'show-login-face');
+                                g = k || j || FB._iframeLoginButton || h || i || FB.XFBML.getBoolAttr(a, 'oneclick');
+                                if (g && !k) f = FB.XFBML.Login;
                             }
-                            element = dom._element = new fn(dom);
-                            if (isLogin) {
-                                showFaces = !! showFaces;
-                                showLoginFace = !! showLoginFace;
-                                var extraParams = {
-                                    show_faces: showFaces,
-                                    show_login_face: showLoginFace,
-                                    add_to_profile: addToTimeline,
+                            d = a._element = new f(a);
+                            if (g) {
+                                h = !! h;
+                                i = !! i;
+                                var l = {
+                                    show_faces: h,
+                                    show_login_face: i,
+                                    add_to_profile: k,
                                     mode: mode
                                 },
-                                    scope = FB.XFBML.getAttr(dom, 'scope') || FB.XFBML.getAttr(dom, 'perms');
-                                if (scope) extraParams.scope = scope;
-                                element.setExtraParams(extraParams);
+                                    m = FB.XFBML.getAttr(a, 'scope') || FB.XFBML.getAttr(a, 'perms');
+                                if (m) l.scope = m;
+                                d.setExtraParams(l);
                             }
-                            element.subscribe('render', cb);
-                            element.process();
+                            d.subscribe('render', c);
+                            d.process();
                         };
-                    if (FB.CLASSES[tagInfo.className.substr(3)]) {
-                        processor();
-                    } else FB.log('Tag ' + tagInfo.className + ' was not found.');
+                    if (FB.CLASSES[b.className.substr(3)]) {
+                        e();
+                    } else FB.log('Tag ' + b.className + ' was not found.');
                 }
             },
             _getDomElements: function (a, b, c) {
@@ -4556,30 +4387,33 @@ if (!FB) {
                 FB.Data._waitToProcess();
                 return c;
             },
-            waitOn: function (dependencies, callback) {
-                var result = new FB.Waitable(),
-                    count = dependencies.length;
-                if (typeof (callback) == 'string') {
-                    var s = callback;
-                    callback = function (args) {
-                        return eval(s);
+            waitOn: function (a, b) {
+                var c = new FB.Waitable(),
+                    d = a.length;
+                if (typeof (b) == 'string') {
+                    var e = b;
+                    b = function (f) {
+                        return FB.safeEval(e);
                     };
                 }
-                ES5(dependencies, 'forEach', true, function (item) {
-                    item.monitor('value', function () {
-                        var done = false;
-                        if (FB.Data._getValue(item) !== undefined) {
-                            count--;
-                            done = true;
+                ES5(a, 'forEach', true, function (f) {
+                    f.monitor('value', function () {
+                        var g = false;
+                        if (FB.Data._getValue(f) !== undefined) {
+                            d--;
+                            g = true;
                         }
-                        if (count === 0) {
-                            var value = callback(ES5(dependencies, 'map', true, FB.Data._getValue));
-                            result.set(value !== undefined ? value : true);
+                        if (d === 0) {
+                            var h = b(ES5(a, 'map', true, FB.Data._getValue));
+                            c.set(h !== undefined ? h : true);
                         }
-                        return done;
+                        return g;
                     });
                 });
-                return result;
+                return c;
+            },
+            process: function (a) {
+                FB.Data._process(a);
             },
             _getValue: function (a) {
                 return FB.Type.isType(a, FB.Waitable) ? a.value : a;
@@ -4600,31 +4434,33 @@ if (!FB) {
             _waitToProcess: function () {
                 if (FB.Data.timer < 0) FB.Data.timer = setTimeout(FB.Data._process, 10);
             },
-            _process: function () {
+            _process: function (a) {
                 FB.Data.timer = -1;
-                var a = {},
-                    b = FB.Data.queue;
+                var b = {},
+                    c = FB.Data.queue;
+                if (!c.length) return;
                 FB.Data.queue = [];
-                for (var c = 0; c < b.length; c++) {
-                    var d = b[c];
-                    if (d.where.type == 'index' && !d.hasDependency) {
-                        FB.Data._mergeIndexQuery(d, a);
-                    } else a[d.name] = d;
+                for (var d = 0; d < c.length; d++) {
+                    var e = c[d];
+                    if (e.where.type == 'index' && !e.hasDependency) {
+                        FB.Data._mergeIndexQuery(e, b);
+                    } else b[e.name] = e;
                 }
-                var e = {
+                var f = {
                     q: {}
                 };
-                FB.copy(e.q, a, true, function (f) {
-                    return f.toFql();
+                FB.copy(f.q, b, true, function (g) {
+                    return g.toFql();
                 });
-                e.queries = ES5('JSON', 'stringify', false, e.queries);
-                FB.api('/fql', 'GET', e, function (f) {
-                    if (f.error) {
-                        ES5(ES5('Object', 'keys', false, a), 'forEach', true, function (g) {
-                            a[g].error(new Error(f.error.message));
+                f.queries = ES5('JSON', 'stringify', false, f.queries);
+                if (a) f.access_token = a;
+                FB.api('/fql', 'GET', f, function (g) {
+                    if (g.error) {
+                        ES5(ES5('Object', 'keys', false, b), 'forEach', true, function (h) {
+                            b[h].error(new Error(g.error.message));
                         });
-                    } else ES5(f.data, 'forEach', true, function (g) {
-                        a[g.name].set(g.fql_result_set);
+                    } else ES5(g.data, 'forEach', true, function (h) {
+                        b[h.name].set(h.fql_result_set);
                     });
                 });
             },
@@ -4744,10 +4580,10 @@ if (!FB) {
                 if (c) b = '<a class="fb_link" href="' + c + '">' + b + '</a>';
                 return b;
             },
-            invokeHandler: function (handler, scope, args) {
-                if (handler) if (typeof handler === 'string') {
-                    eval(handler);
-                } else if (handler.apply) handler.apply(scope, args || []);
+            invokeHandler: function (a, b, c) {
+                if (a) if (typeof a === 'string') {
+                    FB.safeEval(a);
+                } else if (a.apply) a.apply(b, c || []);
             },
             fireEvent: function (a, b) {
                 var c = b._attr.href;
@@ -5444,6 +5280,7 @@ if (!FB) {
                     href: this.getAttribute('href'),
                     permalink: this.getAttribute('permalink'),
                     publish_feed: this.getAttribute('publish_feed'),
+                    order_by: this.getAttribute('order_by'),
                     mobile: this._getBoolAttribute('mobile')
                 };
                 if (FB.initSitevars.enableMobileComments && FB.UA.mobile() && a.mobile !== false) a.mobile = true;
@@ -7056,35 +6893,9 @@ if (!FB) {
             }
         });
         void(0);;
-        __d("UrlMapConfig", [], {
-            "www": "www.facebook.com",
-            "m": "m.facebook.com",
-            "connect": "connect.facebook.net",
-            "api_https": "api.facebook.com",
-            "api_read_https": "api-read.facebook.com",
-            "graph_https": "graph.facebook.com",
-            "fbcdn_http": "static.ak.fbcdn.net",
-            "fbcdn_https": "s-static.ak.fbcdn.net",
-            "cdn_http": "static.ak.facebook.com",
-            "cdn_https": "s-static.ak.facebook.com"
-        });
-        __d("ApiClientConfig", [], {
-            "FlashRequest": {
-                "swfUrl": "https:\/\/s-static.ak.fbcdn.net\/rsrc.php\/v1\/y5\/r\/SrnvQJBTxo-.swf"
-            }
-        });
-        __d("SDKConfig", [], {
-            "migrate": 0
-        });
-        __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=6",
-            "Flash": {
-                "path": "https:\/\/s-static.ak.fbcdn.net\/rsrc.php\/v1\/ys\/r\/WON-TVLCpDP.swf"
-            },
-            "useCdn": true
-        });;
     }).call(FB);
-}
+})()
+
 
 FB.provide("", {
     "_domain": {
@@ -7104,12 +6915,8 @@ FB.provide("", {
     "_locale": "fr_FR",
     "_localeIsRtl": false
 }, true);
-FB.provide("Flash", {
-    "_minVersions": [
-        [10, 3, 181, 34],
-        [11, 0, 0]
-    ],
-    "_swfPath": "rsrc.php\/v1\/ym\/r\/WT2HOUZkT6k.swf"
+FB.provide("Arbiter", {
+    "_canvasProxyUrl": "connect\/canvas_proxy.php?version=6"
 }, true);
 FB.provide('Auth', {
     "_xdStorePath": "xd_localstorage\/v2"
@@ -7118,52 +6925,55 @@ FB.provide("Canvas.Prefetcher", {
     "_appIdsBlacklist": [144959615576466],
     "_sampleRate": 500
 }, true);
-FB.initSitevars = {
-    "parseXFBMLBeforeDomReady": false,
-    "computeContentSizeVersion": 0,
-    "enableMobile": 1,
-    "enableMobileComments": 1,
-    "forceSecureXdProxy": 1,
-    "iframePermissions": {
-        "read_stream": false,
-        "manage_mailbox": false,
-        "manage_friendlists": false,
-        "read_mailbox": false,
-        "publish_checkins": true,
-        "status_update": true,
-        "photo_upload": true,
-        "video_upload": true,
-        "sms": false,
-        "create_event": true,
-        "rsvp_event": true,
-        "offline_access": true,
-        "email": true,
-        "xmpp_login": false,
-        "create_note": true,
-        "share_item": true,
-        "export_stream": false,
-        "publish_stream": true,
-        "publish_likes": true,
-        "ads_management": false,
-        "contact_email": true,
-        "access_private_data": false,
-        "read_insights": false,
-        "read_requests": false,
-        "read_friendlists": true,
-        "manage_pages": false,
-        "physical_login": false,
-        "manage_groups": false,
-        "read_deals": false
-    }
-};
-FB.forceOAuth = true;
-FB.widgetPipeEnabledApps = {
-    "111476658864976": 1,
-    "cca6477272fc5cb805f85a84f20fca1d": 1,
-    "179150165472010": 1
-};
-FB.widgetPipeTagCountThreshold = 4;
-FB._iframeLoginButton = false;
+FB.provide('', {
+    "initSitevars": {
+        "parseXFBMLBeforeDomReady": false,
+        "computeContentSizeVersion": 0,
+        "enableMobile": 1,
+        "enableMobileComments": 1,
+        "forceSecureXdProxy": 1,
+        "iframePermissions": {
+            "read_stream": false,
+            "manage_mailbox": false,
+            "manage_friendlists": false,
+            "read_mailbox": false,
+            "publish_checkins": true,
+            "status_update": true,
+            "photo_upload": true,
+            "video_upload": true,
+            "sms": false,
+            "create_event": true,
+            "rsvp_event": true,
+            "offline_access": true,
+            "email": true,
+            "xmpp_login": false,
+            "create_note": true,
+            "share_item": true,
+            "export_stream": false,
+            "publish_stream": true,
+            "publish_likes": true,
+            "ads_management": false,
+            "contact_email": true,
+            "access_private_data": false,
+            "read_insights": false,
+            "read_requests": false,
+            "read_friendlists": true,
+            "manage_pages": false,
+            "physical_login": false,
+            "manage_groups": false,
+            "read_deals": false
+        }
+    },
+    "widgetPipeEnabledApps": {
+        "111476658864976": 1,
+        "cca6477272fc5cb805f85a84f20fca1d": 1,
+        "179150165472010": 1
+    },
+    "widgetPipeTagCountThreshold": 4
+});
+FB.provide('', {
+    "_iframeLoginButton": 0
+});
 FB.provide("TemplateData", {
     "_enabled": 0
 }, true);
