@@ -1,8 +1,15 @@
-/*1349859089,172025644,JIT Construction: v644018,fr_FR*/
+/*1350460883,172628267,JIT Construction: v649768,fr_FR*/
 
+/**
+ * Copyright Facebook Inc.
+ *
+ * Licensed under the Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
 try {
     window.FB || (function (window) {
-        var document = window.document;
+        var self = window,
+            document = window.document;
         var ES5 = function () {
                 __d("ES5ArrayPrototype", [], function (a, b, c, d, e, f) {
                     var g = {};
@@ -1751,25 +1758,16 @@ try {
             var g = b('copyProperties'),
                 h = {};
 
-            function i(l, m) {
-                return function () {
-                    m.apply(l, arguments);
-                };
-            }
-            function j() {
-                var l = Array.prototype.slice.call(arguments);
-                for (var m = 0; m < l.length; m++) if (typeof l[m] != 'undefined') return l[m];
-            }
-            function k(l) {
+            function i(j) {
                 this._opts = g({
                     interval: 0,
                     processor: null
-                }, l);
+                }, j);
                 this._queue = [];
                 this._stopped = true;
             }
-            g(k.prototype, {
-                _dispatch: function (l) {
+            g(i.prototype, {
+                _dispatch: function (j) {
                     if (this._stopped || this._queue.length === 0) return;
                     if (!this._opts.processor) {
                         this._stopped = true;
@@ -1777,17 +1775,17 @@ try {
                     }
                     if (this._opts.interval) {
                         this._opts.processor.call(this, this._queue.shift());
-                        this._timeout = setTimeout(i(this, this._dispatch), this._opts.interval);
+                        this._timeout = setTimeout(ES5(this._dispatch, 'bind', true, this), this._opts.interval);
                     } else while (this._queue.length) this._opts.processor.call(this, this._queue.shift());
                 },
-                enqueue: function (l) {
+                enqueue: function (j) {
                     if (this._opts.processor && !this._stopped) {
-                        this._opts.processor.call(this, l);
-                    } else this._queue.push(l);
+                        this._opts.processor.call(this, j);
+                    } else this._queue.push(j);
                     return this;
                 },
-                start: function (l) {
-                    if (l) this._opts.processor = l;
+                start: function (j) {
+                    if (j) this._opts.processor = j;
                     this._stopped = false;
                     this._dispatch();
                     return this;
@@ -1795,14 +1793,14 @@ try {
                 dispatch: function () {
                     this._dispatch(true);
                 },
-                stop: function (l) {
+                stop: function (j) {
                     this._stopped = true;
-                    if (j(l, false)) clearTimeout(this._timeout);
+                    if (j) clearTimeout(this._timeout);
                     return this;
                 },
-                merge: function (l, m) {
-                    this._queue[m ? 'unshift' : 'push'].apply(this._queue, l._queue);
-                    l._queue = [];
+                merge: function (j, k) {
+                    this._queue[k ? 'unshift' : 'push'].apply(this._queue, j._queue);
+                    j._queue = [];
                     this._dispatch();
                     return this;
                 },
@@ -1810,22 +1808,22 @@ try {
                     return this._queue.length;
                 }
             });
-            g(k, {
-                get: function (l, m) {
-                    var n;
-                    if (l in h) {
-                        n = h[l];
-                    } else n = h[l] = new k(m);
-                    return n;
+            g(i, {
+                get: function (j, k) {
+                    var l;
+                    if (j in h) {
+                        l = h[j];
+                    } else l = h[j] = new i(k);
+                    return l;
                 },
-                exists: function (l) {
-                    return l in h;
+                exists: function (j) {
+                    return j in h;
                 },
-                remove: function (l) {
-                    return delete h[l];
+                remove: function (j) {
+                    return delete h[j];
                 }
             });
-            e.exports = k;
+            e.exports = i;
         });
         __d("FlashRequest", ["DOMWrapper", "Flash", "GlobalCallback", "QueryString", "Queue"], function (a, b, c, d, e, f) {
             var g = b('DOMWrapper'),
@@ -5205,41 +5203,6 @@ try {
                 FB.XFBML.parse(a, c);
             }
         });
-        FB.provide('String', {
-            format: function (a) {
-                if (!FB.String.format._formatRE) FB.String.format._formatRE = /(\{[^\}^\{]+\})/g;
-                var b = arguments;
-                return a.replace(FB.String.format._formatRE, function (c, d) {
-                    var e = parseInt(d.substr(1), 10),
-                        f = b[e + 1];
-                    if (f === null || f === undefined) return '';
-                    return f.toString();
-                });
-            },
-            escapeHTML: function (a) {
-                var b = document.createElement('div');
-                b.appendChild(document.createTextNode(a));
-                return b.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-            },
-            quote: function (a) {
-                var b = /["\\\x00-\x1f\x7f-\x9f]/g,
-                    c = {
-                        '\b': '\\b',
-                        '\t': '\\t',
-                        '\n': '\\n',
-                        '\f': '\\f',
-                        '\r': '\\r',
-                        '"': '\\"',
-                        '\\': '\\\\'
-                    };
-                return b.test(a) ? '"' + a.replace(b, function (d) {
-                    var e = c[d];
-                    if (e) return e;
-                    e = d.charCodeAt();
-                    return '\\u00' + Math.floor(e / 16).toString(16) + (e % 16).toString(16);
-                }) + '"' : '"' + a + '"';
-            }
-        });
         FB.subclass('Waitable', 'Obj', function () {}, {
             set: function (a) {
                 this.setProperty('value', a);
@@ -5435,6 +5398,41 @@ try {
             },
             timer: -1,
             queue: []
+        });
+        FB.provide('String', {
+            format: function (a) {
+                if (!FB.String.format._formatRE) FB.String.format._formatRE = /(\{[^\}^\{]+\})/g;
+                var b = arguments;
+                return a.replace(FB.String.format._formatRE, function (c, d) {
+                    var e = parseInt(d.substr(1), 10),
+                        f = b[e + 1];
+                    if (f === null || f === undefined) return '';
+                    return f.toString();
+                });
+            },
+            escapeHTML: function (a) {
+                var b = document.createElement('div');
+                b.appendChild(document.createTextNode(a));
+                return b.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            },
+            quote: function (a) {
+                var b = /["\\\x00-\x1f\x7f-\x9f]/g,
+                    c = {
+                        '\b': '\\b',
+                        '\t': '\\t',
+                        '\n': '\\n',
+                        '\f': '\\f',
+                        '\r': '\\r',
+                        '"': '\\"',
+                        '\\': '\\\\'
+                    };
+                return b.test(a) ? '"' + a.replace(b, function (d) {
+                    var e = c[d];
+                    if (e) return e;
+                    e = d.charCodeAt();
+                    return '\\u00' + Math.floor(e / 16).toString(16) + (e % 16).toString(16);
+                }) + '"' : '"' + a + '"';
+            }
         });
         FB.provide('Frictionless', {
             _allowedRecipients: {},
@@ -5713,7 +5711,7 @@ try {
             },
             _isStale: function (a) {
                 if (!a || !a.version || a.version != FB.TemplateData._version || a.currentUserID != FB.getUserID()) return true;
-                var b = Math.round((new Date()).getTime());
+                var b = Math.round(ES5('Date', 'now', false));
                 return (b - a.setAt) / 1000 > FB.TemplateData._localStorageTimeout;
             },
             getResponse: function () {
@@ -5753,7 +5751,7 @@ try {
                     var d = {
                         data: c,
                         currentUserID: FB.getUserID(),
-                        setAt: (new Date()).getTime(),
+                        setAt: ES5('Date', 'now', false),
                         version: FB.TemplateData._version
                     };
                     FB.TemplateData.saveResponse(d);
@@ -6329,9 +6327,9 @@ try {
                     h = null,
                     i = a.style,
                     j = setInterval(ES5(function () {
-                        if (!h) h = new Date().getTime();
+                        if (!h) h = ES5('Date', 'now', false);
                         var k = 1;
-                        if (c != 0) k = Math.min((new Date().getTime() - h) / c, 1);
+                        if (c != 0) k = Math.min((ES5('Date', 'now', false) - h) / c, 1);
                         ES5(FB.Array, 'forEach', true, b, ES5(function (l, m) {
                             if (!f[m]) {
                                 var n = FB.Dom.getStyle(a, m);
@@ -7273,11 +7271,11 @@ try {
                     function n() {
                         k();
                         m = null;
-                        l = (new Date()).getTime();
+                        l = ES5('Date', 'now', false);
                     }
                     return function () {
                         if (!m) {
-                            var o = (new Date()).getTime();
+                            var o = ES5('Date', 'now', false);
                             if (o - l < j) {
                                 m = window.setTimeout(n, j - (o - l));
                             } else n();
@@ -7569,13 +7567,7 @@ try {
         }, true);
         FB.provide('', {
             "initSitevars": {
-                "parseXFBMLBeforeDomReady": false,
-                "computeContentSizeVersion": 0,
-                "enableMobile": 1,
                 "enableMobileComments": 1,
-                "forceSecureXdProxy": 1,
-                "useAsync": 0,
-                "rpc": 1,
                 "iframePermissions": {
                     "read_stream": false,
                     "manage_mailbox": false,
