@@ -1,4 +1,4 @@
-/*1357721347,177610033,JIT Construction: v708694,fr_FR*/
+/*1358327495,180695069,JIT Construction: v713315,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -825,6 +825,9 @@ try {
             var m = {
                 isInstanceOf: k,
                 isTrue: i,
+                isTruthy: function (n, o) {
+                    return i( !! n, o);
+                },
                 type: j,
                 define: function (n, o) {
                     n = n.substring(0, 1).toUpperCase() + n.substring(1).toLowerCase();
@@ -1307,7 +1310,7 @@ try {
             e.exports = i;
         });
         __d("UrlMap", ["UrlMapConfig"], function (a, b, c, d, e, f) {
-            var g = c('UrlMapConfig'),
+            var g = b('UrlMapConfig'),
                 h = {
                     resolve: function (i, j) {
                         var k = typeof j == 'undefined' ? location.protocol.replace(':', '') : j ? 'https' : 'http';
@@ -1821,6 +1824,29 @@ try {
             };
             e.exports = j;
         });
+        __d("emptyFunction", ["copyProperties"], function (a, b, c, d, e, f) {
+            var g = b('copyProperties');
+
+            function h(j) {
+                return function () {
+                    return j;
+                };
+            }
+            function i() {}
+            g(i, {
+                thatReturns: h,
+                thatReturnsFalse: h(false),
+                thatReturnsTrue: h(true),
+                thatReturnsNull: h(null),
+                thatReturnsThis: function () {
+                    return this;
+                },
+                thatReturnsArgument: function (j) {
+                    return j;
+                }
+            });
+            e.exports = i;
+        });
         __d("Flash", ["DOMWrapper", "QueryString", "UserAgent", "copyProperties", "guid"], function (a, b, c, d, e, f) {
             var g = b('DOMWrapper'),
                 h = b('QueryString'),
@@ -1896,215 +1922,193 @@ try {
             };
             e.exports = s;
         });
-        __d("emptyFunction", ["copyProperties"], function (a, b, c, d, e, f) {
-            var g = b('copyProperties');
-
-            function h(j) {
-                return function () {
-                    return j;
-                };
-            }
-            function i() {}
-            g(i, {
-                thatReturns: h,
-                thatReturnsFalse: h(false),
-                thatReturnsTrue: h(true),
-                thatReturnsNull: h(null),
-                thatReturnsThis: function () {
-                    return this;
-                },
-                thatReturnsArgument: function (j) {
-                    return j;
-                }
-            });
-            e.exports = i;
-        });
-        __d("XDM", ["DOMEventListener", "DOMWrapper", "Flash", "Log", "UserAgent", "emptyFunction", "guid"], function (a, b, c, d, e, f) {
+        __d("XDM", ["DOMEventListener", "DOMWrapper", "emptyFunction", "Flash", "guid", "Log", "UserAgent", "wrapFunction"], function (a, b, c, d, e, f) {
             var g = b('DOMEventListener'),
                 h = b('DOMWrapper'),
-                i = b('Flash'),
-                j = b('Log'),
-                k = b('UserAgent'),
-                l = b('emptyFunction'),
-                m = b('guid'),
-                n = {},
-                o = {
+                i = b('emptyFunction'),
+                j = b('Flash'),
+                k = b('guid'),
+                l = b('Log'),
+                m = b('UserAgent'),
+                n = b('wrapFunction'),
+                o = {},
+                p = {
                     transports: []
                 },
-                p = h.getWindow();
+                q = h.getWindow();
 
-            function q(s) {
-                var t = {},
-                    u = s.length,
-                    v = o.transports;
-                while (u--) t[s[u]] = 1;
-                u = v.length;
-                while (u--) {
-                    var w = v[u],
-                        x = n[w];
-                    if (!t[w] && x.isAvailable()) return w;
+            function r(t) {
+                var u = {},
+                    v = t.length,
+                    w = p.transports;
+                while (v--) u[t[v]] = 1;
+                v = w.length;
+                while (v--) {
+                    var x = w[v],
+                        y = o[x];
+                    if (!u[x] && y.isAvailable()) return x;
                 }
             }
-            var r = {
-                register: function (s, t) {
-                    j.debug('Registering %s as XDM provider', s);
-                    o.transports.push(s);
-                    n[s] = t;
+            var s = {
+                register: function (t, u) {
+                    l.debug('Registering %s as XDM provider', t);
+                    p.transports.push(t);
+                    o[t] = u;
                 },
-                create: function (s) {
-                    if (!s.whenReady && !s.onMessage) {
-                        j.error('An instance without whenReady or onMessage makes no sense');
+                create: function (t) {
+                    if (!t.whenReady && !t.onMessage) {
+                        l.error('An instance without whenReady or onMessage makes no sense');
                         throw new Error('An instance without whenReady or ' + 'onMessage makes no sense');
                     }
-                    if (!s.channel) {
-                        j.warn('Missing channel name, selecting at random');
-                        s.channel = m();
+                    if (!t.channel) {
+                        l.warn('Missing channel name, selecting at random');
+                        t.channel = k();
                     }
-                    if (!s.whenReady) s.whenReady = l;
-                    if (!s.onMessage) s.onMessage = l;
-                    var t = s.transport || q(s.blacklist || []),
-                        u = n[t];
-                    if (u && u.isAvailable()) {
-                        j.debug('%s is available', t);
-                        u.init(s);
-                        return t;
+                    if (!t.whenReady) t.whenReady = i;
+                    if (!t.onMessage) t.onMessage = i;
+                    var u = t.transport || r(t.blacklist || []),
+                        v = o[u];
+                    if (v && v.isAvailable()) {
+                        l.debug('%s is available', u);
+                        v.init(t);
+                        return u;
                     }
                 }
             };
-            r.register('fragment', (function () {
-                var s = false,
-                    t, u = location.protocol + '//' + location.host;
+            s.register('fragment', (function () {
+                var t = false,
+                    u, v = location.protocol + '//' + location.host;
 
-                function v(w) {
-                    var x = document.createElement('iframe');
-                    x.src = 'javascript:false';
-                    var y = g.add(x, 'load', function () {
-                        y.remove();
+                function w(x) {
+                    var y = document.createElement('iframe');
+                    y.src = 'javascript:false';
+                    var z = g.add(y, 'load', function () {
+                        z.remove();
                         setTimeout(function () {
-                            x.parentNode.removeChild(x);
+                            y.parentNode.removeChild(y);
                         }, 5000);
                     });
-                    t.appendChild(x);
-                    x.src = w;
+                    u.appendChild(y);
+                    y.src = x;
                 }
                 return {
                     isAvailable: function () {
                         return true;
                     },
-                    init: function (w) {
-                        j.debug('init fragment');
-                        var x = {
-                            send: function (y, z, aa, ba) {
-                                j.debug('sending to: %s (%s)', z + w.channelPath, ba);
-                                v(z + w.channelPath + y + '&xd_rel=parent.parent&relation=parent.parent&xd_origin=' + encodeURIComponent(u));
+                    init: function (x) {
+                        l.debug('init fragment');
+                        var y = {
+                            send: function (z, aa, ba, ca) {
+                                l.debug('sending to: %s (%s)', aa + x.channelPath, ca);
+                                w(aa + x.channelPath + z + '&xd_rel=parent.parent&relation=parent.parent&xd_origin=' + encodeURIComponent(v));
                             }
                         };
-                        if (s) {
-                            w.whenReady(x);
+                        if (t) {
+                            x.whenReady(y);
                             return;
                         }
-                        t = w.root;
-                        s = true;
-                        w.whenReady(x);
+                        u = x.root;
+                        t = true;
+                        x.whenReady(y);
                     }
                 };
             })());
-            r.register('flash', (function () {
-                var s = false,
-                    t, u = {},
-                    v = false,
-                    w = 15000,
-                    x;
+            s.register('flash', (function () {
+                var t = false,
+                    u, v = {},
+                    w = false,
+                    x = 15000,
+                    y;
                 return {
                     isAvailable: function () {
-                        return i.checkMinVersion('8.0.24');
+                        return j.checkMinVersion('8.0.24');
                     },
-                    init: function (y) {
-                        j.debug('init flash: ' + y.channel);
-                        var z = {
-                            send: function (ca, da, ea, fa) {
-                                j.debug('sending to: %s (%s)', da, fa);
-                                t.postMessage(ca, da, fa);
+                    init: function (z) {
+                        l.debug('init flash: ' + z.channel);
+                        var aa = {
+                            send: function (da, ea, fa, ga) {
+                                l.debug('sending to: %s (%s)', ea, ga);
+                                u.postMessage(da, ea, ga);
                             }
                         };
-                        if (s) {
-                            y.whenReady(z);
+                        if (t) {
+                            z.whenReady(aa);
                             return;
                         }
-                        var aa = y.root.appendChild(p.document.createElement('div')),
-                            ba = m();
-                        u[ba] = function () {
-                            clearTimeout(x);
-                            j.info('xdm.swf called the callback');
-                            delete u[ba];
-                            ba = m();
-                            u[ba] = function (ca, da) {
-                                ca = decodeURIComponent(ca);
-                                j.debug('received message %s from %s', ca, da);
-                                y.onMessage(ca, da);
-                            };
-                            t.init(y.channel, 'FB_XDM_CALLBACKS.' + ba);
-                            y.whenReady(z);
-                        };
-                        p.FB_XDM_CALLBACKS = u;
-                        t = i.embed(y.flashUrl, aa, null, {
+                        var ba = z.root.appendChild(q.document.createElement('div')),
+                            ca = k();
+                        v[ca] = n(function () {
+                            clearTimeout(y);
+                            l.info('xdm.swf called the callback');
+                            delete v[ca];
+                            ca = k();
+                            v[ca] = n(function (da, ea) {
+                                da = decodeURIComponent(da);
+                                l.debug('received message %s from %s', da, ea);
+                                z.onMessage(da, ea);
+                            }, 'entry', 'xdm.swf:onMessage');
+                            u.init(z.channel, 'FB_XDM_CALLBACKS.' + ca);
+                            z.whenReady(aa);
+                        }, 'entry', 'xdm.swf:load');
+                        q.FB_XDM_CALLBACKS = v;
+                        u = j.embed(z.flashUrl, ba, null, {
                             protocol: location.protocol.replace(':', ''),
                             host: location.host,
-                            callback: 'FB_XDM_CALLBACKS.' + ba,
-                            log: v
+                            callback: 'FB_XDM_CALLBACKS.' + ca,
+                            log: w
                         });
-                        x = setTimeout(function () {
-                            j.warn('The Flash component did not load within %s ms - ' + 'verify that the container is not set to hidden or invisible ' + 'using CSS as this will cause some browsers to not load ' + 'the components', w);
-                        }, w);
-                        s = true;
+                        y = setTimeout(function () {
+                            l.warn('The Flash component did not load within %s ms - ' + 'verify that the container is not set to hidden or invisible ' + 'using CSS as this will cause some browsers to not load ' + 'the components', x);
+                        }, x);
+                        t = true;
                     }
                 };
             })());
-            r.register('postmessage', (function () {
-                var s = false;
+            s.register('postmessage', (function () {
+                var t = false;
                 return {
                     isAvailable: function () {
-                        return !!p.postMessage;
+                        return !!q.postMessage;
                     },
-                    init: function (t) {
-                        j.debug('init postMessage: ' + t.channel);
-                        var u = '_FB_' + t.channel,
-                            v = {
-                                send: function (w, x, y, z) {
-                                    if (p === y) {
-                                        j.error('Invalid windowref, equal to window (self)');
+                    init: function (u) {
+                        l.debug('init postMessage: ' + u.channel);
+                        var v = '_FB_' + u.channel,
+                            w = {
+                                send: function (x, y, z, aa) {
+                                    if (q === z) {
+                                        l.error('Invalid windowref, equal to window (self)');
                                         throw new Error();
                                     }
-                                    j.debug('sending to: %s (%s)', x, z);
-                                    var aa = function () {
-                                            y.postMessage('_FB_' + z + w, x);
+                                    l.debug('sending to: %s (%s)', y, aa);
+                                    var ba = function () {
+                                            z.postMessage('_FB_' + aa + x, y);
                                         };
-                                    if (k.ie() == 8) {
-                                        setTimeout(aa, 0);
-                                    } else aa();
+                                    if (m.ie() == 8) {
+                                        setTimeout(ba, 0);
+                                    } else ba();
                                 }
                             };
-                        if (s) {
-                            t.whenReady(v);
+                        if (t) {
+                            u.whenReady(w);
                             return;
                         }
-                        g.add(p, 'message', function (event) {
-                            var w = event.data,
-                                x = event.origin || 'native';
-                            if (typeof w != 'string') {
-                                j.warn('Received message of type %s from %s, expected a string', typeof w, x);
+                        g.add(q, 'message', n(function (event) {
+                            var x = event.data,
+                                y = event.origin || 'native';
+                            if (typeof x != 'string') {
+                                l.warn('Received message of type %s from %s, expected a string', typeof x, y);
                                 return;
                             }
-                            j.debug('received message %s from %s', w, x);
-                            if (w.substring(0, u.length) == u) w = w.substring(u.length);
-                            t.onMessage(w, x);
-                        });
-                        t.whenReady(v);
-                        s = true;
+                            l.debug('received message %s from %s', x, y);
+                            if (x.substring(0, v.length) == v) x = x.substring(v.length);
+                            u.onMessage(x, y);
+                        }, 'entry', 'onMessage'));
+                        u.whenReady(w);
+                        t = true;
                     }
                 };
             })());
-            e.exports = r;
+            e.exports = s;
         });
         __d("sdk.XD", ["sdk.Content", "sdk.createIframe", "sdk.Event", "guid", "Log", "QueryString", "Queue", "resolveURI", "resolveWindow", "sdk.RPC", "sdk.Runtime", "UrlMap", "URL", "wrapFunction", "XDM", "XDConfig"], function (a, b, c, d, e, f) {
             var g = b('sdk.Content'),
@@ -2260,7 +2264,7 @@ try {
                                 tabIndex: -1
                             });
                         },
-                        onMessage: t(ka, 'entry', 'XD:message')
+                        onMessage: ka
                     });
                 if (sa === 'fragment') window.FB_XD_onMessage = t(ka, 'entry', 'XD:fragment');
                 fa = true;
@@ -2342,24 +2346,25 @@ try {
                     var ha = q.parse(da.signedRequest);
                     if (ha && ha.user_id) ga = ha.user_id;
                 }
-                var ia = !fa && da,
-                    ja = fa && !da,
-                    ka = da && fa && fa != ga,
-                    la = da != u,
-                    ma = ea != (p.getLoginStatus() || 'unknown');
+                var ia = p.getLoginStatus(),
+                    ja = ia === 'unknown' && da,
+                    ka = fa && !da,
+                    la = da && fa && fa != ga,
+                    ma = da != u,
+                    na = ea != (ia || 'unknown');
                 p.setLoginStatus(ea);
                 p.setAccessToken(da && da.accessToken || null);
                 p.setUserID(ga);
                 u = da;
-                var na = {
+                var oa = {
                     authResponse: da,
                     status: ea
                 };
-                if (ja || ka) w.inform('logout', na);
-                if (ia || ka) w.inform('login', na);
-                if (la) w.inform('authresponse.change', na);
-                if (ma) w.inform('status.change', na);
-                return na;
+                if (ka || la) w.inform('logout', oa);
+                if (ja || la) w.inform('login', oa);
+                if (ma) w.inform('authresponse.change', oa);
+                if (na) w.inform('status.change', oa);
+                return oa;
             }
             function y() {
                 return u;
@@ -2509,7 +2514,7 @@ try {
                 return ba ? /^(true|1|yes|on)$/.test(ba) : null;
             }
             function n(z, aa) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 try {
                     return String(z[aa]);
@@ -2518,7 +2523,7 @@ try {
                 }
             }
             function o(z, aa) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 try {
                     z.innerHTML = aa;
@@ -2527,18 +2532,18 @@ try {
                 }
             }
             function p(z, aa) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 var ba = ' ' + n(z, 'className') + ' ';
                 return ES5(ba, 'indexOf', true, ' ' + aa + ' ') >= 0;
             }
             function q(z, aa) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 if (!p(z, aa)) z.className = n(z, 'className') + ' ' + aa;
             }
             function r(z, aa) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 var ba = new RegExp('\\s*' + aa, 'g');
                 z.className = ES5(n(z, 'className').replace(ba, ''), 'trim', true);
@@ -2554,7 +2559,7 @@ try {
                 return da;
             }
             function t(z, aa) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 aa = aa.replace(/-(\w)/g, function (da, ea) {
                     return ea.toUpperCase();
@@ -2565,7 +2570,7 @@ try {
                 return ca;
             }
             function u(z, aa, ba) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 g.isString(aa);
                 aa = aa.replace(/-(\w)/g, function (ca, da) {
                     return da.toUpperCase();
@@ -2600,7 +2605,7 @@ try {
                 };
             }
             function x(z) {
-                g.isTrue( !! z, 'element not specified');
+                g.isTruthy(z, 'element not specified');
                 var aa = 0,
                     ba = 0;
                 do {
@@ -4366,65 +4371,64 @@ try {
             };
             e.exports = q;
         });
-        __d("sdk.Canvas.IframeHandling", ["DOMWrapper", "sdk.RPC", "wrapFunction"], function (a, b, c, d, e, f) {
+        __d("sdk.Canvas.IframeHandling", ["DOMWrapper", "sdk.RPC"], function (a, b, c, d, e, f) {
             var g = b('DOMWrapper'),
                 h = b('sdk.RPC'),
-                i = b('wrapFunction'),
-                j = null,
-                k;
+                i = null,
+                j;
 
-            function l() {
-                var p = g.getWindow().document,
-                    q = p.body,
-                    r = p.documentElement,
+            function k() {
+                var o = g.getWindow().document,
+                    p = o.body,
+                    q = o.documentElement,
+                    r = Math.max(p.offsetTop, 0),
                     s = Math.max(q.offsetTop, 0),
-                    t = Math.max(r.offsetTop, 0),
-                    u = q.scrollHeight + s,
-                    v = q.offsetHeight + s,
-                    w = r.scrollHeight + t,
-                    x = r.offsetHeight + t;
-                return Math.max(u, v, w, x);
+                    t = p.scrollHeight + r,
+                    u = p.offsetHeight + r,
+                    v = q.scrollHeight + s,
+                    w = q.offsetHeight + s;
+                return Math.max(t, u, v, w);
             }
-            function m(p) {
-                if (typeof p != 'object') p = {};
-                var q = 0,
-                    r = 0;
-                if (!p.height) {
-                    p.height = l();
-                    q = 16;
-                    r = 4;
+            function l(o) {
+                if (typeof o != 'object') o = {};
+                var p = 0,
+                    q = 0;
+                if (!o.height) {
+                    o.height = k();
+                    p = 16;
+                    q = 4;
                 }
-                if (!p.frame) p.frame = window.name || 'iframe_canvas';
-                if (k) {
-                    var s = k.height,
-                        t = p.height - s;
-                    if (t <= r && t >= -q) return false;
+                if (!o.frame) o.frame = window.name || 'iframe_canvas';
+                if (j) {
+                    var r = j.height,
+                        s = o.height - r;
+                    if (s <= q && s >= -p) return false;
                 }
-                k = p;
-                h.remote.setSize(p);
+                j = o;
+                h.remote.setSize(o);
                 return true;
             }
-            function n(p, q) {
-                if (q === undefined && typeof p === 'number') {
-                    q = p;
-                    p = true;
+            function m(o, p) {
+                if (p === undefined && typeof o === 'number') {
+                    p = o;
+                    o = true;
                 }
-                if (p || p === undefined) {
-                    if (j === null) j = setInterval(function () {
-                        m();
-                    }, q || 100);
-                    m();
-                } else if (j !== null) {
-                    clearInterval(j);
-                    j = null;
+                if (o || o === undefined) {
+                    if (i === null) i = setInterval(function () {
+                        l();
+                    }, p || 100);
+                    l();
+                } else if (i !== null) {
+                    clearInterval(i);
+                    i = null;
                 }
             }
             h.stub('setSize');
-            var o = {
-                setSize: m,
-                setAutoGrow: n
+            var n = {
+                setSize: l,
+                setAutoGrow: m
             };
-            e.exports = o;
+            e.exports = n;
         });
         __d("sdk.Canvas.Navigation", ["sdk.RPC"], function (a, b, c, d, e, f) {
             var g = b('sdk.RPC');
@@ -5090,6 +5094,15 @@ try {
             };
             e.exports = m;
         });
+        __d("sdk.feature", ["SDKConfig"], function (a, b, c, d, e, f) {
+            var g = c('SDKConfig');
+
+            function h(i, j) {
+                if (g.features && i in g.features) return g.features[i];
+                return typeof j !== 'undefined' ? j : null;
+            }
+            e.exports = h;
+        });
         __d("runOnce", [], function (a, b, c, d, e, f) {
             function g(h) {
                 var i, j;
@@ -5103,120 +5116,135 @@ try {
             }
             e.exports = g;
         });
-        __d("XFBML", ["FB", "Assert", "copyProperties", "createArrayFrom", "sdk.Impressions", "Log", "ObservableMixin", "runOnce", "wrapFunction", "SDKConfig"], function (a, b, c, d, e, f) {
-            b('FB');
+        __d("XFBML", ["Assert", "copyProperties", "createArrayFrom", "sdk.DOM", "sdk.feature", "sdk.Impressions", "Log", "ObservableMixin", "runOnce", "UserAgent", "SDKConfig"], function (a, b, c, d, e, f) {
             var g = b('Assert'),
                 h = b('copyProperties'),
                 i = b('createArrayFrom'),
-                j = b('sdk.Impressions'),
-                k = b('Log'),
-                l = b('ObservableMixin'),
-                m = b('runOnce'),
-                n = c('SDKConfig'),
-                o = b('wrapFunction'),
-                p = {},
-                q = {},
-                r = 0,
-                s = new l();
+                j = b('sdk.DOM'),
+                k = b('sdk.feature'),
+                l = b('sdk.Impressions'),
+                m = b('Log'),
+                n = b('ObservableMixin'),
+                o = b('runOnce'),
+                p = c('SDKConfig'),
+                q = b('UserAgent'),
+                r = {},
+                s = {},
+                t = 0,
+                u = new n();
 
-            function t(aa, ba) {
-                return aa[ba] + '';
+            function v(ca, da) {
+                return ca[da] + '';
             }
-            function u(aa) {
-                return aa.scopeName ? (aa.scopeName + ':' + aa.nodeName) : '';
+            function w(ca) {
+                return ca.scopeName ? (ca.scopeName + ':' + ca.nodeName) : '';
             }
-            function v(aa) {
-                return p[t(aa, 'nodeName').toLowerCase()] || p[u(aa).toLowerCase()];
+            function x(ca) {
+                return r[v(ca, 'nodeName').toLowerCase()] || r[w(ca).toLowerCase()];
             }
-            function w(aa) {
-                var ba = ES5(ES5(t(aa, 'className'), 'trim', true).split(/\s+/), 'filter', true, function (ca) {
-                    return q.hasOwnProperty(ca);
+            function y(ca) {
+                var da = ES5(ES5(v(ca, 'className'), 'trim', true).split(/\s+/), 'filter', true, function (ea) {
+                    return s.hasOwnProperty(ea);
                 });
-                if (ba.length === 0) return undefined;
-                if (!aa.childNodes || aa.childNodes.length === 0 || (aa.childNodes.length == 1 && aa.childNodes[0].nodeType == 3) || aa.getAttribute('fb-xfbml-state')) return q[ba[0]];
+                if (da.length === 0) return undefined;
+                if (!ca.childNodes || ca.childNodes.length === 0 || (ca.childNodes.length == 1 && ca.childNodes[0].nodeType == 3) || ca.getAttribute('fb-xfbml-state')) return s[da[0]];
             }
-            function x(aa) {
-                var ba = {};
-                ES5(i(aa.attributes), 'forEach', true, function (ca) {
-                    ba[t(ca, 'name')] = t(ca, 'value');
+            function z(ca) {
+                var da = {};
+                ES5(i(ca.attributes), 'forEach', true, function (ea) {
+                    da[v(ea, 'name')] = v(ea, 'value');
                 });
-                return ba;
+                return da;
             }
-            function y(aa, ba, ca) {
-                g.isTrue(aa && aa.nodeType && aa.nodeType === 1 && !! aa.getElementsByTagName, 'Invalid DOM node passed to FB.XFBML.parse()');
-                g.isFunction(ba, 'Invalid callback passed to FB.XFBML.parse()');
-                var da = ++r;
-                k.info('XFBML Parsing Start %s', da);
-                var ea = 1,
-                    fa = 0,
-                    ga = function () {
-                        ea--;
-                        if (ea === 0) {
-                            k.info('XFBML Parsing Finish %s, %s tags found', da, fa);
-                            ba();
-                            s.inform('render', da, fa);
+            function aa(ca, da, ea) {
+                g.isTrue(ca && ca.nodeType && ca.nodeType === 1 && !! ca.getElementsByTagName, 'Invalid DOM node passed to FB.XFBML.parse()');
+                g.isFunction(da, 'Invalid callback passed to FB.XFBML.parse()');
+                var fa = ++t;
+                m.info('XFBML Parsing Start %s', fa);
+                var ga = 1,
+                    ha = 0,
+                    ia = function () {
+                        ga--;
+                        if (ga === 0) {
+                            m.info('XFBML Parsing Finish %s, %s tags found', fa, ha);
+                            da();
+                            u.inform('render', fa, ha);
                         }
-                        g.isTrue(ea >= 0, 'onrender() has been called too many times');
+                        g.isTrue(ga >= 0, 'onrender() has been called too many times');
                     };
-                ES5(i(aa.getElementsByTagName('*')), 'forEach', true, function (ia) {
-                    if (!ca && ia.getAttribute('fb-xfbml-state')) return;
-                    if (ia.nodeType !== 1) return;
-                    var ja = v(ia) || w(ia);
-                    if (!ja) return;
-                    ea++;
-                    fa++;
-                    var ka = new ja.ctor(ia, ja.xmlns, ja.localName, x(ia));
-                    ka.subscribe('render', m(function () {
-                        ia.setAttribute('fb-xfbml-state', 'rendered');
-                        ga();
+                ES5(i(ca.getElementsByTagName('*')), 'forEach', true, function (ka) {
+                    if (!ea && ka.getAttribute('fb-xfbml-state')) return;
+                    if (ka.nodeType !== 1) return;
+                    var la = y(ka),
+                        ma = z(ka);
+                    if (!la) {
+                        la = x(ka);
+                        if (!la) return;
+                        if (k('convert_xfbml', true) && q.ie() < 9) {
+                            var na = ka;
+                            ka = document.createElement('div');
+                            j.addCss(ka, la.xmlns + '-' + la.localName);
+                            ES5(i(na.childNodes), 'forEach', true, function (ra) {
+                                ka.appendChild(ra);
+                            });
+                            for (var oa in ma) if (ma.hasOwnProperty(oa)) ka.setAttribute(oa, ma[oa]);
+                            na.parentNode.replaceChild(ka, na);
+                        }
+                    }
+                    ga++;
+                    ha++;
+                    var pa = new la.ctor(ka, la.xmlns, la.localName, ma);
+                    pa.subscribe('render', o(function () {
+                        ka.setAttribute('fb-xfbml-state', 'rendered');
+                        ia();
                     }));
-                    var la = function () {
-                            if (ia.getAttribute('fb-xfbml-state') == 'parsed') {
-                                s.subscribe('render.queue', la);
+                    var qa = function () {
+                            if (ka.getAttribute('fb-xfbml-state') == 'parsed') {
+                                u.subscribe('render.queue', qa);
                             } else {
-                                ia.setAttribute('fb-xfbml-state', 'parsed');
-                                ka.process();
+                                ka.setAttribute('fb-xfbml-state', 'parsed');
+                                pa.process();
                             }
                         };
-                    la();
+                    qa();
                 });
-                s.inform('parse', da, fa);
-                var ha = 30000;
+                u.inform('parse', fa, ha);
+                var ja = 30000;
                 setTimeout(function () {
-                    if (ea > 0) k.warn('%s tags failed to render in %s ms', ea, ha);
-                }, ha);
-                ga();
+                    if (ga > 0) m.warn('%s tags failed to render in %s ms', ga, ja);
+                }, ja);
+                ia();
             }
-            s.subscribe('render', function () {
-                var aa = s.getSubscribers('render.queue');
-                s.clearSubscribers('render.queue');
-                ES5(aa, 'forEach', true, function (ba) {
-                    ba();
+            u.subscribe('render', function () {
+                var ca = u.getSubscribers('render.queue');
+                u.clearSubscribers('render.queue');
+                ES5(ca, 'forEach', true, function (da) {
+                    da();
                 });
             });
-            h(s, {
-                registerTag: function (aa) {
-                    var ba = aa.xmlns + ':' + aa.localName;
-                    g.isUndefined(p[ba], ba + ' already registered');
-                    p[ba] = aa;
-                    q[aa.xmlns + '-' + aa.localName] = aa;
+            h(u, {
+                registerTag: function (ca) {
+                    var da = ca.xmlns + ':' + ca.localName;
+                    g.isUndefined(r[da], da + ' already registered');
+                    r[da] = ca;
+                    s[ca.xmlns + '-' + ca.localName] = ca;
                 },
-                parse: function (aa, ba) {
-                    y(aa || document.body, ba ||
+                parse: function (ca, da) {
+                    aa(ca || document.body, da ||
                     function () {}, true);
                 },
                 parseNew: function () {
-                    y(document.body, function () {}, false);
+                    aa(document.body, function () {}, false);
                 }
             });
-            var z = function (aa, ba) {
-                    if (Math.random() < n.tagCountLogRate) setTimeout(ES5(j.log, 'bind', true, null, 102, {
-                        tag_count: ba
+            var ba = function (ca, da) {
+                    if (Math.random() < p.tagCountLogRate) setTimeout(ES5(l.log, 'bind', true, null, 102, {
+                        tag_count: da
                     }), 5000);
-                    s.unsubscribe('parse', z);
+                    u.unsubscribe('parse', ba);
                 };
-            s.subscribe('parse', z);
-            e.exports = s;
+            u.subscribe('parse', ba);
+            e.exports = u;
         });
         __d("PluginPipe", ["sdk.Content", "copyProperties", "guid", "insertIframe", "Miny", "ObservableMixin", "sdk.Runtime", "UrlMap", "UserAgent", "XFBML", "PluginPipeConfig", "SDKConfig"], function (a, b, c, d, e, f) {
             var g = b('sdk.Content'),
@@ -5396,19 +5424,8 @@ try {
                     var ga = y(fa, 'plugin_id');
                     this.subscribe('xd.resize', w(ga));
                     this.subscribe('xd.resize.flow', w(ga));
-                    this.subscribe('xd.resize', ES5(function (na) {
-                        v(this._config.root, aa(na.width), aa(na.height));
-                        v(this._iframe, aa(na.width), aa(na.height));
-                        this.updateLift();
-                        clearTimeout(this._timeoutID);
-                    }, 'bind', true, this));
                     this.subscribe('xd.resize.flow', ES5(function (na) {
                         v(this._config.root, aa(na.width), aa(na.height));
-                        this.updateLift();
-                        clearTimeout(this._timeoutID);
-                    }, 'bind', true, this));
-                    this.subscribe('xd.resize.iframe', ES5(function (na) {
-                        v(this._iframe, aa(na.width), aa(na.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
@@ -5448,6 +5465,17 @@ try {
                         height: ja.height || 1000,
                         onload: ES5(function () {
                             this._iframe = this._config.root.getElementsByTagName('iframe')[0];
+                            this.subscribe('xd.resize', ES5(function (na) {
+                                v(this._config.root, aa(na.width), aa(na.height));
+                                v(this._iframe, aa(na.width), aa(na.height));
+                                this.updateLift();
+                                clearTimeout(this._timeoutID);
+                            }, 'bind', true, this));
+                            this.subscribe('xd.resize.iframe', ES5(function (na) {
+                                v(this._iframe, aa(na.width), aa(na.height));
+                                this.updateLift();
+                                clearTimeout(this._timeoutID);
+                            }, 'bind', true, this));
                             this.inform('render');
                         }, 'bind', true, this)
                     };
@@ -5456,7 +5484,6 @@ try {
                     this._element.innerHTML = '';
                     this._element.appendChild(this._config.root);
                     this._timeoutID = setTimeout(ES5(function () {
-                        this._iframe && v(this._iframe, 0, 0);
                         j.warn('%s:%s failed to resize in 45s', this._ns, this._tag);
                     }, 'bind', true, this), 45 * 1000);
                     if (!l.add(this)) s(this._config);
@@ -5510,6 +5537,13 @@ try {
                     href: 'url',
                     layout: 'string',
                     show_faces: 'bool'
+                },
+                open_graph: {
+                    href: 'url',
+                    layout: 'string',
+                    show_faces: 'bool',
+                    action: 'string',
+                    action_properties: 'string'
                 },
                 page_events: {
                     href: 'url'
@@ -6074,9 +6108,7 @@ try {
             }
             e.exports = i;
         });
-        __d("sdk.Helper", ["FB", "sdk.Runtime", "sdk.ErrorHandling", "sdk.Event", "safeEval", "UrlMap"], function (a, b, c, d, e, f) {
-            b('FB');
-            b('sdk.Runtime');
+        __d("sdk.Helper", ["sdk.ErrorHandling", "sdk.Event", "safeEval", "UrlMap"], function (a, b, c, d, e, f) {
             var g = b('sdk.ErrorHandling'),
                 h = b('sdk.Event'),
                 i = b('safeEval'),
@@ -6646,8 +6678,7 @@ try {
                 });
             e.exports = j;
         });
-        __d("sdk.XFBML.Like", ["XFBML", "sdk.XFBML.EdgeWidget", "sdk.XFBML.SendButtonFormWidget"], function (a, b, c, d, e, f) {
-            b('XFBML');
+        __d("sdk.XFBML.Like", ["sdk.XFBML.EdgeWidget", "sdk.XFBML.SendButtonFormWidget"], function (a, b, c, d, e, f) {
             var g = b('sdk.XFBML.EdgeWidget'),
                 h = b('sdk.XFBML.SendButtonFormWidget'),
                 i = g.extend({
@@ -6736,8 +6767,7 @@ try {
                 });
             e.exports = k;
         });
-        __d("sdk.XFBML.LiveStream", ["XFBML", "sdk.XFBML.IframeWidget"], function (a, b, c, d, e, f) {
-            b('XFBML');
+        __d("sdk.XFBML.LiveStream", ["sdk.XFBML.IframeWidget"], function (a, b, c, d, e, f) {
             var g = b('sdk.XFBML.IframeWidget'),
                 h = g.extend({
                     _visibleAfter: 'load',
@@ -6800,8 +6830,7 @@ try {
                 });
             e.exports = i;
         });
-        __d("sdk.XFBML.Name", ["FB", "copyProperties", "sdk.Data", "escapeHTML", "sdk.Event", "sdk.XFBML.Element", "sdk.Helper", "Log", "sdk.Runtime"], function (a, b, c, d, e, f) {
-            b('FB');
+        __d("sdk.XFBML.Name", ["copyProperties", "sdk.Data", "escapeHTML", "sdk.Event", "sdk.XFBML.Element", "sdk.Helper", "Log", "sdk.Runtime"], function (a, b, c, d, e, f) {
             var g = b('copyProperties'),
                 h = b('sdk.Data'),
                 i = b('escapeHTML'),
@@ -6988,7 +7017,7 @@ try {
                         var y = ES5(function (z) {
                             var aa = z ? z[0] : null,
                                 ba = aa ? aa[t] : null;
-                            if (!ba) ba = p.resolve('fbcdn') + j.defPicMap[t];
+                            if (!ba) ba = p.resolve('fbcdn') + '/' + j.defPicMap[t];
                             var ca = ((u ? 'width:' + u + ';' : '') + (v ? 'height:' + u + ';' : '')),
                                 da = m('<img src="{0}" alt="{1}" title="{1}" style="{2}" class="{3}" />', ba, aa ? i(aa.name) : '', ca, this.dom.className);
                             if (this._getBoolAttribute('linked', true)) da = n.getProfileLink(aa, da, this.getAttribute('href', null));
