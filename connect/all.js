@@ -1,4 +1,4 @@
-/*1359540923,179389469,JIT Construction: v724062,fr_FR*/
+/*1360143053,177611542,JIT Construction: v729873,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -3876,7 +3876,7 @@ try {
                         url: 'dialog/oauth',
                         size: {
                             width: (y.mobile() ? null : 440),
-                            height: (y.mobile() ? null : 186)
+                            height: (y.mobile() ? null : 183)
                         },
                         transform: function (da) {
                             if (!w.getClientID()) {
@@ -5705,6 +5705,7 @@ try {
                     _visibleAfter: 'load',
                     _widgetPipeEnabled: false,
                     _borderReset: false,
+                    _repositioned: false,
                     getUrlBits: function () {
                         throw new Error('Inheriting class needs to implement getUrlBits().');
                     },
@@ -5856,6 +5857,7 @@ try {
                     },
                     _resizeIframe: function (aa) {
                         var ba = this.getIframeNode();
+                        if (aa.reposition) this._repositionIframe(aa);
                         aa.height && (ba.style.height = aa.height + 'px');
                         aa.width && (ba.style.width = aa.width + 'px');
                         this._updateIframeZIndex();
@@ -5872,6 +5874,26 @@ try {
                             ca = ba.style.height === aa.style.height && ba.style.width === aa.style.width,
                             da = ca ? 'removeCss' : 'addCss';
                         k[da](ba, 'fb_iframe_widget_lift');
+                    },
+                    _repositionIframe: function (aa) {
+                        var ba = this.getIframeNode(),
+                            ca = parseInt(k.getStyle(ba, 'width'), 10),
+                            da = k.getPosition(ba).x,
+                            ea = k.getViewportInfo().width,
+                            fa = parseInt(aa.width, 10);
+                        if (da + fa > ea) {
+                            ba.style.left = ca - fa + 'px';
+                            this.arbiterInform('xd/reposition', {
+                                type: 'horizontal'
+                            });
+                            this._repositioned = true;
+                        } else if (this._repositioned) {
+                            ba.style.left = '0px';
+                            this.arbiterInform('xd/reposition', {
+                                type: 'restore'
+                            });
+                            this._repositioned = false;
+                        }
                     },
                     _addLoader: function () {
                         if (!this._loaderDiv) {
