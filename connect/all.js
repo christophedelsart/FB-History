@@ -1,4 +1,4 @@
-/*1360143053,177611542,JIT Construction: v729873,fr_FR*/
+/*1360750322,173072459,JIT Construction: v735892,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -622,7 +622,7 @@ try {
         __d("XDConfig", [], {
             "XdUrl": "connect\/xd_arbiter.php?version=18",
             "Flash": {
-                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/ys\/r\/WON-TVLCpDP.swf"
+                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yy\/x\/WON-TVLCpDP.swf"
             },
             "useCdn": true
         });
@@ -689,25 +689,25 @@ try {
         });
         __d("ConnectBarConfig", [], {
             "imgs": {
-                "buttonUrl": "rsrc.php\/v2\/yY\/r\/h_Y6u1wrZPW.png",
-                "missingProfileUrl": "rsrc.php\/v2\/yo\/r\/UlIqmHJn-SK.gif"
+                "buttonUrl": "rsrc.php\/v2\/yY\/x\/h_Y6u1wrZPW.png",
+                "missingProfileUrl": "rsrc.php\/v2\/yR\/x\/UlIqmHJn-SK.gif"
             }
         });
         __d("ProfilePicConfig", [], {
             "defPicMap": {
-                "pic": "rsrc.php\/v1\/yh\/r\/C5yt7Cqf3zU.jpg",
-                "pic_big": "rsrc.php\/v2\/yL\/r\/HsTZSDw4avx.gif",
-                "pic_big_with_logo": "rsrc.php\/v2\/y5\/r\/SRDCaeCL7hM.gif",
-                "pic_small": "rsrc.php\/v1\/yi\/r\/odA9sNLrE86.jpg",
-                "pic_small_with_logo": "rsrc.php\/v2\/yD\/r\/k1xiRXKnlGd.gif",
-                "pic_square": "rsrc.php\/v2\/yo\/r\/UlIqmHJn-SK.gif",
-                "pic_square_with_logo": "rsrc.php\/v2\/yX\/r\/9dYJBPDHXwZ.gif",
-                "pic_with_logo": "rsrc.php\/v2\/yu\/r\/fPPR9f2FJ3t.gif"
+                "pic": "rsrc.php\/v1\/yx\/x\/C5yt7Cqf3zU.jpg",
+                "pic_big": "rsrc.php\/v2\/y0\/x\/HsTZSDw4avx.gif",
+                "pic_big_with_logo": "rsrc.php\/v2\/yt\/x\/SRDCaeCL7hM.gif",
+                "pic_small": "rsrc.php\/v1\/yj\/x\/odA9sNLrE86.jpg",
+                "pic_small_with_logo": "rsrc.php\/v2\/yj\/x\/k1xiRXKnlGd.gif",
+                "pic_square": "rsrc.php\/v2\/yR\/x\/UlIqmHJn-SK.gif",
+                "pic_square_with_logo": "rsrc.php\/v2\/ym\/x\/9dYJBPDHXwZ.gif",
+                "pic_with_logo": "rsrc.php\/v2\/ys\/x\/fPPR9f2FJ3t.gif"
             }
         });
         __d("ApiClientConfig", [], {
             "FlashRequest": {
-                "swfUrl": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/y5\/r\/SrnvQJBTxo-.swf"
+                "swfUrl": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yr\/x\/SrnvQJBTxo-.swf"
             }
         });
         __d("QueryString", [], function (a, b, c, d, e, f) {
@@ -1007,7 +1007,8 @@ try {
                     Scope: undefined,
                     Secure: undefined,
                     UseCookie: false,
-                    UserID: ''
+                    UserID: '',
+                    CookieUserID: ''
                 });
             i(k, {
                 ENVIRONMENTS: j,
@@ -2389,7 +2390,7 @@ try {
                     if (ha && ha.user_id) ga = ha.user_id;
                 }
                 var ia = p.getLoginStatus(),
-                    ja = ia === 'unknown' && da,
+                    ja = (ia === 'unknown' && da) || (p.getUseCookie() && p.getCookieUserID() !== ga),
                     ka = fa && !da,
                     la = da && fa && fa != ga,
                     ma = da != u,
@@ -3638,6 +3639,7 @@ try {
                     },
                     hide: function (r) {
                         var s = q._findRoot(r);
+                        q._hideLoader();
                         if (s == q._active) {
                             q._lowerActive();
                             q._restoreBodyPosition();
@@ -4306,7 +4308,7 @@ try {
                     return k.getAccessToken() || null;
                 },
                 getUserID: function () {
-                    return k.getUserID();
+                    return k.getUserID() || k.getCookieUserID();
                 },
                 login: function (n, o) {
                     if (o && o.perms && !o.scope) {
@@ -4337,12 +4339,15 @@ try {
                 if (k.getClientID()) if (n.authResponse) {
                     e.setAuthResponse(n.authResponse, 'connected');
                 } else if (k.getUseCookie()) {
-                    var o = f.loadSignedRequest();
-                    if (o) try {
-                        var q = l.parse(o);
-                        k.setUserID(q.user_id || '');
-                    } catch (p) {
-                        f.clearSignedRequestCookie();
+                    var o = f.loadSignedRequest(),
+                        p;
+                    if (o) {
+                        try {
+                            p = l.parse(o);
+                        } catch (q) {
+                            f.clearSignedRequestCookie();
+                        }
+                        if (p && p.user_id) k.setCookieUserID(p.user_id);
                     }
                     f.loadMeta();
                 }
@@ -5881,7 +5886,7 @@ try {
                             da = k.getPosition(ba).x,
                             ea = k.getViewportInfo().width,
                             fa = parseInt(aa.width, 10);
-                        if (da + fa > ea) {
+                        if (da + fa > ea && da > fa) {
                             ba.style.left = ca - fa + 'px';
                             this.arbiterInform('xd/reposition', {
                                 type: 'horizontal'
