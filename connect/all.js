@@ -1,4 +1,4 @@
-/*1360750322,173072459,JIT Construction: v735892,fr_FR*/
+/*1361353502,178600533,JIT Construction: v739790,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -622,7 +622,7 @@ try {
         __d("XDConfig", [], {
             "XdUrl": "connect\/xd_arbiter.php?version=18",
             "Flash": {
-                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yy\/x\/WON-TVLCpDP.swf"
+                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/ys\/r\/WON-TVLCpDP.swf"
             },
             "useCdn": true
         });
@@ -689,25 +689,25 @@ try {
         });
         __d("ConnectBarConfig", [], {
             "imgs": {
-                "buttonUrl": "rsrc.php\/v2\/yY\/x\/h_Y6u1wrZPW.png",
-                "missingProfileUrl": "rsrc.php\/v2\/yR\/x\/UlIqmHJn-SK.gif"
+                "buttonUrl": "rsrc.php\/v2\/yY\/r\/h_Y6u1wrZPW.png",
+                "missingProfileUrl": "rsrc.php\/v2\/yo\/r\/UlIqmHJn-SK.gif"
             }
         });
         __d("ProfilePicConfig", [], {
             "defPicMap": {
-                "pic": "rsrc.php\/v1\/yx\/x\/C5yt7Cqf3zU.jpg",
-                "pic_big": "rsrc.php\/v2\/y0\/x\/HsTZSDw4avx.gif",
-                "pic_big_with_logo": "rsrc.php\/v2\/yt\/x\/SRDCaeCL7hM.gif",
-                "pic_small": "rsrc.php\/v1\/yj\/x\/odA9sNLrE86.jpg",
-                "pic_small_with_logo": "rsrc.php\/v2\/yj\/x\/k1xiRXKnlGd.gif",
-                "pic_square": "rsrc.php\/v2\/yR\/x\/UlIqmHJn-SK.gif",
-                "pic_square_with_logo": "rsrc.php\/v2\/ym\/x\/9dYJBPDHXwZ.gif",
-                "pic_with_logo": "rsrc.php\/v2\/ys\/x\/fPPR9f2FJ3t.gif"
+                "pic": "rsrc.php\/v1\/yh\/r\/C5yt7Cqf3zU.jpg",
+                "pic_big": "rsrc.php\/v2\/yL\/r\/HsTZSDw4avx.gif",
+                "pic_big_with_logo": "rsrc.php\/v2\/y5\/r\/SRDCaeCL7hM.gif",
+                "pic_small": "rsrc.php\/v1\/yi\/r\/odA9sNLrE86.jpg",
+                "pic_small_with_logo": "rsrc.php\/v2\/yD\/r\/k1xiRXKnlGd.gif",
+                "pic_square": "rsrc.php\/v2\/yo\/r\/UlIqmHJn-SK.gif",
+                "pic_square_with_logo": "rsrc.php\/v2\/yX\/r\/9dYJBPDHXwZ.gif",
+                "pic_with_logo": "rsrc.php\/v2\/yu\/r\/fPPR9f2FJ3t.gif"
             }
         });
         __d("ApiClientConfig", [], {
             "FlashRequest": {
-                "swfUrl": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yr\/x\/SrnvQJBTxo-.swf"
+                "swfUrl": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/y5\/r\/SrnvQJBTxo-.swf"
             }
         });
         __d("QueryString", [], function (a, b, c, d, e, f) {
@@ -5862,7 +5862,7 @@ try {
                     },
                     _resizeIframe: function (aa) {
                         var ba = this.getIframeNode();
-                        if (aa.reposition) this._repositionIframe(aa);
+                        if (aa.reposition === "true") this._repositionIframe(aa);
                         aa.height && (ba.style.height = aa.height + 'px');
                         aa.width && (ba.style.width = aa.width + 'px');
                         this._updateIframeZIndex();
