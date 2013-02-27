@@ -1,4 +1,4 @@
-/*1361353502,178600533,JIT Construction: v739790,fr_FR*/
+/*1361959135,168571215,JIT Construction: v744757,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -6796,7 +6796,8 @@ try {
                             width: this._getPxAttribute('width', 300),
                             href: this.getAttribute('href'),
                             colorscheme: this.getAttribute('colorscheme', 'light'),
-                            border_color: this.getAttribute('border_color')
+                            border_color: this.getAttribute('border_color'),
+                            show_border: this._getBoolAttribute('show-border', true)
                         };
                         if (this._getBoolAttribute('force_wall', false)) this._attr.force_wall = true;
                         if (this._attr.connections === '0') {
