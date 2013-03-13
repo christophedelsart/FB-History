@@ -1,4 +1,4 @@
-/*1362694834,180765773,JIT Construction: v751345,fr_FR*/
+/*1363171207,171328816,JIT Construction: v755744,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -620,7 +620,7 @@ try {
             "cdn_https": "s-static.ak.facebook.com"
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=18",
+            "XdUrl": "connect\/xd_arbiter.php?version=19",
             "Flash": {
                 "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/y2\/r\/4SqLWH0DQtN.swf"
             },
@@ -2324,6 +2324,7 @@ try {
                             if (q.getSecure() !== true) z = h({
                                 url: xa + wa,
                                 name: 'fb_xdm_frame_http',
+                                id: 'fb_xdm_frame_http',
                                 root: sa,
                                 'aria-hidden': true,
                                 title: ga,
@@ -2332,6 +2333,7 @@ try {
                             aa = h({
                                 url: ya + wa,
                                 name: 'fb_xdm_frame_https',
+                                id: 'fb_xdm_frame_https',
                                 root: sa,
                                 'aria-hidden': true,
                                 title: ga,
