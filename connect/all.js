@@ -1,4 +1,4 @@
-/*1363771549,168602161,JIT Construction: v761327,fr_FR*/
+/*1364376524,173059873,JIT Construction: v767468,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -620,7 +620,7 @@ try {
             "cdn_https": "s-static.ak.facebook.com"
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=19",
+            "XdUrl": "connect\/xd_arbiter.php?version=20",
             "Flash": {
                 "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/y2\/r\/4SqLWH0DQtN.swf"
             },
@@ -4706,10 +4706,11 @@ try {
             e.exports = g;
         });
         __d("safeEval", [], function (a, b, c, d, e, f) {
-            function g(h) {
+            function g(h, i) {
                 if (h === null || typeof h === 'undefined') return;
                 if (typeof h !== 'string') return h;
-                return Function('return eval("' + h.replace(/"/g, '\\"') + '");')();
+                if (/^\w+$/.test(h) && typeof window[h] === 'function') return window[h].apply(null, i || []);
+                return Function('return eval("' + h.replace(/"/g, '\\"') + '");').apply(null, i || []);
             }
             e.exports = g;
         });
@@ -6203,7 +6204,7 @@ try {
                     },
                     invokeHandler: function (l, m, n) {
                         if (l) if (typeof l === 'string') {
-                            g.unguard(i)(l);
+                            g.unguard(i)(l, n);
                         } else if (l.apply) g.unguard(l).apply(m, n || []);
                     },
                     fireEvent: function (l, m) {
