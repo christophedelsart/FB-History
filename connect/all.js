@@ -1,4 +1,4 @@
-/*1364376524,173059873,JIT Construction: v767468,fr_FR*/
+/*1364981520,168639289,JIT Construction: v773890,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -622,7 +622,7 @@ try {
         __d("XDConfig", [], {
             "XdUrl": "connect\/xd_arbiter.php?version=20",
             "Flash": {
-                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/y2\/r\/4SqLWH0DQtN.swf"
+                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yX\/r\/VpkNidONSDC.swf"
             },
             "useCdn": true
         });
@@ -1881,6 +1881,9 @@ try {
                 },
                 thatReturnsArgument: function (j) {
                     return j;
+                },
+                mustImplement: function (j, k) {
+                    return function () {};
                 }
             });
             e.exports = i;
@@ -2114,6 +2117,7 @@ try {
                                 m.info('xdm.swf called the callback');
                                 var da = k.create(function (ea, fa) {
                                     ea = decodeURIComponent(ea);
+                                    fa = decodeURIComponent(fa);
                                     m.debug('received message %s from %s', ea, fa);
                                     z.onMessage(ea, fa);
                                 }, 'xdm.swf:onMessage');
