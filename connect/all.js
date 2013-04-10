@@ -1,4 +1,4 @@
-/*1364981520,168639289,JIT Construction: v773890,fr_FR*/
+/*1365585126,180750161,JIT Construction: v780823,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -620,7 +620,7 @@ try {
             "cdn_https": "s-static.ak.facebook.com"
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=20",
+            "XdUrl": "connect\/xd_arbiter.php?version=21",
             "Flash": {
                 "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yX\/r\/VpkNidONSDC.swf"
             },
@@ -1327,15 +1327,15 @@ try {
                 var m = Array.prototype.slice.call(arguments, 2),
                     n = g.apply(null, m),
                     o = window.console;
-                if (o && j.level >= k) o[l in o ? l : 'log'](n);
+                if (o && j.level >= l) o[k in o ? k : 'log'](n);
             }
             var j = {
                 level: -1,
                 Level: h,
-                debug: ES5(i, 'bind', true, null, h.DEBUG, 'debug'),
-                info: ES5(i, 'bind', true, null, h.INFO, 'debug'),
-                warn: ES5(i, 'bind', true, null, h.WARNING, 'debug'),
-                error: ES5(i, 'bind', true, null, h.ERROR, 'debug')
+                debug: ES5(i, 'bind', true, null, 'debug', h.DEBUG),
+                info: ES5(i, 'bind', true, null, 'info', h.INFO),
+                warn: ES5(i, 'bind', true, null, 'warn', h.WARNING),
+                error: ES5(i, 'bind', true, null, 'error', h.ERROR)
             };
             e.exports = j;
         });
@@ -3966,7 +3966,6 @@ try {
                             ha = p(),
                             ia = w.getSecure() || (fa !== 'auth.status' && fa != 'login.status');
                         i(da, {
-                            api_key: w.getClientID(),
                             app_id: w.getClientID(),
                             locale: w.getLocale(),
                             sdk: 'joey',
@@ -3979,7 +3978,6 @@ try {
                             id: ha,
                             size: ga.size || ca.getDefaultSize(),
                             url: x.resolve(da.display == 'touch' ? 'm' : 'www', ia) + '/' + ga.url,
-                            forceHTTPS: ia,
                             params: da,
                             name: fa,
                             dialog: j.newInstance(ha, da.display)
@@ -4115,6 +4113,7 @@ try {
                     },
                     async: function (da) {
                         da.params.redirect_uri = location.protocol + '//' + location.host + location.pathname;
+                        delete da.params.access_token;
                         v.remote.showDialog(da.params, function (ea) {
                             da.cb(ea.result);
                         });
@@ -4221,10 +4220,7 @@ try {
                             try {
                                 if (fa.close) {
                                     fa.close();
-                                    if (y.iphone()) {
-                                        var ia = /Version\/([\d\.]+)/.test(navigator.userAgent) ? parseFloat(RegExp.$1, 10) : null;
-                                        if (ia >= 6) window.focus();
-                                    }
+                                    if (/iPhone.*Version\/(5|6)/.test(navigator.userAgent) && RegExp.$1 !== '5') window.focus();
                                     ca._popupCount--;
                                 }
                             } catch (ha) {}
@@ -4260,6 +4256,10 @@ try {
                 if (!n.method) {
                     i.error('"method" is a required parameter for FB.ui().');
                     return null;
+                }
+                if (n.redirect_uri) {
+                    i.warn('When using FB.ui, you should not specify a redirect_uri.');
+                    delete n.redirect_uri;
                 }
                 if ((n.method == 'permissions.request' || n.method == 'permissions.oauth') && (n.display == 'iframe' || n.display == 'dialog')) {
                     var p = 'scope' in n ? n.scope : j.getScope();
