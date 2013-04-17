@@ -1,4 +1,4 @@
-/*1365585126,180750161,JIT Construction: v780823,fr_FR*/
+/*1366193807,168638791,JIT Construction: v787526,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -620,7 +620,7 @@ try {
             "cdn_https": "s-static.ak.facebook.com"
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=21",
+            "XdUrl": "connect\/xd_arbiter.php?version=22",
             "Flash": {
                 "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yX\/r\/VpkNidONSDC.swf"
             },
@@ -635,7 +635,7 @@ try {
             "usePluginPipe": true,
             "api": {
                 "mode": "warn",
-                "whitelist": ["Canvas", "Canvas.Prefetcher", "Canvas.Prefetcher.addStaticResource", "Canvas.Prefetcher.setCollectionMode", "Canvas.getPageInfo", "Canvas.hideFlashElement", "Canvas.scrollTo", "Canvas.setAutoGrow", "Canvas.setDoneLoading", "Canvas.setSize", "Canvas.setUrlHandler", "Canvas.showFlashElement", "Canvas.startTimer", "Canvas.stopTimer", "Data", "Data.process", "Data.query", "Data.query:wait", "Data.waitOn", "Data.waitOn:wait", "Event", "Event.subscribe", "Event.unsubscribe", "Music.flashCallback", "Music.init", "Music.send", "Payment", "Payment.init", "Payment.setSize", "ThirdPartyProvider", "ThirdPartyProvider.init", "ThirdPartyProvider.sendData", "UA", "UA.nativeApp", "XFBML", "XFBML.RecommendationsBar", "XFBML.RecommendationsBar.markRead", "XFBML.parse", "addFriend", "api", "getAccessToken", "getAuthResponse", "getLoginStatus", "getUserID", "init", "login", "logout", "publish", "share", "ui", "ui:subscribe"]
+                "whitelist": ["Canvas", "Canvas.Prefetcher", "Canvas.Prefetcher.addStaticResource", "Canvas.Prefetcher.setCollectionMode", "Canvas.getPageInfo", "Canvas.hideFlashElement", "Canvas.scrollTo", "Canvas.setAutoGrow", "Canvas.setDoneLoading", "Canvas.setSize", "Canvas.setUrlHandler", "Canvas.showFlashElement", "Canvas.startTimer", "Canvas.stopTimer", "Data", "Data.process", "Data.query", "Data.query:wait", "Data.waitOn", "Data.waitOn:wait", "Event", "Event.subscribe", "Event.unsubscribe", "Music.flashCallback", "Music.init", "Music.send", "Payment", "Payment.cancelFlow", "Payment.continueFlow", "Payment.init", "Payment.parse", "Payment.setSize", "ThirdPartyProvider", "ThirdPartyProvider.init", "ThirdPartyProvider.sendData", "UA", "UA.nativeApp", "XFBML", "XFBML.RecommendationsBar", "XFBML.RecommendationsBar.markRead", "XFBML.parse", "addFriend", "api", "getAccessToken", "getAuthResponse", "getLoginStatus", "getUserID", "init", "login", "logout", "publish", "share", "ui", "ui:subscribe"]
             },
             "initSitevars": {
                 "enableMobileComments": 1,
@@ -2704,6 +2704,22 @@ try {
             };
             e.exports = y;
         });
+        __d("sdk.feature", ["SDKConfig"], function (a, b, c, d, e, f) {
+            var g = c('SDKConfig');
+
+            function h(i, j) {
+                if (g.features && i in g.features) {
+                    var k = g.features[i];
+                    if (typeof k === 'object' && typeof k.rate === 'number') {
+                        if (k.rate && Math.floor(Math.random() * 100) + 1 <= k.rate) {
+                            return k.value || true;
+                        } else return k.value ? null : false;
+                    } else return k;
+                }
+                return typeof j !== 'undefined' ? j : null;
+            }
+            e.exports = h;
+        });
         __d("sdk.Scribe", ["UrlMap", "QueryString"], function (a, b, c, d, e, f) {
             var g = b('UrlMap'),
                 h = b('QueryString');
@@ -2719,94 +2735,92 @@ try {
             };
             e.exports = j;
         });
-        __d("sdk.ErrorHandling", ["UserAgent", "sdk.Scribe", "sdk.Runtime", "wrapFunction", "ManagedError", "SDKConfig"], function (a, b, c, d, e, f) {
-            var g = b('UserAgent'),
-                h = b('sdk.Scribe'),
-                i = c('SDKConfig'),
-                j = b('sdk.Runtime'),
-                k = b('wrapFunction'),
-                l = b('ManagedError'),
-                m = false,
+        __d("sdk.ErrorHandling", ["sdk.feature", "ManagedError", "sdk.Runtime", "sdk.Scribe", "UserAgent", "wrapFunction"], function (a, b, c, d, e, f) {
+            var g = b('sdk.feature'),
+                h = b('ManagedError'),
+                i = b('sdk.Runtime'),
+                j = b('sdk.Scribe'),
+                k = b('UserAgent'),
+                l = b('wrapFunction'),
+                m = g('error_handling', false),
                 n = '';
 
-            function o(v) {
-                var w = v._originalError;
-                delete v._originalError;
-                h.log('jssdk_error', {
-                    appId: j.getClientID(),
-                    error: v.name || v.message,
-                    extra: v
+            function o(u) {
+                var v = u._originalError;
+                delete u._originalError;
+                j.log('jssdk_error', {
+                    appId: i.getClientID(),
+                    error: u.name || u.message,
+                    extra: u
                 });
-                throw w;
+                throw v;
             }
-            function p(v) {
-                var w = {
-                    line: v.lineNumber || v.line,
-                    message: v.message,
-                    name: v.name,
-                    script: v.fileName || v.sourceURL || v.script,
-                    stack: v.stackTrace || v.stack
+            function p(u) {
+                var v = {
+                    line: u.lineNumber || u.line,
+                    message: u.message,
+                    name: u.name,
+                    script: u.fileName || u.sourceURL || u.script,
+                    stack: u.stackTrace || u.stack
                 };
-                w._originalError = v;
-                if (g.chrome() && /([\w:\.\/]+\.js):(\d+)/.test(v.stack)) {
-                    w.script = RegExp.$1;
-                    w.line = parseInt(RegExp.$2, 10);
+                v._originalError = u;
+                if (k.chrome() && /([\w:\.\/]+\.js):(\d+)/.test(u.stack)) {
+                    v.script = RegExp.$1;
+                    v.line = parseInt(RegExp.$2, 10);
                 }
-                for (var x in w)(w[x] == null && delete w[x]);
-                return w;
+                for (var w in v)(v[w] == null && delete v[w]);
+                return v;
             }
-            function q(v, w) {
+            function q(u, v) {
                 return function () {
-                    if (!m) return v.apply(this, arguments);
+                    if (!m) return u.apply(this, arguments);
                     try {
-                        n = w;
-                        return v.apply(this, arguments);
-                    } catch (x) {
-                        if (x instanceof l) throw x;
-                        var y = p(x);
-                        y.entry = w;
-                        var z = ES5(Array.prototype.slice.call(arguments), 'map', true, function (aa) {
-                            var ba = Object.prototype.toString.call(aa);
-                            return (/^\[object (String|Number|Boolean|Object|Date)\]$/).test(ba) ? aa : aa.toString();
+                        n = v;
+                        return u.apply(this, arguments);
+                    } catch (w) {
+                        if (w instanceof h) throw w;
+                        var x = p(w);
+                        x.entry = v;
+                        var y = ES5(Array.prototype.slice.call(arguments), 'map', true, function (z) {
+                            var aa = Object.prototype.toString.call(z);
+                            return (/^\[object (String|Number|Boolean|Object|Date)\]$/).test(aa) ? z : z.toString();
                         });
-                        y.args = ES5('JSON', 'stringify', false, z).substring(0, 200);
-                        o(y);
+                        x.args = ES5('JSON', 'stringify', false, y).substring(0, 200);
+                        o(x);
                     } finally {
                         n = '';
                     }
                 };
             }
-            function r(v) {
-                if (!v.__wrapper) v.__wrapper = function () {
+            function r(u) {
+                if (!u.__wrapper) u.__wrapper = function () {
                     try {
-                        return v.apply(this, arguments);
-                    } catch (w) {
+                        return u.apply(this, arguments);
+                    } catch (v) {
                         window.setTimeout(function () {
-                            throw w;
+                            throw v;
                         }, 0);
                         return false;
                     }
                 };
-                return v.__wrapper;
+                return u.__wrapper;
             }
-            function s(v, w) {
-                return function (x, y) {
-                    var z = w + ':' + (n || '[global]') + ':' + (x.name || '[anonymous]' + (arguments.callee.caller.name ? '(' + arguments.callee.caller.name + ')' : ''));
-                    return v(k(x, 'entry', z), y);
+            function s(u, v) {
+                return function (w, x) {
+                    var y = v + ':' + (n || '[global]') + ':' + (w.name || '[anonymous]' + (arguments.callee.caller.name ? '(' + arguments.callee.caller.name + ')' : ''));
+                    return u(l(w, 'entry', y), x);
                 };
             }
-            var t = i.errorHandling.rate;
-            if (t && Math.floor(Math.random() * 100) + 1 <= t) m = true;
             if (m) {
                 setTimeout = s(setTimeout, 'setTimeout');
                 setInterval = s(setInterval, 'setInterval');
-                k.setWrapper(q, 'entry');
+                l.setWrapper(q, 'entry');
             }
-            var u = {
+            var t = {
                 guard: q,
                 unguard: r
             };
-            e.exports = u;
+            e.exports = t;
         });
         __d("sdk.Impressions", ["guid", "QueryString", "sdk.Runtime", "UrlMap"], function (a, b, c, d, e, f) {
             var g = b('guid'),
@@ -3407,15 +3421,29 @@ try {
                 n = b('Type'),
                 o = b('UserAgent'),
                 p = n.extend({
-                    constructor: function (r, s) {
+                    constructor: function r(s, t) {
                         this.parent();
-                        this.id = r;
-                        this.display = s;
+                        this.id = s;
+                        this.display = t;
+                        this._e2e = {};
                         if (!q._dialogs) {
                             q._dialogs = {};
                             q._addOrientationHandler();
                         }
-                        q._dialogs[r] = this;
+                        q._dialogs[s] = this;
+                        this.trackEvent('init');
+                    },
+                    trackEvent: function (r, s) {
+                        if (this._e2e[r]) return this;
+                        this._e2e[r] = s || ES5('Date', 'now', false);
+                        if (r == 'close') this.inform('e2e:end', this._e2e);
+                        return this;
+                    },
+                    trackEvents: function (r) {
+                        if (!r) return this;
+                        if (typeof r === 'string') r = ES5('JSON', 'parse', false, r);
+                        for (var s in r) if (r.hasOwnProperty(s)) this.trackEvent(s, r[s]);
+                        return this;
                     }
                 }, l),
                 q = {
@@ -3638,7 +3666,7 @@ try {
                             q._hideLoader();
                             q._makeActive(s);
                             q._stack.push(s);
-                            if ('fbCallID' in r) q.get(r.fbCallID).inform('iframe_show');
+                            if ('fbCallID' in r) q.get(r.fbCallID).inform('iframe_show').trackEvent('show');
                         }
                     },
                     hide: function (r) {
@@ -3648,7 +3676,7 @@ try {
                             q._lowerActive();
                             q._restoreBodyPosition();
                             q._hideIPadOverlay();
-                            if ('fbCallID' in r) q.get(r.fbCallID).inform('iframe_hide');
+                            if ('fbCallID' in r) q.get(r.fbCallID).inform('iframe_hide').trackEvent('hide');
                         }
                     },
                     remove: function (r) {
@@ -4115,6 +4143,9 @@ try {
                         da.params.redirect_uri = location.protocol + '//' + location.host + location.pathname;
                         delete da.params.access_token;
                         v.remote.showDialog(da.params, function (ea) {
+                            var fa = j.get(da.id);
+                            fa.trackEvents(ea.result.e2e);
+                            fa.trackEvent('close');
                             da.cb(ea.result);
                         });
                     },
@@ -4227,6 +4258,9 @@ try {
                         }
                         delete ca._loadedNodes[da.frame];
                         delete ca._defaultCb[da.frame];
+                        var ia = j.get(da.frame);
+                        ia.trackEvents(da.e2e);
+                        ia.trackEvent('close');
                         ea(da);
                     },
                     _xdResult: function (da, ea, fa, ga) {
@@ -4241,55 +4275,66 @@ try {
             v.stub('showDialog');
             e.exports = ca;
         });
-        __d("sdk.ui", ["Assert", "copyProperties", "Log", "sdk.Runtime", "sdk.UIServer", "SDKConfig"], function (a, b, c, d, e, f) {
+        __d("sdk.ui", ["Assert", "copyProperties", "sdk.feature", "sdk.Impressions", "Log", "sdk.Runtime", "sdk.UIServer", "SDKConfig"], function (a, b, c, d, e, f) {
             var g = b('Assert'),
                 h = b('copyProperties'),
-                i = b('Log'),
-                j = b('sdk.Runtime'),
-                k = c('SDKConfig'),
-                l = b('sdk.UIServer');
+                i = b('sdk.feature'),
+                j = b('sdk.Impressions'),
+                k = b('Log'),
+                l = b('sdk.Runtime'),
+                m = c('SDKConfig'),
+                n = b('sdk.UIServer');
 
-            function m(n, o) {
-                g.isObject(n);
-                g.maybeFunction(o);
-                n = h({}, n);
-                if (!n.method) {
-                    i.error('"method" is a required parameter for FB.ui().');
+            function o(p, q) {
+                g.isObject(p);
+                g.maybeFunction(q);
+                p = h({}, p);
+                if (!p.method) {
+                    k.error('"method" is a required parameter for FB.ui().');
                     return null;
                 }
-                if (n.redirect_uri) {
-                    i.warn('When using FB.ui, you should not specify a redirect_uri.');
-                    delete n.redirect_uri;
+                var r = p.method;
+                if (p.redirect_uri) {
+                    k.warn('When using FB.ui, you should not specify a redirect_uri.');
+                    delete p.redirect_uri;
                 }
-                if ((n.method == 'permissions.request' || n.method == 'permissions.oauth') && (n.display == 'iframe' || n.display == 'dialog')) {
-                    var p = 'scope' in n ? n.scope : j.getScope();
-                    if (p) {
-                        var q = p.split(/\s|,/g);
-                        for (var r = 0; r < q.length; r++) {
-                            var s = ES5(q[r], 'trim', true);
-                            if (s && !k.initSitevars.iframePermissions[s]) {
-                                n.display = 'popup';
+                if ((r == 'permissions.request' || r == 'permissions.oauth') && (p.display == 'iframe' || p.display == 'dialog')) {
+                    var s = 'scope' in p ? p.scope : l.getScope();
+                    if (s) {
+                        var t = s.split(/\s|,/g);
+                        for (var u = 0; u < t.length; u++) {
+                            var v = ES5(t[u], 'trim', true);
+                            if (v && !m.initSitevars.iframePermissions[v]) {
+                                p.display = 'popup';
                                 break;
                             }
                         }
                     }
                 }
-                var t = l.prepareCall(n, o ||
+                var w = i('e2e_tracking', true);
+                if (w) p.e2e = {};
+                var x = n.prepareCall(p, q ||
                 function () {});
-                if (!t) return null;
-                var u = t.params.display;
-                if (u === 'dialog') {
-                    u = 'iframe';
-                } else if (u === 'none') u = 'hidden';
-                var v = l[u];
-                if (!v) {
-                    i.error('"display" must be one of "popup", ' + '"dialog", "iframe", "touch", "async", "hidden", or "none"');
+                if (!x) return null;
+                var y = x.params.display;
+                if (y === 'dialog') {
+                    y = 'iframe';
+                } else if (y === 'none') y = 'hidden';
+                var z = n[y];
+                if (!z) {
+                    k.error('"display" must be one of "popup", ' + '"dialog", "iframe", "touch", "async", "hidden", or "none"');
                     return null;
                 }
-                v(t);
-                return t.dialog;
+                if (w) x.dialog.subscribe('e2e:end', function (aa) {
+                    aa.method = r;
+                    aa.display = y;
+                    k.debug('e2e: %s', ES5('JSON', 'stringify', false, aa));
+                    j.log(114, aa);
+                });
+                z(x);
+                return x.dialog;
             }
-            e.exports = m;
+            e.exports = o;
         });
         __d("legacy:fb.auth", ["sdk.Auth", "sdk.Cookie", "copyProperties", "sdk.Event", "FB", "Log", "sdk.Runtime", "sdk.SignedRequest", "sdk.ui"], function (a, b, c, d) {
             var e = b('sdk.Auth'),
@@ -5146,15 +5191,6 @@ try {
             };
             e.exports = m;
         });
-        __d("sdk.feature", ["SDKConfig"], function (a, b, c, d, e, f) {
-            var g = c('SDKConfig');
-
-            function h(i, j) {
-                if (g.features && i in g.features) return g.features[i];
-                return typeof j !== 'undefined' ? j : null;
-            }
-            e.exports = h;
-        });
         __d("runOnce", [], function (a, b, c, d, e, f) {
             function g(h) {
                 var i, j;
@@ -5168,7 +5204,7 @@ try {
             }
             e.exports = g;
         });
-        __d("XFBML", ["Assert", "copyProperties", "createArrayFrom", "sdk.DOM", "sdk.feature", "sdk.Impressions", "Log", "ObservableMixin", "runOnce", "UserAgent", "SDKConfig"], function (a, b, c, d, e, f) {
+        __d("XFBML", ["Assert", "copyProperties", "createArrayFrom", "sdk.DOM", "sdk.feature", "sdk.Impressions", "Log", "ObservableMixin", "runOnce", "UserAgent"], function (a, b, c, d, e, f) {
             var g = b('Assert'),
                 h = b('copyProperties'),
                 i = b('createArrayFrom'),
@@ -5178,152 +5214,153 @@ try {
                 m = b('Log'),
                 n = b('ObservableMixin'),
                 o = b('runOnce'),
-                p = c('SDKConfig'),
-                q = b('UserAgent'),
+                p = b('UserAgent'),
+                q = {},
                 r = {},
-                s = {},
-                t = 0,
-                u = new n();
+                s = 0,
+                t = new n();
 
-            function v(ca, da) {
-                return ca[da] + '';
+            function u(ba, ca) {
+                return ba[ca] + '';
             }
-            function w(ca) {
-                return ca.scopeName ? (ca.scopeName + ':' + ca.nodeName) : '';
+            function v(ba) {
+                return ba.scopeName ? (ba.scopeName + ':' + ba.nodeName) : '';
             }
-            function x(ca) {
-                return r[v(ca, 'nodeName').toLowerCase()] || r[w(ca).toLowerCase()];
+            function w(ba) {
+                return q[u(ba, 'nodeName').toLowerCase()] || q[v(ba).toLowerCase()];
             }
-            function y(ca) {
-                var da = ES5(ES5(v(ca, 'className'), 'trim', true).split(/\s+/), 'filter', true, function (ea) {
-                    return s.hasOwnProperty(ea);
+            function x(ba) {
+                var ca = ES5(ES5(u(ba, 'className'), 'trim', true).split(/\s+/), 'filter', true, function (da) {
+                    return r.hasOwnProperty(da);
                 });
-                if (da.length === 0) return undefined;
-                if (!ca.childNodes || ca.childNodes.length === 0 || (ca.childNodes.length == 1 && ca.childNodes[0].nodeType == 3) || ca.getAttribute('fb-xfbml-state')) return s[da[0]];
+                if (ca.length === 0) return undefined;
+                if (!ba.childNodes || ba.childNodes.length === 0 || (ba.childNodes.length == 1 && ba.childNodes[0].nodeType == 3) || ba.getAttribute('fb-xfbml-state')) return r[ca[0]];
             }
-            function z(ca) {
-                var da = {};
-                ES5(i(ca.attributes), 'forEach', true, function (ea) {
-                    da[v(ea, 'name')] = v(ea, 'value');
+            function y(ba) {
+                var ca = {};
+                ES5(i(ba.attributes), 'forEach', true, function (da) {
+                    ca[u(da, 'name')] = u(da, 'value');
                 });
-                return da;
+                return ca;
             }
-            function aa(ca, da, ea) {
-                g.isTrue(ca && ca.nodeType && ca.nodeType === 1 && !! ca.getElementsByTagName, 'Invalid DOM node passed to FB.XFBML.parse()');
-                g.isFunction(da, 'Invalid callback passed to FB.XFBML.parse()');
-                var fa = ++t;
-                m.info('XFBML Parsing Start %s', fa);
-                var ga = 1,
-                    ha = 0,
-                    ia = function () {
-                        ga--;
-                        if (ga === 0) {
-                            m.info('XFBML Parsing Finish %s, %s tags found', fa, ha);
-                            da();
-                            u.inform('render', fa, ha);
+            function z(ba, ca, da) {
+                g.isTrue(ba && ba.nodeType && ba.nodeType === 1 && !! ba.getElementsByTagName, 'Invalid DOM node passed to FB.XFBML.parse()');
+                g.isFunction(ca, 'Invalid callback passed to FB.XFBML.parse()');
+                var ea = ++s;
+                m.info('XFBML Parsing Start %s', ea);
+                var fa = 1,
+                    ga = 0,
+                    ha = function () {
+                        fa--;
+                        if (fa === 0) {
+                            m.info('XFBML Parsing Finish %s, %s tags found', ea, ga);
+                            ca();
+                            t.inform('render', ea, ga);
                         }
-                        g.isTrue(ga >= 0, 'onrender() has been called too many times');
+                        g.isTrue(fa >= 0, 'onrender() has been called too many times');
                     };
-                ES5(i(ca.getElementsByTagName('*')), 'forEach', true, function (ka) {
-                    if (!ea && ka.getAttribute('fb-xfbml-state')) return;
-                    if (ka.nodeType !== 1) return;
-                    var la = y(ka),
-                        ma = z(ka);
-                    if (!la) {
-                        la = x(ka);
-                        if (!la) return;
-                        if (k('convert_xfbml', true) && q.ie() < 9) {
-                            var na = ka;
-                            ka = document.createElement('div');
-                            j.addCss(ka, la.xmlns + '-' + la.localName);
-                            ES5(i(na.childNodes), 'forEach', true, function (ra) {
-                                ka.appendChild(ra);
+                ES5(i(ba.getElementsByTagName('*')), 'forEach', true, function (ja) {
+                    if (!da && ja.getAttribute('fb-xfbml-state')) return;
+                    if (ja.nodeType !== 1) return;
+                    var ka = x(ja),
+                        la = y(ja);
+                    if (!ka) {
+                        ka = w(ja);
+                        if (!ka) return;
+                        if (p.ie() < 9) {
+                            var ma = ja;
+                            ja = document.createElement('div');
+                            j.addCss(ja, ka.xmlns + '-' + ka.localName);
+                            ES5(i(ma.childNodes), 'forEach', true, function (qa) {
+                                ja.appendChild(qa);
                             });
-                            for (var oa in ma) if (ma.hasOwnProperty(oa)) ka.setAttribute(oa, ma[oa]);
-                            na.parentNode.replaceChild(ka, na);
+                            for (var na in la) if (la.hasOwnProperty(na)) ja.setAttribute(na, la[na]);
+                            ma.parentNode.replaceChild(ja, ma);
                         }
                     }
+                    fa++;
                     ga++;
-                    ha++;
-                    var pa = new la.ctor(ka, la.xmlns, la.localName, ma);
-                    pa.subscribe('render', o(function () {
-                        ka.setAttribute('fb-xfbml-state', 'rendered');
-                        ia();
+                    var oa = new ka.ctor(ja, ka.xmlns, ka.localName, la);
+                    oa.subscribe('render', o(function () {
+                        ja.setAttribute('fb-xfbml-state', 'rendered');
+                        ha();
                     }));
-                    var qa = function () {
-                            if (ka.getAttribute('fb-xfbml-state') == 'parsed') {
-                                u.subscribe('render.queue', qa);
+                    var pa = function () {
+                            if (ja.getAttribute('fb-xfbml-state') == 'parsed') {
+                                t.subscribe('render.queue', pa);
                             } else {
-                                ka.setAttribute('fb-xfbml-state', 'parsed');
-                                pa.process();
+                                ja.setAttribute('fb-xfbml-state', 'parsed');
+                                oa.process();
                             }
                         };
-                    qa();
+                    pa();
                 });
-                u.inform('parse', fa, ha);
-                var ja = 30000;
+                t.inform('parse', ea, ga);
+                var ia = 30000;
                 setTimeout(function () {
-                    if (ga > 0) m.warn('%s tags failed to render in %s ms', ga, ja);
-                }, ja);
-                ia();
+                    if (fa > 0) m.warn('%s tags failed to render in %s ms', fa, ia);
+                }, ia);
+                ha();
             }
-            u.subscribe('render', function () {
-                var ca = u.getSubscribers('render.queue');
-                u.clearSubscribers('render.queue');
-                ES5(ca, 'forEach', true, function (da) {
-                    da();
+            t.subscribe('render', function () {
+                var ba = t.getSubscribers('render.queue');
+                t.clearSubscribers('render.queue');
+                ES5(ba, 'forEach', true, function (ca) {
+                    ca();
                 });
             });
-            h(u, {
-                registerTag: function (ca) {
-                    var da = ca.xmlns + ':' + ca.localName;
-                    g.isUndefined(r[da], da + ' already registered');
-                    r[da] = ca;
-                    s[ca.xmlns + '-' + ca.localName] = ca;
+            h(t, {
+                registerTag: function (ba) {
+                    var ca = ba.xmlns + ':' + ba.localName;
+                    g.isUndefined(q[ca], ca + ' already registered');
+                    q[ca] = ba;
+                    r[ba.xmlns + '-' + ba.localName] = ba;
                 },
-                parse: function (ca, da) {
-                    aa(ca || document.body, da ||
+                parse: function (ba, ca) {
+                    z(ba || document.body, ca ||
                     function () {}, true);
                 },
                 parseNew: function () {
-                    aa(document.body, function () {}, false);
+                    z(document.body, function () {}, false);
                 }
             });
-            var ba = function (ca, da) {
-                    if (Math.random() < p.tagCountLogRate) setTimeout(ES5(l.log, 'bind', true, null, 102, {
-                        tag_count: da
-                    }), 5000);
-                    u.unsubscribe('parse', ba);
-                };
-            u.subscribe('parse', ba);
-            e.exports = u;
+            if (k('log_tag_count')) {
+                var aa = function (ba, ca) {
+                        t.unsubscribe('parse', aa);
+                        setTimeout(ES5(l.log, 'bind', true, null, 102, {
+                            tag_count: ca
+                        }), 5000);
+                    };
+                t.subscribe('parse', aa);
+            }
+            e.exports = t;
         });
-        __d("PluginPipe", ["sdk.Content", "copyProperties", "guid", "insertIframe", "Miny", "ObservableMixin", "sdk.Runtime", "UrlMap", "UserAgent", "XFBML", "PluginPipeConfig", "SDKConfig"], function (a, b, c, d, e, f) {
+        __d("PluginPipe", ["sdk.Content", "copyProperties", "sdk.feature", "guid", "insertIframe", "Miny", "ObservableMixin", "sdk.Runtime", "UrlMap", "UserAgent", "XFBML", "PluginPipeConfig"], function (a, b, c, d, e, f) {
             var g = b('sdk.Content'),
                 h = b('copyProperties'),
-                i = b('guid'),
-                j = b('insertIframe'),
-                k = b('Miny'),
-                l = b('ObservableMixin'),
-                m = c('PluginPipeConfig'),
-                n = b('sdk.Runtime'),
-                o = c('SDKConfig'),
+                i = b('sdk.feature'),
+                j = b('guid'),
+                k = b('insertIframe'),
+                l = b('Miny'),
+                m = b('ObservableMixin'),
+                n = c('PluginPipeConfig'),
+                o = b('sdk.Runtime'),
                 p = b('UrlMap'),
                 q = b('UserAgent'),
                 r = b('XFBML'),
-                s = new l(),
-                t = m.threshold,
+                s = new m(),
+                t = n.threshold,
                 u = [];
 
             function v() {
-                return !!(o.usePluginPipe && n.getSecure() !== undefined && (q.chrome() || q.firefox()) && m.enabledApps[n.getClientID()]);
+                return !!(i('plugin_pipe') && o.getSecure() !== undefined && (q.chrome() || q.firefox()) && n.enabledApps[o.getClientID()]);
             }
             function w() {
                 var y = u;
                 u = [];
                 if (y.length <= t) {
                     ES5(y, 'forEach', true, function (ba) {
-                        j(ba.config);
+                        k(ba.config);
                     });
                     return;
                 }
@@ -5336,9 +5373,9 @@ try {
                 ES5(y, 'forEach', true, function (ba) {
                     var ca = {};
                     for (var da in ba.config) ca[da] = ba.config[da];
-                    ca.url = p.resolve('www', n.getSecure()) + '/plugins/plugin_pipe_shell.php';
+                    ca.url = p.resolve('www', o.getSecure()) + '/plugins/plugin_pipe_shell.php';
                     ca.onload = aa;
-                    j(ca);
+                    k(ca);
                 });
                 aa();
             }
@@ -5355,14 +5392,14 @@ try {
                     };
                 });
                 var ba = ES5('JSON', 'stringify', false, aa),
-                    ca = k.encode(ba);
+                    ca = l.encode(ba);
                 ES5(y, 'forEach', true, function (fa) {
                     var ga = document.getElementsByName(fa.config.name)[0];
                     ga.onload = fa.config.onload;
                 });
-                var da = p.resolve('www', n.getSecure()) + '/plugins/pipe.php',
-                    ea = i();
-                j({
+                var da = p.resolve('www', o.getSecure()) + '/plugins/pipe.php',
+                    ea = j();
+                k({
                     url: 'about:blank',
                     root: z,
                     name: ea,
