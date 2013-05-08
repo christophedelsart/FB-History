@@ -1,4 +1,4 @@
-/*1367402310,177609508,JIT Construction: v801567,fr_FR*/
+/*1368000585,171312932,JIT Construction: v808581,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -634,7 +634,7 @@ try {
             },
             "usePluginPipe": true,
             "features": {
-                "xfbml_profile_pic_server": false,
+                "xfbml_profile_pic_server": true,
                 "error_handling": 4
             },
             "api": {
@@ -883,6 +883,8 @@ try {
                 q.prototype = m.prototype;
                 p.prototype = new q();
                 g(p.prototype, n);
+                p.prototype.constructor = p;
+                p.parent = m;
                 p.prototype.__mixins = m.prototype.__mixins ? Array.prototype.slice.call(m.prototype.__mixins) : [];
                 if (o) k(p, o);
                 p.prototype.parent = function () {
@@ -1763,7 +1765,10 @@ try {
             function i(j) {
                 this._counter = 0;
                 this._callbacks = {};
-                this.remote = {};
+                this.remote = ES5(function (k) {
+                    this._context = k;
+                    return this.remote;
+                }, 'bind', true, this);
                 this.local = {};
                 this._write = j;
             }
@@ -1780,7 +1785,7 @@ try {
                             this._callbacks[l.id] = k.pop();
                         }
                         l.params = k;
-                        this._write(ES5('JSON', 'stringify', false, l), {
+                        this._write(ES5('JSON', 'stringify', false, l), this._context || {
                             method: j
                         });
                     }, 'bind', true, this);
