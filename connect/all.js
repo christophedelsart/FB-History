@@ -1,4 +1,4 @@
-/*1368000585,171312932,JIT Construction: v808581,fr_FR*/
+/*1368607761,177656597,JIT Construction: v815930,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -607,25 +607,6 @@ try {
             "locale": "fr_FR",
             "rtl": false
         });
-        __d("UrlMapConfig", [], {
-            "www": "www.facebook.com",
-            "m": "m.facebook.com",
-            "connect": "connect.facebook.net",
-            "api_https": "api.facebook.com",
-            "api_read_https": "api-read.facebook.com",
-            "graph_https": "graph.facebook.com",
-            "fbcdn_http": "static.ak.fbcdn.net",
-            "fbcdn_https": "fbstatic-a.akamaihd.net",
-            "cdn_http": "static.ak.facebook.com",
-            "cdn_https": "s-static.ak.facebook.com"
-        });
-        __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=24",
-            "Flash": {
-                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yX\/r\/VpkNidONSDC.swf"
-            },
-            "useCdn": true
-        });
         __d("SDKConfig", [], {
             "bustCache": true,
             "tagCountLogRate": 0.01,
@@ -635,7 +616,8 @@ try {
             "usePluginPipe": true,
             "features": {
                 "xfbml_profile_pic_server": true,
-                "error_handling": 4
+                "error_handling": 4,
+                "oauth_ping": false
             },
             "api": {
                 "mode": "warn",
@@ -675,6 +657,25 @@ try {
                     "read_deals": false
                 }
             }
+        });
+        __d("UrlMapConfig", [], {
+            "www": "www.facebook.com",
+            "m": "m.facebook.com",
+            "connect": "connect.facebook.net",
+            "api_https": "api.facebook.com",
+            "api_read_https": "api-read.facebook.com",
+            "graph_https": "graph.facebook.com",
+            "fbcdn_http": "static.ak.fbcdn.net",
+            "fbcdn_https": "fbstatic-a.akamaihd.net",
+            "cdn_http": "static.ak.facebook.com",
+            "cdn_https": "s-static.ak.facebook.com"
+        });
+        __d("XDConfig", [], {
+            "XdUrl": "connect\/xd_arbiter.php?version=24",
+            "Flash": {
+                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yX\/r\/VpkNidONSDC.swf"
+            },
+            "useCdn": true
         });
         __d("CssConfig", [], {
             "rules": ".fb_hidden{position:absolute;top:-10000px;z-index:10001}\n.fb_invisible{display:none}\n.fb_reset{background:none;border-spacing:0;border:0;color:#000;cursor:auto;direction:ltr;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}\n.fb_link img{border:none}\n.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}\n.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}\n.fb_dialog_content{background:#fff;color:#333}\n.fb_dialog_close_icon{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yL\/r\/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px;top:8px\\9;right:7px\\9}\n.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}\n.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}\n.fb_dialog_close_icon:hover{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yL\/r\/s816eWC-2sl.gif)}\n.fb_dialog_close_icon:active{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yq\/r\/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yL\/r\/s816eWC-2sl.gif)}\n.fb_dialog_loader{background-color:#f2f2f2;border:1px solid #606060;font-size:24px;padding:20px}\n.fb_dialog_top_left,\n.fb_dialog_top_right,\n.fb_dialog_bottom_left,\n.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}\n\/* \u0040noflip *\/\n.fb_dialog_top_left{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/ye\/r\/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}\n\/* \u0040noflip *\/\n.fb_dialog_top_right{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/ye\/r\/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}\n\/* \u0040noflip *\/\n.fb_dialog_bottom_left{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/ye\/r\/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}\n\/* \u0040noflip *\/\n.fb_dialog_bottom_right{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/ye\/r\/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}\n.fb_dialog_vert_left,\n.fb_dialog_vert_right,\n.fb_dialog_horiz_top,\n.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}\n.fb_dialog_vert_left,\n.fb_dialog_vert_right{width:10px;height:100\u0025}\n.fb_dialog_vert_left{margin-left:-10px}\n.fb_dialog_vert_right{right:0;margin-right:-10px}\n.fb_dialog_horiz_top,\n.fb_dialog_horiz_bottom{width:100\u0025;height:10px}\n.fb_dialog_horiz_top{margin-top:-10px}\n.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}\n.fb_dialog_iframe{line-height:0}\n.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #3b5998;color:#fff;font-size:14px;font-weight:bold;margin:0}\n.fb_dialog_content .dialog_title > span{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/yd\/r\/Cou7n-nqK52.gif)\nno-repeat 5px 50\u0025;float:left;padding:5px 0 7px 26px}\nbody.fb_hidden{-webkit-transform:none;height:100\u0025;margin:0;left:-10000px;overflow:visible;position:absolute;top:-10000px;width:100\u0025\n}\n.fb_dialog.fb_dialog_mobile.loading{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/ya\/r\/3rhSv5V8j3o.gif)\nwhite no-repeat 50\u0025 50\u0025;min-height:100\u0025;min-width:100\u0025;overflow:hidden;position:absolute;top:0;z-index:10001}\n.fb_dialog.fb_dialog_mobile.loading.centered{max-height:590px;min-height:590px;max-width:500px;min-width:500px}\n#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;left:0;top:0;width:100\u0025;min-height:100\u0025;z-index:10000}\n#fb-root #fb_dialog_ipad_overlay.hidden{display:none}\n.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}\n.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0 0, 0 100\u0025, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}\n.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100\u0025\n}\n.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px\n}\n.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px\n}\n.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0 0, 0 100\u0025, from(#4966A6),\ncolor-stop(0.5, #355492), to(#2A4887));border:1px solid #29447e;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset,\nrgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}\n.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}\n.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}\n.fb_dialog_content .dialog_content{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/y9\/r\/jKEcVPZFk-2.gif) no-repeat 50\u0025 50\u0025;border:1px solid #555;border-bottom:0;border-top:0;height:150px}\n.fb_dialog_content .dialog_footer{background:#f2f2f2;border:1px solid #555;border-top-color:#ccc;height:40px}\n#fb_dialog_loader_close{float:left}\n.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}\n.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}\n.fb_iframe_widget{display:inline-block;position:relative}\n.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}\n.fb_iframe_widget iframe{position:absolute}\n.fb_iframe_widget_lift{z-index:1}\n.fb_hide_iframes iframe{position:relative;left:-10000px}\n.fb_iframe_widget_loader{position:relative;display:inline-block}\n.fb_iframe_widget_fluid{display:inline}\n.fb_iframe_widget_fluid span{width:100\u0025}\n.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}\n.fb_iframe_widget_loader .FB_Loader{background:url(http:\/\/static.ak.fbcdn.net\/rsrc.php\/v2\/y9\/r\/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50\u0025;z-index:4}\n.fb_connect_bar_container div,\n.fb_connect_bar_container span,\n.fb_connect_bar_container a,\n.fb_connect_bar_container img,\n.fb_connect_bar_container strong{background:none;border-spacing:0;border:0;direction:ltr;font-style:normal;font-variant:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal;vertical-align:baseline}\n.fb_connect_bar_container{position:fixed;left:0 !important;right:0 !important;height:42px !important;padding:0 25px !important;margin:0 !important;vertical-align:middle !important;border-bottom:1px solid #333 !important;background:#3b5998 !important;z-index:99999999 !important;overflow:hidden !important}\n.fb_connect_bar_container_ie6{position:absolute;top:expression(document.compatMode==\"CSS1Compat\"? document.documentElement.scrollTop+\"px\":body.scrollTop+\"px\")}\n.fb_connect_bar{position:relative;margin:auto;height:100\u0025;width:100\u0025;padding:6px 0 0 0 !important;background:none;color:#fff !important;font-family:\"lucida grande\", tahoma, verdana, arial, sans-serif !important;font-size:13px !important;font-style:normal !important;font-variant:normal !important;font-weight:normal !important;letter-spacing:normal !important;line-height:1 !important;text-decoration:none !important;text-indent:0 !important;text-shadow:none !important;text-transform:none !important;white-space:normal !important;word-spacing:normal !important}\n.fb_connect_bar a:hover{color:#fff}\n.fb_connect_bar .fb_profile img{height:30px;width:30px;vertical-align:middle;margin:0 6px 5px 0}\n.fb_connect_bar div a,\n.fb_connect_bar span,\n.fb_connect_bar span a{color:#bac6da;font-size:11px;text-decoration:none}\n.fb_connect_bar .fb_buttons{float:right;margin-top:7px}\n.fb_edge_widget_with_comment{position:relative;*z-index:1000}\n.fb_edge_widget_with_comment span.fb_edge_comment_widget{position:absolute}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget{z-index:1}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget .FB_Loader{left:0;top:1px;margin-top:6px;margin-left:0;background-position:50\u0025 50\u0025;background-color:#fff;height:150px;width:394px;border:1px #666 solid;border-bottom:2px solid #283e6c;z-index:1}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget.dark .FB_Loader{background-color:#000;border-bottom:2px solid #ccc}\n.fb_edge_widget_with_comment span.fb_send_button_form_widget.siderender\n.FB_Loader{margin-top:0}\n.fbpluginrecommendationsbarleft,\n.fbpluginrecommendationsbarright{position:fixed !important;bottom:0;z-index:999}\n\/* \u0040noflip *\/\n.fbpluginrecommendationsbarleft{left:10px}\n\/* \u0040noflip *\/\n.fbpluginrecommendationsbarright{right:10px}",
@@ -1222,6 +1223,22 @@ try {
                 }
             };
             e.exports = i;
+        });
+        __d("sdk.feature", ["SDKConfig"], function (a, b, c, d, e, f) {
+            var g = c('SDKConfig');
+
+            function h(i, j) {
+                if (g.features && i in g.features) {
+                    var k = g.features[i];
+                    if (typeof k === 'object' && typeof k.rate === 'number') {
+                        if (k.rate && Math.floor(Math.random() * 100) + 1 <= k.rate) {
+                            return k.value || true;
+                        } else return k.value ? null : false;
+                    } else return k;
+                }
+                return typeof j !== 'undefined' ? j : null;
+            }
+            e.exports = h;
         });
         __d("UserAgent", [], function (a, b, c, d, e, f) {
             var g = false,
@@ -2408,151 +2425,153 @@ try {
             });
             e.exports = oa;
         });
-        __d("sdk.Auth", ["sdk.Cookie", "copyProperties", "sdk.createIframe", "DOMWrapper", "sdk.getContextType", "guid", "Log", "ObservableMixin", "QueryString", "sdk.Runtime", "sdk.SignedRequest", "UrlMap", "URL", "sdk.XD"], function (a, b, c, d, e, f) {
+        __d("sdk.Auth", ["sdk.Cookie", "copyProperties", "sdk.createIframe", "DOMWrapper", "sdk.feature", "sdk.getContextType", "guid", "Log", "ObservableMixin", "QueryString", "sdk.Runtime", "sdk.SignedRequest", "UrlMap", "URL", "sdk.XD"], function (a, b, c, d, e, f) {
             var g = b('sdk.Cookie'),
                 h = b('copyProperties'),
                 i = b('sdk.createIframe'),
                 j = b('DOMWrapper'),
-                k = b('sdk.getContextType'),
-                l = b('guid'),
-                m = b('Log'),
-                n = b('ObservableMixin'),
-                o = b('QueryString'),
-                p = b('sdk.Runtime'),
-                q = b('sdk.SignedRequest'),
-                r = b('UrlMap'),
-                s = b('URL'),
-                t = b('sdk.XD'),
-                u, v, w = new n();
+                k = b('sdk.feature'),
+                l = b('sdk.getContextType'),
+                m = b('guid'),
+                n = b('Log'),
+                o = b('ObservableMixin'),
+                p = b('QueryString'),
+                q = b('sdk.Runtime'),
+                r = b('sdk.SignedRequest'),
+                s = b('UrlMap'),
+                t = b('URL'),
+                u = b('sdk.XD'),
+                v, w, x = new o();
 
-            function x(da, ea) {
-                var fa = p.getUserID(),
-                    ga = '';
-                if (da) if (da.userID) {
-                    ga = da.userID;
-                } else if (da.signedRequest) {
-                    var ha = q.parse(da.signedRequest);
-                    if (ha && ha.user_id) ga = ha.user_id;
+            function y(ea, fa) {
+                var ga = q.getUserID(),
+                    ha = '';
+                if (ea) if (ea.userID) {
+                    ha = ea.userID;
+                } else if (ea.signedRequest) {
+                    var ia = r.parse(ea.signedRequest);
+                    if (ia && ia.user_id) ha = ia.user_id;
                 }
-                var ia = p.getLoginStatus(),
-                    ja = (ia === 'unknown' && da) || (p.getUseCookie() && p.getCookieUserID() !== ga),
-                    ka = fa && !da,
-                    la = da && fa && fa != ga,
-                    ma = da != u,
-                    na = ea != (ia || 'unknown');
-                p.setLoginStatus(ea);
-                p.setAccessToken(da && da.accessToken || null);
-                p.setUserID(ga);
-                u = da;
-                var oa = {
-                    authResponse: da,
-                    status: ea
+                var ja = q.getLoginStatus(),
+                    ka = (ja === 'unknown' && ea) || (q.getUseCookie() && q.getCookieUserID() !== ha),
+                    la = ga && !ea,
+                    ma = ea && ga && ga != ha,
+                    na = ea != v,
+                    oa = fa != (ja || 'unknown');
+                q.setLoginStatus(fa);
+                q.setAccessToken(ea && ea.accessToken || null);
+                q.setUserID(ha);
+                v = ea;
+                var pa = {
+                    authResponse: ea,
+                    status: fa
                 };
-                if (ka || la) w.inform('logout', oa);
-                if (ja || la) w.inform('login', oa);
-                if (ma) w.inform('authresponse.change', oa);
-                if (na) w.inform('status.change', oa);
-                return oa;
+                if (la || ma) x.inform('logout', pa);
+                if (ka || ma) x.inform('login', pa);
+                if (na) x.inform('authresponse.change', pa);
+                if (oa) x.inform('status.change', pa);
+                return pa;
             }
-            function y() {
-                return u;
+            function z() {
+                return v;
             }
-            function z(da, ea, fa) {
-                return function (ga) {
-                    var ha;
-                    if (ga && ga.access_token) {
-                        var ia = q.parse(ga.signed_request);
-                        ea = {
-                            accessToken: ga.access_token,
-                            userID: ia.user_id,
-                            expiresIn: parseInt(ga.expires_in, 10),
-                            signedRequest: ga.signed_request
+            function aa(ea, fa, ga) {
+                return function (ha) {
+                    var ia;
+                    if (ha && ha.access_token) {
+                        var ja = r.parse(ha.signed_request);
+                        fa = {
+                            accessToken: ha.access_token,
+                            userID: ja.user_id,
+                            expiresIn: parseInt(ha.expires_in, 10),
+                            signedRequest: ha.signed_request
                         };
-                        if (p.getUseCookie()) {
-                            var ja = ea.expiresIn === 0 ? 0 : ES5('Date', 'now', false) + ea.expiresIn * 1000,
-                                ka = g.getDomain();
-                            if (!ka && ga.base_domain) g.setDomain('.' + ga.base_domain);
-                            g.setSignedRequestCookie(ga.signed_request, ja);
+                        if (q.getUseCookie()) {
+                            var ka = fa.expiresIn === 0 ? 0 : ES5('Date', 'now', false) + fa.expiresIn * 1000,
+                                la = g.getDomain();
+                            if (!la && ha.base_domain) g.setDomain('.' + ha.base_domain);
+                            g.setSignedRequestCookie(ha.signed_request, ka);
                         }
-                        ha = 'connected';
-                        x(ea, ha);
-                    } else if (fa === 'logout' || fa === 'login_status') {
-                        if (ga.error && ga.error === 'not_authorized') {
-                            ha = 'not_authorized';
-                        } else ha = 'unknown';
-                        x(null, ha);
-                        if (p.getUseCookie()) g.clearSignedRequestCookie();
+                        ia = 'connected';
+                        y(fa, ia);
+                    } else if (ga === 'logout' || ga === 'login_status') {
+                        if (ha.error && ha.error === 'not_authorized') {
+                            ia = 'not_authorized';
+                        } else ia = 'unknown';
+                        y(null, ia);
+                        if (q.getUseCookie()) g.clearSignedRequestCookie();
                     }
-                    if (ga && ga.https == 1) p.setSecure(true);
-                    if (da) da({
-                        authResponse: ea,
-                        status: p.getLoginStatus()
+                    if (ha && ha.https == 1) q.setSecure(true);
+                    if (ea) ea({
+                        authResponse: fa,
+                        status: q.getLoginStatus()
                     });
-                    return ea;
+                    return fa;
                 };
             }
-            function aa(da) {
-                var ea;
-                if (v) {
-                    clearTimeout(v);
-                    v = null;
+            function ba(ea) {
+                var fa;
+                if (w) {
+                    clearTimeout(w);
+                    w = null;
                 }
-                var fa = z(da, u, 'login_status'),
-                    ga = s(r.resolve('www', true) + '/dialog/oauth').setSearch(o.encode({
-                        client_id: p.getClientID(),
+                var ga = aa(ea, v, 'login_status'),
+                    ha = k('oauth_ping', true) ? '/connect/ping' : '/dialog/oauth',
+                    ia = t(s.resolve('www', true) + ha).setSearch(p.encode({
+                        client_id: q.getClientID(),
                         response_type: 'token,signed_request,code',
                         display: 'none',
                         domain: location.hostname,
-                        origin: k(),
-                        redirect_uri: t.handler(function (ha) {
-                            ea.parentNode.removeChild(ea);
-                            if (fa(ha)) v = setTimeout(function () {
-                                aa(function () {});
+                        origin: l(),
+                        redirect_uri: u.handler(function (ja) {
+                            fa.parentNode.removeChild(fa);
+                            if (ga(ja)) w = setTimeout(function () {
+                                ba(function () {});
                             }, 1200000);
                         }, 'parent'),
                         sdk: 'joey'
                     }));
-                ea = i({
+                fa = i({
                     root: j.getRoot(),
-                    name: l(),
-                    url: ga.toString(),
+                    name: m(),
+                    url: ia.toString(),
                     style: {
                         display: 'none'
                     }
                 });
             }
-            var ba;
+            var ca;
 
-            function ca(da, ea) {
-                if (!p.getClientID()) {
-                    m.warn('FB.getLoginStatus() called before calling FB.init().');
+            function da(ea, fa) {
+                if (!q.getClientID()) {
+                    n.warn('FB.getLoginStatus() called before calling FB.init().');
                     return;
                 }
-                if (da) if (!ea && ba == 'loaded') {
-                    da({
-                        status: p.getLoginStatus(),
-                        authResponse: y()
+                if (ea) if (!fa && ca == 'loaded') {
+                    ea({
+                        status: q.getLoginStatus(),
+                        authResponse: z()
                     });
                     return;
-                } else w.subscribe('FB.loginStatus', da);
-                if (!ea && ba == 'loading') return;
-                ba = 'loading';
-                var fa = function (ga) {
-                        ba = 'loaded';
-                        w.inform('FB.loginStatus', ga);
-                        w.clearSubscribers('FB.loginStatus');
+                } else x.subscribe('FB.loginStatus', ea);
+                if (!fa && ca == 'loading') return;
+                ca = 'loading';
+                var ga = function (ha) {
+                        ca = 'loaded';
+                        x.inform('FB.loginStatus', ha);
+                        x.clearSubscribers('FB.loginStatus');
                     };
-                aa(fa);
+                ba(ga);
             }
-            h(w, {
-                getLoginStatus: ca,
-                fetchLoginStatus: aa,
-                setAuthResponse: x,
-                getAuthResponse: y,
-                parseSignedRequest: q.parse,
-                xdResponseWrapper: z
+            h(x, {
+                getLoginStatus: da,
+                fetchLoginStatus: ba,
+                setAuthResponse: y,
+                getAuthResponse: z,
+                parseSignedRequest: r.parse,
+                xdResponseWrapper: aa
             });
-            e.exports = w;
+            e.exports = x;
         });
         __d("hasArrayNature", [], function (a, b, c, d, e, f) {
             function g(h) {
@@ -2711,22 +2730,6 @@ try {
                 ready: i
             };
             e.exports = y;
-        });
-        __d("sdk.feature", ["SDKConfig"], function (a, b, c, d, e, f) {
-            var g = c('SDKConfig');
-
-            function h(i, j) {
-                if (g.features && i in g.features) {
-                    var k = g.features[i];
-                    if (typeof k === 'object' && typeof k.rate === 'number') {
-                        if (k.rate && Math.floor(Math.random() * 100) + 1 <= k.rate) {
-                            return k.value || true;
-                        } else return k.value ? null : false;
-                    } else return k;
-                }
-                return typeof j !== 'undefined' ? j : null;
-            }
-            e.exports = h;
         });
         __d("sdk.Scribe", ["UrlMap", "QueryString"], function (a, b, c, d, e, f) {
             var g = b('UrlMap'),
@@ -3910,6 +3913,7 @@ try {
                                 }
                                 ea.cb = n._processRequestResponse(ea.cb, ea.hideLoader);
                             }
+                            ea.closeIcon = false;
                             return ea;
                         },
                         getXdRelation: ba.getXdRelation
@@ -4134,7 +4138,7 @@ try {
                             };
                         ea.root = j.create({
                             onClose: fa,
-                            closeIcon: true,
+                            closeIcon: ea.closeIcon === undefined ? true : ea.closeIcon,
                             classes: (z.ipad() ? 'centered' : '')
                         });
                         if (!ea.hideLoader) j.showLoader(fa, ea.size.width);
@@ -5577,6 +5581,7 @@ try {
                             border: 'none',
                             visibility: 'hidden'
                         },
+                        title: this._ns + ':' + this._tag + ' Facebook Social Plugin',
                         onload: ES5(function () {
                             this.inform('render');
                         }, 'bind', true, this)
@@ -5785,12 +5790,14 @@ try {
                     getIframeName: function () {
                         return this._iframeName;
                     },
-                    getIframeTitle: function () {},
+                    getIframeTitle: function () {
+                        return 'Facebook Social Plugin';
+                    },
                     getChannelUrl: function () {
                         if (!this._channelUrl) {
-                            var z = this;
-                            this._channelUrl = t.handler(function (aa) {
-                                z.fire('xd.' + aa.type, aa);
+                            var y = this;
+                            this._channelUrl = t.handler(function (z) {
+                                y.fire('xd.' + z.type, z);
                             }, 'parent.parent', true);
                         }
                         return this._channelUrl;
@@ -5798,23 +5805,23 @@ try {
                     getIframeNode: function () {
                         return this.dom.getElementsByTagName('iframe')[0];
                     },
-                    arbiterInform: function (event, z, aa) {
+                    arbiterInform: function (event, y, z) {
                         t.sendToFacebook(this.getIframeName(), {
                             method: event,
-                            params: ES5('JSON', 'stringify', false, z || {}),
-                            behavior: aa || g.BEHAVIOR_PERSISTENT
+                            params: ES5('JSON', 'stringify', false, y || {}),
+                            behavior: z || g.BEHAVIOR_PERSISTENT
                         });
                     },
-                    _arbiterInform: function (event, z, aa) {
-                        var ba = 'parent.frames["' + this.getIframeNode().name + '"]';
-                        t.inform(event, z, ba, aa);
+                    _arbiterInform: function (event, y, z) {
+                        var aa = 'parent.frames["' + this.getIframeNode().name + '"]';
+                        t.inform(event, y, aa, z);
                     },
                     getDefaultWebDomain: function () {
                         return s.resolve('www');
                     },
-                    process: function (z) {
+                    process: function (y) {
                         if (this._done) {
-                            if (!this._allowReProcess && !z) return;
+                            if (!this._allowReProcess && !y) return;
                             this.clear();
                         } else this._oneTimeSetup();
                         this._done = true;
@@ -5828,21 +5835,21 @@ try {
                         if (this._visibleAfter != 'immediate') {
                             k.addCss(this.dom, 'fb_hide_iframes');
                         } else this.subscribe('iframe.onload', ES5(this.fire, 'bind', true, this, 'render'));
-                        var aa = this.getSize() || {},
-                            ba = this.getFullyQualifiedURL();
-                        if (aa.width == '100%') k.addCss(this.dom, 'fb_iframe_widget_fluid');
+                        var z = this.getSize() || {},
+                            aa = this.getFullyQualifiedURL();
+                        if (z.width == '100%') k.addCss(this.dom, 'fb_iframe_widget_fluid');
                         this.clear();
                         o({
-                            url: ba,
+                            url: aa,
                             root: this.dom.appendChild(document.createElement('span')),
                             name: this._iframeName,
                             title: this.getIframeTitle(),
                             className: q.getRtl() ? 'fb_rtl' : 'fb_ltr',
-                            height: aa.height,
-                            width: aa.width,
+                            height: z.height,
+                            width: z.width,
                             onload: ES5(this.fire, 'bind', true, this, 'iframe.onload')
                         });
-                        this._resizeFlow(aa);
+                        this._resizeFlow(z);
                         this.loaded = false;
                         this.subscribe('iframe.onload', ES5(function () {
                             this.loaded = true;
@@ -5853,17 +5860,17 @@ try {
                         return 'fb_iframe_' + v;
                     },
                     getFullyQualifiedURL: function () {
-                        var z = this._getURL();
-                        z += '?' + p.encode(this._getQS());
-                        if (z.length > 2000) {
-                            z = 'about:blank';
-                            var aa = ES5(function () {
+                        var y = this._getURL();
+                        y += '?' + p.encode(this._getQS());
+                        if (y.length > 2000) {
+                            y = 'about:blank';
+                            var z = ES5(function () {
                                 this._postRequest();
-                                this.unsubscribe('iframe.onload', aa);
+                                this.unsubscribe('iframe.onload', z);
                             }, 'bind', true, this);
-                            this.subscribe('iframe.onload', aa);
+                            this.subscribe('iframe.onload', z);
                         }
-                        return z;
+                        return y;
                     },
                     _getWidgetPipeShell: function () {
                         return s.resolve('www') + '/common/widget_pipe_shell.php';
@@ -5885,8 +5892,8 @@ try {
                         });
                         if (this._refreshOnAuthChange) this._setupAuthRefresh();
                         if (this._visibleAfter == 'load') this.subscribe('iframe.onload', ES5(this._makeVisible, 'bind', true, this));
-                        this.subscribe('xd.verify', ES5(function (z) {
-                            this.arbiterInform('xd/verify', z.token);
+                        this.subscribe('xd.verify', ES5(function (y) {
+                            this.arbiterInform('xd/verify', y.token);
                         }, 'bind', true, this));
                         this.oneTimeSetup();
                     },
@@ -5896,67 +5903,67 @@ try {
                         this.fire('render');
                     },
                     _setupAuthRefresh: function () {
-                        h.getLoginStatus(ES5(function (z) {
-                            var aa = z.status;
-                            l.subscribe('auth.statusChange', ES5(function (ba) {
+                        h.getLoginStatus(ES5(function (y) {
+                            var z = y.status;
+                            l.subscribe('auth.statusChange', ES5(function (aa) {
                                 if (!this.isValid()) return;
-                                if (aa == 'unknown' || ba.status == 'unknown') this.process(true);
-                                aa = ba.status;
+                                if (z == 'unknown' || aa.status == 'unknown') this.process(true);
+                                z = aa.status;
                             }, 'bind', true, this));
                         }, 'bind', true, this));
                     },
-                    _handleResizeMsg: function (z) {
+                    _handleResizeMsg: function (y) {
                         if (!this.isValid()) return;
-                        this._resizeIframe(z);
-                        this._resizeFlow(z);
+                        this._resizeIframe(y);
+                        this._resizeFlow(y);
                         if (!this._borderReset) {
                             this.getIframeNode().style.border = 'none';
                             this._borderReset = true;
                         }
                         this._makeVisible();
                     },
-                    _bubbleResizeEvent: function (z) {
-                        var aa = {
-                            height: z.height,
-                            width: z.width,
+                    _bubbleResizeEvent: function (y) {
+                        var z = {
+                            height: y.height,
+                            width: y.width,
                             pluginID: this.getAttribute('plugin-id')
                         };
-                        l.fire('xfbml.resize', aa);
+                        l.fire('xfbml.resize', z);
                     },
-                    _resizeIframe: function (z) {
-                        var aa = this.getIframeNode();
-                        if (z.reposition === "true") this._repositionIframe(z);
-                        z.height && (aa.style.height = z.height + 'px');
-                        z.width && (aa.style.width = z.width + 'px');
+                    _resizeIframe: function (y) {
+                        var z = this.getIframeNode();
+                        if (y.reposition === "true") this._repositionIframe(y);
+                        y.height && (z.style.height = y.height + 'px');
+                        y.width && (z.style.width = y.width + 'px');
                         this._updateIframeZIndex();
                     },
-                    _resizeFlow: function (z) {
-                        var aa = this.dom.getElementsByTagName('span')[0];
-                        z.height && (aa.style.height = z.height + 'px');
-                        z.width && (aa.style.width = z.width + 'px');
+                    _resizeFlow: function (y) {
+                        var z = this.dom.getElementsByTagName('span')[0];
+                        y.height && (z.style.height = y.height + 'px');
+                        y.width && (z.style.width = y.width + 'px');
                         this._updateIframeZIndex();
                     },
                     _updateIframeZIndex: function () {
-                        var z = this.dom.getElementsByTagName('span')[0],
-                            aa = this.getIframeNode(),
-                            ba = aa.style.height === z.style.height && aa.style.width === z.style.width,
-                            ca = ba ? 'removeCss' : 'addCss';
-                        k[ca](aa, 'fb_iframe_widget_lift');
+                        var y = this.dom.getElementsByTagName('span')[0],
+                            z = this.getIframeNode(),
+                            aa = z.style.height === y.style.height && z.style.width === y.style.width,
+                            ba = aa ? 'removeCss' : 'addCss';
+                        k[ba](z, 'fb_iframe_widget_lift');
                     },
-                    _repositionIframe: function (z) {
-                        var aa = this.getIframeNode(),
-                            ba = parseInt(k.getStyle(aa, 'width'), 10),
-                            ca = k.getPosition(aa).x,
-                            da = k.getViewportInfo().width,
-                            ea = parseInt(z.width, 10);
-                        if (ca + ea > da && ca > ea) {
-                            aa.style.left = ba - ea + 'px';
+                    _repositionIframe: function (y) {
+                        var z = this.getIframeNode(),
+                            aa = parseInt(k.getStyle(z, 'width'), 10),
+                            ba = k.getPosition(z).x,
+                            ca = k.getViewportInfo().width,
+                            da = parseInt(y.width, 10);
+                        if (ba + da > ca && ba > da) {
+                            z.style.left = aa - da + 'px';
                             this.arbiterInform('xd/reposition', {
                                 type: 'horizontal'
                             });
                             this._repositioned = true;
                         } else if (this._repositioned) {
-                            aa.style.left = '0px';
+                            z.style.left = '0px';
                             this.arbiterInform('xd/reposition', {
                                 type: 'restore'
                             });
@@ -5987,9 +5994,9 @@ try {
                         }, this.getUrlBits().params);
                     },
                     _getURL: function () {
-                        var z = this.getDefaultWebDomain(),
-                            aa = '';
-                        return z + '/plugins/' + aa + this.getUrlBits().name + '.php';
+                        var y = this.getDefaultWebDomain(),
+                            z = '';
+                        return y + '/plugins/' + z + this.getUrlBits().name + '.php';
                     },
                     _postRequest: function () {
                         i.submitToTarget({
@@ -6000,19 +6007,18 @@ try {
                     }
                 }),
                 v = 0,
-                w = null,
-                x = {};
+                w = {};
 
-            function y() {
-                var z = {};
-                for (var aa in x) {
-                    var ba = x[aa];
-                    z[aa] = {
-                        widget: ba.getUrlBits().name,
-                        params: ba._getQS()
+            function x() {
+                var y = {};
+                for (var z in w) {
+                    var aa = w[z];
+                    y[z] = {
+                        widget: aa.getUrlBits().name,
+                        params: aa._getQS()
                     };
                 }
-                return z;
+                return y;
             }
             e.exports = u;
         });
