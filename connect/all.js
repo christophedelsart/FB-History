@@ -1,4 +1,4 @@
-/*1371630499,182101783,JIT Construction: v851198,fr_FR*/
+/*1372845181,180774181,JIT Construction: v865082,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -3927,7 +3927,7 @@ try {
                     'permissions.oauth': {
                         url: 'dialog/oauth',
                         size: {
-                            width: (z.mobile() ? null : 440),
+                            width: (z.mobile() ? null : 475),
                             height: (z.mobile() ? null : 183)
                         },
                         transform: function (ea) {
@@ -4455,11 +4455,14 @@ try {
             }
             function s(y) {
                 var z = y.type.toLowerCase() === 'application/x-shockwave-flash' || (y.classid && y.classid.toUpperCase() == l);
-                if (z) for (var aa = 0; aa < y.childNodes.length; aa++) {
-                    var ba = y.childNodes[aa];
-                    if (/param/i.test(ba.nodeName) && /wmode/i.test(ba.name) && /opaque|transparent/i.test(ba.value)) return false;
+                if (!z) return false;
+                var aa = /opaque|transparent/i;
+                if (aa.test(y.getAttribute('wmode'))) return false;
+                for (var ba = 0; ba < y.childNodes.length; ba++) {
+                    var ca = y.childNodes[ba];
+                    if (/param/i.test(ca.nodeName) && /wmode/i.test(ca.name) && aa.test(ca.value)) return false;
                 }
-                return z;
+                return true;
             }
             function t(y) {
                 return y.type.toLowerCase() === 'application/vnd.unity' || (y.classid && y.classid.toUpperCase() == m);
@@ -5681,8 +5684,7 @@ try {
                 },
                 create_event_button: {},
                 degrees: {
-                    href: 'url',
-                    limit_profile_visibility: 'bool'
+                    href: 'url'
                 },
                 facepile: {
                     href: 'string',
