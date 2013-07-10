@@ -1,4 +1,4 @@
-/*1372845181,180774181,JIT Construction: v865082,fr_FR*/
+/*1373450090,168615497,JIT Construction: v870661,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -15,7 +15,12 @@ try {
         var __DEV__ = 0;
 
         function emptyFunction() {};
-
+        var __t = function (a) {
+                return a[0];
+            },
+            __w = function (a) {
+                return a;
+            };
         var require, __d;
         (function (a) {
             var b = {},
@@ -793,7 +798,7 @@ try {
                 h = b('sprintf');
 
             function i(n, o) {
-                if (!n) throw new g(o);
+                if (typeof n !== 'boolean' || !n) throw new g(o);
                 return n;
             }
             function j(n, o, p) {
@@ -5325,25 +5330,25 @@ try {
                 ES5(i(ba.getElementsByTagName('*')), 'forEach', true, function (ja) {
                     if (!da && ja.getAttribute('fb-xfbml-state')) return;
                     if (ja.nodeType !== 1) return;
-                    var ka = x(ja),
-                        la = y(ja);
+                    var ka = x(ja);
                     if (!ka) {
                         ka = w(ja);
                         if (!ka) return;
                         if (p.ie() < 9) {
-                            var ma = ja;
+                            var la = ja;
                             ja = document.createElement('div');
                             j.addCss(ja, ka.xmlns + '-' + ka.localName);
-                            ES5(i(ma.childNodes), 'forEach', true, function (qa) {
+                            ES5(i(la.childNodes), 'forEach', true, function (qa) {
                                 ja.appendChild(qa);
                             });
-                            for (var na in la) if (la.hasOwnProperty(na)) ja.setAttribute(na, la[na]);
-                            ma.parentNode.replaceChild(ja, ma);
+                            var ma = y(ja);
+                            for (var na in ma) if (ma.hasOwnProperty(na)) ja.setAttribute(na, ma[na]);
+                            la.parentNode.replaceChild(ja, la);
                         }
                     }
                     fa++;
                     ga++;
-                    var oa = new ka.ctor(ja, ka.xmlns, ka.localName, la);
+                    var oa = new ka.ctor(ja, ka.xmlns, ka.localName, y(ja));
                     oa.subscribe('render', o(function () {
                         ja.setAttribute('fb-xfbml-state', 'rendered');
                         ha();
