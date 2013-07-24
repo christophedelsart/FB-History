@@ -1,4 +1,4 @@
-/*1374051553,168609331,JIT Construction: v877896,fr_FR*/
+/*1374653828,168636511,JIT Construction: v886489,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -2611,7 +2611,7 @@ try {
         });
         __d("hasArrayNature", [], function (a, b, c, d, e, f) {
             function g(h) {
-                return ( !! h && (typeof h == 'object' || typeof h == 'function') && ('length' in h) && !('setInterval' in h) && (Object.prototype.toString.call(h) === "[object Array]" || ('callee' in h) || ('item' in h)));
+                return ( !! h && (typeof h == 'object' || typeof h == 'function') && ('length' in h) && !('setInterval' in h) && (typeof h.nodeType != 'number') && (ES5('Array', 'isArray', false, h) || ('callee' in h) || ('item' in h)));
             }
             e.exports = g;
         });
@@ -3262,9 +3262,9 @@ try {
                 };
 
             function y(da, ea, fa, ga) {
-                if (!fa.access_token) fa.access_token = t;
-                fa.pretty = 0;
-                if (v) i(fa, v);
+                if (v) fa = i({}, v, fa);
+                fa.access_token = fa.access_token || t;
+                fa.pretty = fa.pretty || 0;
                 fa = l(fa);
                 var ha = {
                     jsonp: m,
@@ -5599,6 +5599,11 @@ try {
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
+                    this.subscribe('xd.sdk_event', function (na) {
+                        var oa = ES5('JSON', 'parse', false, na.data);
+                        oa.pluginID = ga;
+                        j.fire(na.event, oa);
+                    });
                     var ha = q.getSecure() || window.location.protocol == 'https:',
                         ia = s.resolve('www', ha) + '/plugins/' + ea + '.php?',
                         ja = {};
@@ -6561,18 +6566,19 @@ try {
                 });
             e.exports = j;
         });
-        __d("sdk.XFBML.EdgeWidget", ["sdk.XFBML.IframeWidget", "sdk.XFBML.EdgeCommentWidget", "sdk.DOM", "sdk.Helper", "sdk.Runtime"], function (a, b, c, d, e, f) {
-            var g = b('sdk.XFBML.IframeWidget'),
-                h = b('sdk.XFBML.EdgeCommentWidget'),
-                i = b('sdk.DOM'),
-                j = b('sdk.Helper'),
-                k = b('sdk.Runtime'),
-                l = g.extend({
+        __d("sdk.XFBML.EdgeWidget", ["sdk.Event", "sdk.XFBML.IframeWidget", "sdk.XFBML.EdgeCommentWidget", "sdk.DOM", "sdk.Helper", "sdk.Runtime"], function (a, b, c, d, e, f) {
+            var g = b('sdk.Event'),
+                h = b('sdk.XFBML.IframeWidget'),
+                i = b('sdk.XFBML.EdgeCommentWidget'),
+                j = b('sdk.DOM'),
+                k = b('sdk.Helper'),
+                l = b('sdk.Runtime'),
+                m = h.extend({
                     _visibleAfter: 'immediate',
                     _showLoader: false,
                     _rootPadding: null,
                     setupAndValidate: function () {
-                        i.addCss(this.dom, 'fb_edge_widget_with_comment');
+                        j.addCss(this.dom, 'fb_edge_widget_with_comment');
                         this._attr = {
                             channel_url: this.getChannelUrl(),
                             debug: this._getBoolAttribute('debug'),
@@ -6592,15 +6598,18 @@ try {
                             extended_social_context: this._getBoolAttribute('extended_social_context', false)
                         };
                         this._rootPadding = {
-                            left: parseFloat(i.getStyle(this.dom, 'paddingLeft')),
-                            top: parseFloat(i.getStyle(this.dom, 'paddingTop'))
+                            left: parseFloat(j.getStyle(this.dom, 'paddingLeft')),
+                            top: parseFloat(j.getStyle(this.dom, 'paddingTop'))
                         };
                         return true;
                     },
                     oneTimeSetup: function () {
-                        this.subscribe('xd.authPrompted', ES5(this._onAuthPrompt, 'bind', true, this));
-                        this.subscribe('xd.edgeCreated', ES5(this._onEdgeCreate, 'bind', true, this));
-                        this.subscribe('xd.edgeRemoved', ES5(this._onEdgeRemove, 'bind', true, this));
+                        this.subscribe('xd.sdk_event', ES5(function (n) {
+                            g.fire(n.event, ES5('JSON', 'parse', false, n.data));
+                            if (n.event == 'edge.create') {
+                                k.invokeHandler(this.getAttribute('on-create'), this, [this._attr.href]);
+                            } else if (n.event == 'edge.remove') k.invokeHandler(this.getAttribute('on-remove'), this, [this._attr.href]);
+                        }, 'bind', true, this));
                         this.subscribe('xd.presentEdgeCommentDialog', ES5(this._handleEdgeCommentDialogPresentation, 'bind', true, this));
                         this.subscribe('xd.dismissEdgeCommentDialog', ES5(this._handleEdgeCommentDialogDismissal, 'bind', true, this));
                         this.subscribe('xd.hideEdgeCommentDialog', ES5(this._handleEdgeCommentDialogHide, 'bind', true, this));
@@ -6613,18 +6622,18 @@ try {
                         };
                     },
                     _getWidgetHeight: function () {
-                        var m = this._getLayout(),
-                            n = this._shouldShowFaces() ? 'show' : 'hide',
-                            o = this._getBoolAttribute('send'),
-                            p = 65 + (o ? 25 : 0),
-                            q = {
+                        var n = this._getLayout(),
+                            o = this._shouldShowFaces() ? 'show' : 'hide',
+                            p = this._getBoolAttribute('send'),
+                            q = 65 + (p ? 25 : 0),
+                            r = {
                                 standard: {
                                     show: 80,
                                     hide: 35
                                 },
                                 box_count: {
-                                    show: p,
-                                    hide: p
+                                    show: q,
+                                    hide: q
                                 },
                                 button_count: {
                                     show: 21,
@@ -6635,48 +6644,48 @@ try {
                                     hide: 20
                                 }
                             };
-                        return q[m][n];
+                        return r[n][o];
                     },
                     _getWidgetWidth: function () {
-                        var m = this._getLayout(),
-                            n = this._getBoolAttribute('send'),
-                            o = this._shouldShowFaces() ? 'show' : 'hide',
-                            p = (this.getAttribute('action') === 'recommend'),
-                            q = (p ? 265 : 225) + (n ? 60 : 0),
-                            r = (p ? 130 : 90) + (n ? 60 : 0),
-                            s = this.getAttribute('action') === 'recommend' ? 100 : 55,
-                            t = this.getAttribute('action') === 'recommend' ? 90 : 50,
-                            u = {
+                        var n = this._getLayout(),
+                            o = this._getBoolAttribute('send'),
+                            p = this._shouldShowFaces() ? 'show' : 'hide',
+                            q = (this.getAttribute('action') === 'recommend'),
+                            r = (q ? 265 : 225) + (o ? 60 : 0),
+                            s = (q ? 130 : 90) + (o ? 60 : 0),
+                            t = this.getAttribute('action') === 'recommend' ? 100 : 55,
+                            u = this.getAttribute('action') === 'recommend' ? 90 : 50,
+                            v = {
                                 standard: {
                                     show: 450,
                                     hide: 450
                                 },
                                 box_count: {
+                                    show: t,
+                                    hide: t
+                                },
+                                button_count: {
                                     show: s,
                                     hide: s
                                 },
-                                button_count: {
-                                    show: r,
-                                    hide: r
-                                },
                                 simple: {
-                                    show: t,
-                                    hide: t
+                                    show: u,
+                                    hide: u
                                 }
                             },
-                            v = u[m][o],
-                            w = this._getPxAttribute('width', v),
-                            x = {
+                            w = v[n][p],
+                            x = this._getPxAttribute('width', w),
+                            y = {
                                 standard: {
-                                    min: q,
+                                    min: r,
                                     max: 900
                                 },
                                 box_count: {
-                                    min: s,
+                                    min: t,
                                     max: 900
                                 },
                                 button_count: {
-                                    min: r,
+                                    min: s,
                                     max: 900
                                 },
                                 simple: {
@@ -6684,10 +6693,10 @@ try {
                                     max: 900
                                 }
                             };
-                        if (w < x[m].min) {
-                            w = x[m].min;
-                        } else if (w > x[m].max) w = x[m].max;
-                        return w;
+                        if (x < y[n].min) {
+                            x = y[n].min;
+                        } else if (x > y[n].max) x = y[n].max;
+                        return x;
                     },
                     _getLayout: function () {
                         return this._getAttributeFromList('layout', 'standard', ['standard', 'button_count', 'box_count', 'simple']);
@@ -6695,68 +6704,68 @@ try {
                     _shouldShowFaces: function () {
                         return this._getLayout() === 'standard' && this._getBoolAttribute('show-faces', true);
                     },
-                    _handleEdgeCommentDialogPresentation: function (m) {
+                    _handleEdgeCommentDialogPresentation: function (n) {
                         if (!this.isValid()) return;
-                        var n = document.createElement('span');
-                        this._commentSlave = this._createEdgeCommentWidget(m, n);
-                        this.dom.appendChild(n);
+                        var o = document.createElement('span');
+                        this._commentSlave = this._createEdgeCommentWidget(n, o);
+                        this.dom.appendChild(o);
                         this._commentSlave.process();
-                        this._commentWidgetNode = n;
+                        this._commentWidgetNode = o;
                     },
-                    _createEdgeCommentWidget: function (m, n) {
-                        var o = {
-                            commentNode: n,
-                            externalUrl: m.externalURL,
-                            masterFrameName: m.masterFrameName,
+                    _createEdgeCommentWidget: function (n, o) {
+                        var p = {
+                            commentNode: o,
+                            externalUrl: n.externalURL,
+                            masterFrameName: n.masterFrameName,
                             layout: this._getLayout(),
-                            relativeHeightOffset: this._getHeightOffset(m),
-                            relativeWidthOffset: this._getWidthOffset(m),
-                            anchorTargetX: parseFloat(m['query[anchorTargetX]']) + this._rootPadding.left,
-                            anchorTargetY: parseFloat(m['query[anchorTargetY]']) + this._rootPadding.top,
-                            width: parseFloat(m.width),
-                            height: parseFloat(m.height),
+                            relativeHeightOffset: this._getHeightOffset(n),
+                            relativeWidthOffset: this._getWidthOffset(n),
+                            anchorTargetX: parseFloat(n['query[anchorTargetX]']) + this._rootPadding.left,
+                            anchorTargetY: parseFloat(n['query[anchorTargetY]']) + this._rootPadding.top,
+                            width: parseFloat(n.width),
+                            height: parseFloat(n.height),
                             paddingLeft: this._rootPadding.left
                         };
-                        return new h(o);
+                        return new i(p);
                     },
-                    _getHeightOffset: function (m) {
-                        return parseFloat(m['anchorGeometry[y]']) + parseFloat(m['anchorPosition[y]']) + this._rootPadding.top;
+                    _getHeightOffset: function (n) {
+                        return parseFloat(n['anchorGeometry[y]']) + parseFloat(n['anchorPosition[y]']) + this._rootPadding.top;
                     },
-                    _getWidthOffset: function (m) {
-                        var n = parseFloat(m['anchorPosition[x]']) + this._rootPadding.left,
-                            o = i.getPosition(this.dom).x,
-                            p = this.dom.offsetWidth,
-                            q = i.getViewportInfo().width,
-                            r = parseFloat(m.width),
-                            s = false;
-                        if (k.getRtl()) {
-                            s = r < o;
-                        } else if ((o + r) > q) s = true;
-                        if (s) n += parseFloat(m['anchorGeometry[x]']) - r;
-                        return n;
+                    _getWidthOffset: function (n) {
+                        var o = parseFloat(n['anchorPosition[x]']) + this._rootPadding.left,
+                            p = j.getPosition(this.dom).x,
+                            q = this.dom.offsetWidth,
+                            r = j.getViewportInfo().width,
+                            s = parseFloat(n.width),
+                            t = false;
+                        if (l.getRtl()) {
+                            t = s < p;
+                        } else if ((p + s) > r) t = true;
+                        if (t) o += parseFloat(n['anchorGeometry[x]']) - s;
+                        return o;
                     },
-                    _getCommonEdgeCommentWidgetOpts: function (m, n) {
+                    _getCommonEdgeCommentWidgetOpts: function (n, o) {
                         return {
                             colorscheme: this._attr.colorscheme,
-                            commentNode: n,
-                            controllerID: m.controllerID,
-                            nodeImageURL: m.nodeImageURL,
+                            commentNode: o,
+                            controllerID: n.controllerID,
+                            nodeImageURL: n.nodeImageURL,
                             nodeRef: this._attr.ref,
-                            nodeTitle: m.nodeTitle,
-                            nodeURL: m.nodeURL,
-                            nodeSummary: m.nodeSummary,
-                            width: parseFloat(m.width),
-                            height: parseFloat(m.height),
-                            relativeHeightOffset: this._getHeightOffset(m),
-                            relativeWidthOffset: this._getWidthOffset(m),
-                            error: m.error,
-                            siderender: m.siderender,
-                            extended_social_context: m.extended_social_context,
-                            anchorTargetX: parseFloat(m['query[anchorTargetX]']) + this._rootPadding.left,
-                            anchorTargetY: parseFloat(m['query[anchorTargetY]']) + this._rootPadding.top
+                            nodeTitle: n.nodeTitle,
+                            nodeURL: n.nodeURL,
+                            nodeSummary: n.nodeSummary,
+                            width: parseFloat(n.width),
+                            height: parseFloat(n.height),
+                            relativeHeightOffset: this._getHeightOffset(n),
+                            relativeWidthOffset: this._getWidthOffset(n),
+                            error: n.error,
+                            siderender: n.siderender,
+                            extended_social_context: n.extended_social_context,
+                            anchorTargetX: parseFloat(n['query[anchorTargetX]']) + this._rootPadding.left,
+                            anchorTargetY: parseFloat(n['query[anchorTargetY]']) + this._rootPadding.top
                         };
                     },
-                    _handleEdgeCommentDialogDismissal: function (m) {
+                    _handleEdgeCommentDialogDismissal: function (n) {
                         if (this._commentWidgetNode) {
                             this.dom.removeChild(this._commentWidgetNode);
                             delete this._commentWidgetNode;
@@ -6767,22 +6776,9 @@ try {
                     },
                     _handleEdgeCommentDialogShow: function () {
                         if (this._commentWidgetNode) this._commentWidgetNode.style.display = "block";
-                    },
-                    _fireEventAndInvokeHandler: function (m, n) {
-                        j.fireEvent(m, this);
-                        j.invokeHandler(this.getAttribute(n), this, [this._attr.href]);
-                    },
-                    _onEdgeCreate: function () {
-                        this._fireEventAndInvokeHandler('edge.create', 'on-create');
-                    },
-                    _onEdgeRemove: function () {
-                        this._fireEventAndInvokeHandler('edge.remove', 'on-remove');
-                    },
-                    _onAuthPrompt: function () {
-                        this._fireEventAndInvokeHandler('auth.prompt', 'on-prompt');
                     }
                 });
-            e.exports = l;
+            e.exports = m;
         });
         __d("sdk.XFBML.SendButtonFormWidget", ["sdk.XFBML.EdgeCommentWidget", "sdk.DOM", "sdk.Event"], function (a, b, c, d, e, f) {
             var g = b('sdk.XFBML.EdgeCommentWidget'),
