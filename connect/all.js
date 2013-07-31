@@ -1,4 +1,4 @@
-/*1374653828,168636511,JIT Construction: v886489,fr_FR*/
+/*1375259919,173044053,JIT Construction: v893363,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -5602,7 +5602,7 @@ try {
                     this.subscribe('xd.sdk_event', function (na) {
                         var oa = ES5('JSON', 'parse', false, na.data);
                         oa.pluginID = ga;
-                        j.fire(na.event, oa);
+                        j.fire(na.event, oa, ca);
                     });
                     var ha = q.getSecure() || window.location.protocol == 'https:',
                         ia = s.resolve('www', ha) + '/plugins/' + ea + '.php?',
@@ -6605,7 +6605,7 @@ try {
                     },
                     oneTimeSetup: function () {
                         this.subscribe('xd.sdk_event', ES5(function (n) {
-                            g.fire(n.event, ES5('JSON', 'parse', false, n.data));
+                            g.fire(n.event, ES5('JSON', 'parse', false, n.data), this.dom);
                             if (n.event == 'edge.create') {
                                 k.invokeHandler(this.getAttribute('on-create'), this, [this._attr.href]);
                             } else if (n.event == 'edge.remove') k.invokeHandler(this.getAttribute('on-remove'), this, [this._attr.href]);
