@@ -1,4 +1,4 @@
-/*1375259919,173044053,JIT Construction: v893363,fr_FR*/
+/*1375865694,168628551,JIT Construction: v900980,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -1709,63 +1709,59 @@ try {
                 this._queue = [];
                 this._stopped = true;
             }
-            g(i.prototype, {
-                _dispatch: function (j) {
-                    if (this._stopped || this._queue.length === 0) return;
-                    if (!this._opts.processor) {
-                        this._stopped = true;
-                        throw new Error('No processor available');
-                    }
-                    if (this._opts.interval) {
-                        this._opts.processor.call(this, this._queue.shift());
-                        this._timeout = setTimeout(ES5(this._dispatch, 'bind', true, this), this._opts.interval);
-                    } else while (this._queue.length) this._opts.processor.call(this, this._queue.shift());
-                },
-                enqueue: function (j) {
-                    if (this._opts.processor && !this._stopped) {
-                        this._opts.processor.call(this, j);
-                    } else this._queue.push(j);
-                    return this;
-                },
-                start: function (j) {
-                    if (j) this._opts.processor = j;
-                    this._stopped = false;
-                    this._dispatch();
-                    return this;
-                },
-                dispatch: function () {
-                    this._dispatch(true);
-                },
-                stop: function (j) {
+            i.prototype._dispatch = function (j) {
+                if (this._stopped || this._queue.length === 0) return;
+                if (!this._opts.processor) {
                     this._stopped = true;
-                    if (j) clearTimeout(this._timeout);
-                    return this;
-                },
-                merge: function (j, k) {
-                    this._queue[k ? 'unshift' : 'push'].apply(this._queue, j._queue);
-                    j._queue = [];
-                    this._dispatch();
-                    return this;
-                },
-                getLength: function () {
-                    return this._queue.length;
+                    throw new Error('No processor available');
                 }
-            });
-            g(i, {
-                get: function (j, k) {
-                    var l;
-                    if (j in h) {
-                        l = h[j];
-                    } else l = h[j] = new i(k);
-                    return l;
-                },
-                exists: function (j) {
-                    return j in h;
-                },
-                remove: function (j) {
-                    return delete h[j];
-                }
-            });
+                if (this._opts.interval) {
+                    this._opts.processor.call(this, this._queue.shift());
+                    this._timeout = setTimeout(ES5(this._dispatch, 'bind', true, this), this._opts.interval);
+                } else while (this._queue.length) this._opts.processor.call(this, this._queue.shift());
+            };
+            i.prototype.enqueue = function (j) {
+                if (this._opts.processor && !this._stopped) {
+                    this._opts.processor.call(this, j);
+                } else this._queue.push(j);
+                return this;
+            };
+            i.prototype.start = function (j) {
+                if (j) this._opts.processor = j;
+                this._stopped = false;
+                this._dispatch();
+                return this;
+            };
+            i.prototype.dispatch = function () {
+                this._dispatch(true);
+            };
+            i.prototype.stop = function (j) {
+                this._stopped = true;
+                if (j) clearTimeout(this._timeout);
+                return this;
+            };
+            i.prototype.merge = function (j, k) {
+                this._queue[k ? 'unshift' : 'push'].apply(this._queue, j._queue);
+                j._queue = [];
+                this._dispatch();
+                return this;
+            };
+            i.prototype.getLength = function () {
+                return this._queue.length;
+            };
+            i.get = function (j, k) {
+                var l;
+                if (j in h) {
+                    l = h[j];
+                } else l = h[j] = new i(k);
+                return l;
+            };
+            i.exists = function (j) {
+                return j in h;
+            };
+            i.remove = function (j) {
+                return delete h[j];
+            };
             e.exports = i;
         });
         __d("resolveURI", [], function (a, b, c, d, e, f) {
@@ -2609,15 +2605,10 @@ try {
             });
             e.exports = y;
         });
-        __d("hasArrayNature", [], function (a, b, c, d, e, f) {
-            function g(h) {
-                return ( !! h && (typeof h == 'object' || typeof h == 'function') && ('length' in h) && !('setInterval' in h) && (typeof h.nodeType != 'number') && (ES5('Array', 'isArray', false, h) || ('callee' in h) || ('item' in h)));
+        __d("createArrayFrom", [], function (a, b, c, d, e, f) {
+            function g(i) {
+                return ( !! i && (typeof i == 'object' || typeof i == 'function') && ('length' in i) && !('setInterval' in i) && (typeof i.nodeType != 'number') && (ES5('Array', 'isArray', false, i) || ('callee' in i) || ('item' in i)));
             }
-            e.exports = g;
-        });
-        __d("createArrayFrom", ["hasArrayNature"], function (a, b, c, d, e, f) {
-            var g = b('hasArrayNature');
-
             function h(i) {
                 if (!g(i)) return [i];
                 if (i.item) {
