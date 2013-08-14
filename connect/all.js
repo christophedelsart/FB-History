@@ -1,4 +1,4 @@
-/*1375865694,168628551,JIT Construction: v900980,fr_FR*/
+/*1376472654,171318847,JIT Construction: v908037,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -198,7 +198,7 @@ try {
                 });
                 /**
                  * @providesModule JSON3
-                 * @option preserve-header
+                 * @preserve-header
                  *
                  *! JSON v3.2.3 | http://bestiejs.github.com/json3 | Copyright 2012, Kit Cambridge | http://kit.mit-license.org
                  */
@@ -614,7 +614,7 @@ try {
             "rtl": false
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=25",
+            "XdUrl": "connect\/xd_arbiter.php?version=26",
             "Flash": {
                 "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yY\/r\/tkKkN2MZL-q.swf"
             },
@@ -1247,7 +1247,7 @@ try {
                 if (g) return;
                 g = true;
                 var x = navigator.userAgent,
-                    y = /(?:MSIE.(\d+\.\d+))|(?:(?:Firefox|GranParadiso|Iceweasel).(\d+\.\d+))|(?:Opera(?:.+Version.|.)(\d+\.\d+))|(?:AppleWebKit.(\d+(?:\.\d+)?))/.exec(x),
+                    y = /(?:MSIE.(\d+\.\d+))|(?:(?:Firefox|GranParadiso|Iceweasel).(\d+\.\d+))|(?:Opera(?:.+Version.|.)(\d+\.\d+))|(?:AppleWebKit.(\d+(?:\.\d+)?))|(?:Trident\/\d+\.\d+.*rv:(\d+\.\d+))/.exec(x),
                     z = /(Mac OS X)|(Windows)|(Linux)/.exec(x);
                 r = /\b(iPhone|iP[ao]d)/.exec(x);
                 s = /\b(iP[ao]d)/.exec(x);
@@ -1256,7 +1256,7 @@ try {
                 u = /Mobile/i.exec(x);
                 q = !! (/Win64/.exec(x));
                 if (y) {
-                    h = y[1] ? parseFloat(y[1]) : NaN;
+                    h = y[1] ? parseFloat(y[1]) : (y[5] ? parseFloat(y[5]) : NaN);
                     if (h && document.documentMode) h = document.documentMode;
                     i = y[2] ? parseFloat(y[2]) : NaN;
                     j = y[3] ? parseFloat(y[3]) : NaN;
@@ -5294,7 +5294,7 @@ try {
                     return r.hasOwnProperty(ea);
                 });
                 if (da.length === 0) return undefined;
-                if (!ca.childNodes || ca.childNodes.length === 0 || (ca.childNodes.length == 1 && ca.childNodes[0].nodeType == 3) || ca.getAttribute('fb-xfbml-state')) return r[da[0]];
+                if (ca.getAttribute('fb-xfbml-state') || !ca.childNodes || ca.childNodes.length === 0 || (ca.childNodes.length === 1 && ca.childNodes[0].nodeType === 3) || (ca.children.length === 1 && u(ca.children[0], 'className') === 'fb-xfbml-parse-ignore')) return r[da[0]];
             }
             function y(ca) {
                 var da = {};
