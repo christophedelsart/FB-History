@@ -1,4 +1,4 @@
-/*1376472654,171318847,JIT Construction: v908037,fr_FR*/
+/*1377081696,171903263,JIT Construction: v915078,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -716,7 +716,7 @@ try {
         __d("QueryString", [], function (a, b, c, d, e, f) {
             function g(k) {
                 var l = [];
-                ES5(ES5('Object', 'keys', false, k), 'forEach', true, function (m) {
+                ES5(ES5('Object', 'keys', false, k).sort(), 'forEach', true, function (m) {
                     var n = k[m];
                     if (typeof n === 'undefined') return;
                     if (n === null) {
@@ -4263,27 +4263,22 @@ try {
                     },
                     _xdRecv: function (ea, fa) {
                         var ga = da.getLoadedNode(ea.frame);
-                        if (ga) {
+                        if (ga) if (ga.close) {
                             try {
-                                if (k.containsCss(ga, 'FB_UI_Hidden')) {
-                                    setTimeout(function () {
-                                        ga.parentNode.parentNode.removeChild(ga.parentNode);
-                                    }, 3000);
-                                } else if (k.containsCss(ga, 'FB_UI_Dialog')) j.remove(ga);
+                                ga.close();
+                                if (/iPhone.*Version\/(5|6)/.test(navigator.userAgent) && RegExp.$1 !== '5') window.focus();
+                                da._popupCount--;
                             } catch (ha) {}
-                            try {
-                                if (ga.close) {
-                                    ga.close();
-                                    if (/iPhone.*Version\/(5|6)/.test(navigator.userAgent) && RegExp.$1 !== '5') window.focus();
-                                    da._popupCount--;
-                                }
-                            } catch (ia) {}
-                        }
+                        } else if (k.containsCss(ga, 'FB_UI_Hidden')) {
+                            setTimeout(function () {
+                                ga.parentNode.parentNode.removeChild(ga.parentNode);
+                            }, 3000);
+                        } else if (k.containsCss(ga, 'FB_UI_Dialog')) j.remove(ga);
                         delete da._loadedNodes[ea.frame];
                         delete da._defaultCb[ea.frame];
-                        var ja = j.get(ea.frame);
-                        ja.trackEvents(ea.e2e);
-                        ja.trackEvent('close');
+                        var ia = j.get(ea.frame);
+                        ia.trackEvents(ea.e2e);
+                        ia.trackEvent('close');
                         fa(ea);
                     },
                     _xdResult: function (ea, fa, ga, ha) {
@@ -5487,22 +5482,23 @@ try {
             });
             e.exports = s;
         });
-        __d("IframePlugin", ["sdk.Auth", "sdk.createIframe", "sdk.DOM", "sdk.Event", "guid", "Log", "ObservableMixin", "PluginPipe", "QueryString", "resolveURI", "sdk.Runtime", "Type", "UrlMap", "sdk.XD"], function (a, b, c, d, e, f) {
+        __d("IframePlugin", ["sdk.Auth", "sdk.createIframe", "copyProperties", "sdk.DOM", "sdk.Event", "guid", "Log", "ObservableMixin", "PluginPipe", "QueryString", "resolveURI", "sdk.Runtime", "Type", "UrlMap", "sdk.XD"], function (a, b, c, d, e, f) {
             var g = b('sdk.Auth'),
                 h = b('sdk.createIframe'),
-                i = b('sdk.DOM'),
-                j = b('sdk.Event'),
-                k = b('guid'),
-                l = b('Log'),
-                m = b('ObservableMixin'),
-                n = b('PluginPipe'),
-                o = b('QueryString'),
-                p = b('resolveURI'),
-                q = b('sdk.Runtime'),
-                r = b('Type'),
-                s = b('UrlMap'),
-                t = b('sdk.XD'),
-                u = {
+                i = b('copyProperties'),
+                j = b('sdk.DOM'),
+                k = b('sdk.Event'),
+                l = b('guid'),
+                m = b('Log'),
+                n = b('ObservableMixin'),
+                o = b('PluginPipe'),
+                p = b('QueryString'),
+                q = b('resolveURI'),
+                r = b('sdk.Runtime'),
+                s = b('Type'),
+                t = b('UrlMap'),
+                u = b('sdk.XD'),
+                v = {
                     skin: 'string',
                     font: 'string',
                     width: 'px',
@@ -5511,129 +5507,126 @@ try {
                     color_scheme: 'string'
                 };
 
-            function v(ca, da, ea) {
-                if (da || da === 0) ca.style.width = da + 'px';
-                if (ea || ea === 0) ca.style.height = ea + 'px';
+            function w(da, ea, fa) {
+                if (ea || ea === 0) da.style.width = ea + 'px';
+                if (fa || fa === 0) da.style.height = fa + 'px';
             }
-            function w(ca) {
-                return function (da) {
-                    var ea = {
-                        width: da.width,
-                        height: da.height,
-                        pluginID: ca
+            function x(da) {
+                return function (ea) {
+                    var fa = {
+                        width: ea.width,
+                        height: ea.height,
+                        pluginID: da
                     };
-                    j.fire('xfbml.resize', ea);
+                    k.fire('xfbml.resize', fa);
                 };
             }
-            var x = {
-                string: function (ca) {
-                    return ca;
+            var y = {
+                string: function (da) {
+                    return da;
                 },
-                bool: function (ca) {
-                    return ca ? (/^(?:true|1|yes|on)$/i).test(ca) : undefined;
+                bool: function (da) {
+                    return da ? (/^(?:true|1|yes|on)$/i).test(da) : undefined;
                 },
-                url: function (ca) {
-                    return p(ca);
+                url: function (da) {
+                    return q(da);
                 },
-                url_maybe: function (ca) {
-                    return ca ? p(ca) : ca;
+                url_maybe: function (da) {
+                    return da ? q(da) : da;
                 },
-                hostname: function (ca) {
-                    return ca || window.location.hostname;
+                hostname: function (da) {
+                    return da || window.location.hostname;
                 },
-                px: function (ca) {
-                    return (/^(\d+)(?:px)?$/).test(ca) ? parseInt(RegExp.$1, 10) : undefined;
+                px: function (da) {
+                    return (/^(\d+)(?:px)?$/).test(da) ? parseInt(RegExp.$1, 10) : undefined;
                 },
-                text: function (ca) {
-                    return ca;
+                text: function (da) {
+                    return da;
                 }
             };
 
-            function y(ca, da) {
-                var ea = ca[da] || ca[da.replace(/_/g, '-')] || ca[da.replace(/_/g, '')] || ca['data-' + da] || ca['data-' + da.replace(/_/g, '-')] || ca['data-' + da.replace(/_/g, '')] || undefined;
-                return ea;
+            function z(da, ea) {
+                var fa = da[ea] || da[ea.replace(/_/g, '-')] || da[ea.replace(/_/g, '')] || da['data-' + ea] || da['data-' + ea.replace(/_/g, '-')] || da['data-' + ea.replace(/_/g, '')] || undefined;
+                return fa;
             }
-            function z(ca, da, ea, fa) {
-                ES5(ES5('Object', 'keys', false, ca), 'forEach', true, function (ga) {
-                    if (ca[ga] == 'text' && !ea[ga]) {
-                        ea[ga] = da.textContent || da.innerText || '';
-                        da.setAttribute(ga, ea[ga]);
+            function aa(da, ea, fa, ga) {
+                ES5(ES5('Object', 'keys', false, da), 'forEach', true, function (ha) {
+                    if (da[ha] == 'text' && !fa[ha]) {
+                        fa[ha] = ea.textContent || ea.innerText || '';
+                        ea.setAttribute(ha, fa[ha]);
                     }
-                    fa[ga] = x[ca[ga]](y(ea, ga));
+                    ga[ha] = y[da[ha]](z(fa, ha));
                 });
             }
-            function aa(ca) {
-                return ca || ca === '0' || ca === 0 ? parseInt(ca, 10) : undefined;
+            function ba(da) {
+                return da || da === '0' || da === 0 ? parseInt(da, 10) : undefined;
             }
-            var ba = r.extend({
-                constructor: function (ca, da, ea, fa) {
+            var ca = s.extend({
+                constructor: function (da, ea, fa, ga) {
                     this.parent();
-                    ea = ea.replace(/-/g, '_');
-                    var ga = y(fa, 'plugin_id');
-                    this.subscribe('xd.resize', w(ga));
-                    this.subscribe('xd.resize.flow', w(ga));
-                    this.subscribe('xd.resize.flow', ES5(function (na) {
+                    fa = fa.replace(/-/g, '_');
+                    var ha = z(ga, 'plugin_id');
+                    this.subscribe('xd.resize', x(ha));
+                    this.subscribe('xd.resize.flow', x(ha));
+                    this.subscribe('xd.resize.flow', ES5(function (oa) {
                         this._config.root.style.verticalAlign = 'bottom';
-                        v(this._config.root, aa(na.width), aa(na.height));
+                        w(this._config.root, ba(oa.width), ba(oa.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
-                    this.subscribe('xd.resize', ES5(function (na) {
+                    this.subscribe('xd.resize', ES5(function (oa) {
                         this._config.root.style.verticalAlign = 'bottom';
-                        v(this._config.root, aa(na.width), aa(na.height));
-                        v(this._iframe, aa(na.width), aa(na.height));
+                        w(this._config.root, ba(oa.width), ba(oa.height));
+                        w(this._iframe, ba(oa.width), ba(oa.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
-                    this.subscribe('xd.resize.iframe', ES5(function (na) {
-                        v(this._iframe, aa(na.width), aa(na.height));
+                    this.subscribe('xd.resize.iframe', ES5(function (oa) {
+                        w(this._iframe, ba(oa.width), ba(oa.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
-                    this.subscribe('xd.sdk_event', function (na) {
-                        var oa = ES5('JSON', 'parse', false, na.data);
-                        oa.pluginID = ga;
-                        j.fire(na.event, oa, ca);
+                    this.subscribe('xd.sdk_event', function (oa) {
+                        var pa = ES5('JSON', 'parse', false, oa.data);
+                        pa.pluginID = ha;
+                        k.fire(oa.event, pa, da);
                     });
-                    var ha = q.getSecure() || window.location.protocol == 'https:',
-                        ia = s.resolve('www', ha) + '/plugins/' + ea + '.php?',
-                        ja = {};
-                    z(this.getParams(), ca, fa, ja);
-                    z(u, ca, fa, ja);
-                    ja.app_id = q.getClientID();
-                    ja.locale = q.getLocale();
-                    ja.sdk = 'joey';
-                    ja.kid_directed_site = q.getKidDirectedSite();
-                    var ka = ES5(function (na) {
-                        this.inform('xd.' + na.type, na);
+                    var ia = r.getSecure() || window.location.protocol == 'https:',
+                        ja = t.resolve('www', ia) + '/plugins/' + fa + '.php?',
+                        ka = {};
+                    aa(this.getParams(), da, ga, ka);
+                    aa(v, da, ga, ka);
+                    ka.app_id = r.getClientID();
+                    ka.locale = r.getLocale();
+                    ka.sdk = 'joey';
+                    ka.kid_directed_site = r.getKidDirectedSite();
+                    var la = ES5(function (oa) {
+                        this.inform('xd.' + oa.type, oa);
                     }, 'bind', true, this);
-                    ja.channel = t.handler(ka, 'parent.parent', true);
-                    i.addCss(ca, 'fb_iframe_widget');
-                    var la = k();
-                    this.subscribe('xd.verify', function (na) {
-                        t.sendToFacebook(la, {
+                    ka.channel = u.handler(la, 'parent.parent', true);
+                    j.addCss(da, 'fb_iframe_widget');
+                    var ma = l();
+                    this.subscribe('xd.verify', function (oa) {
+                        u.sendToFacebook(ma, {
                             method: 'xd/verify',
-                            params: ES5('JSON', 'stringify', false, na.token)
+                            params: ES5('JSON', 'stringify', false, oa.token)
                         });
                     });
                     this.subscribe('xd.refreshLoginStatus', ES5(g.getLoginStatus, 'bind', true, g, ES5(this.inform, 'bind', true, this, 'login.status'), true));
-                    var ma = document.createElement('span');
-                    ma.style.verticalAlign = 'top';
-                    ma.style.width = '0px';
-                    ma.style.height = '0px';
-                    this.subscribe('render', function () {
-                        this._iframe.style.visibility = 'visible';
-                    });
-                    this._element = ca;
-                    this._ns = da;
-                    this._tag = ea;
-                    this._params = ja;
+                    var na = document.createElement('span');
+                    na.style.verticalAlign = 'top';
+                    na.style.width = '0px';
+                    na.style.height = '0px';
+                    this._element = da;
+                    this._ns = ea;
+                    this._tag = fa;
+                    this._params = ka;
                     this._config = {
-                        root: ma,
-                        url: ia + o.encode(ja),
-                        name: la,
-                        width: ja.width || 1000,
-                        height: ja.height || 1000,
+                        root: na,
+                        url: ja + p.encode(ka),
+                        name: ma,
+                        width: ka.width || 1000,
+                        height: ka.height || 1000,
                         style: {
                             border: 'none',
                             visibility: 'hidden'
@@ -5645,28 +5638,40 @@ try {
                     };
                 },
                 process: function () {
-                    this._element.innerHTML = '';
+                    var da = i({}, this._params);
+                    delete da.channel;
+                    var ea = p.encode(da);
+                    if (this._element.getAttribute('fb-iframe-plugin-query') == ea) {
+                        m.info('Skipping render: %s:%s %s', this._ns, this._tag, ea);
+                        this.inform('render');
+                        return;
+                    }
+                    this._element.setAttribute('fb-iframe-plugin-query', ea);
+                    this.subscribe('render', function () {
+                        this._iframe.style.visibility = 'visible';
+                    });
+                    while (this._element.firstChild) this._element.removeChild(this._element.firstChild);
                     this._element.appendChild(this._config.root);
                     this._timeoutID = setTimeout(ES5(function () {
-                        this._iframe && v(this._iframe, 0, 0);
-                        l.warn('%s:%s failed to resize in 45s', this._ns, this._tag);
+                        this._iframe && w(this._iframe, 0, 0);
+                        m.warn('%s:%s failed to resize in 45s', this._ns, this._tag);
                     }, 'bind', true, this), 45 * 1000);
-                    if (!n.add(this)) this._iframe = h(this._config);
+                    if (!o.add(this)) this._iframe = h(this._config);
                 },
                 updateLift: function () {
-                    var ca = this._iframe.style.width === this._config.root.style.width && this._iframe.style.height === this._config.root.style.height;
-                    i[ca ? 'removeCss' : 'addCss'](this._iframe, 'fb_iframe_widget_lift');
+                    var da = this._iframe.style.width === this._config.root.style.width && this._iframe.style.height === this._config.root.style.height;
+                    j[da ? 'removeCss' : 'addCss'](this._iframe, 'fb_iframe_widget_lift');
                 }
-            }, m);
-            ba.getVal = y;
-            ba.withParams = function (ca) {
-                return ba.extend({
+            }, n);
+            ca.getVal = z;
+            ca.withParams = function (da) {
+                return ca.extend({
                     getParams: function () {
-                        return ca;
+                        return da;
                     }
                 });
             };
-            e.exports = ba;
+            e.exports = ca;
         });
         __d("PluginTags", [], function (a, b, c, d, e, f) {
             var g = {
