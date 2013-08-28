@@ -1,4 +1,4 @@
-/*1377081696,171903263,JIT Construction: v915078,fr_FR*/
+/*1377678168,171994924,JIT Construction: v921390,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -5482,7 +5482,7 @@ try {
             });
             e.exports = s;
         });
-        __d("IframePlugin", ["sdk.Auth", "sdk.createIframe", "copyProperties", "sdk.DOM", "sdk.Event", "guid", "Log", "ObservableMixin", "PluginPipe", "QueryString", "resolveURI", "sdk.Runtime", "Type", "UrlMap", "sdk.XD"], function (a, b, c, d, e, f) {
+        __d("IframePlugin", ["sdk.Auth", "sdk.createIframe", "copyProperties", "sdk.DOM", "sdk.Event", "guid", "Log", "ObservableMixin", "PluginPipe", "QueryString", "resolveURI", "sdk.Runtime", "Type", "UrlMap", "UserAgent", "sdk.XD"], function (a, b, c, d, e, f) {
             var g = b('sdk.Auth'),
                 h = b('sdk.createIframe'),
                 i = b('copyProperties'),
@@ -5497,8 +5497,9 @@ try {
                 r = b('sdk.Runtime'),
                 s = b('Type'),
                 t = b('UrlMap'),
-                u = b('sdk.XD'),
-                v = {
+                u = b('UserAgent'),
+                v = b('sdk.XD'),
+                w = {
                     skin: 'string',
                     font: 'string',
                     width: 'px',
@@ -5507,126 +5508,126 @@ try {
                     color_scheme: 'string'
                 };
 
-            function w(da, ea, fa) {
-                if (ea || ea === 0) da.style.width = ea + 'px';
-                if (fa || fa === 0) da.style.height = fa + 'px';
+            function x(ea, fa, ga) {
+                if (fa || fa === 0) ea.style.width = fa + 'px';
+                if (ga || ga === 0) ea.style.height = ga + 'px';
             }
-            function x(da) {
-                return function (ea) {
-                    var fa = {
-                        width: ea.width,
-                        height: ea.height,
-                        pluginID: da
+            function y(ea) {
+                return function (fa) {
+                    var ga = {
+                        width: fa.width,
+                        height: fa.height,
+                        pluginID: ea
                     };
-                    k.fire('xfbml.resize', fa);
+                    k.fire('xfbml.resize', ga);
                 };
             }
-            var y = {
-                string: function (da) {
-                    return da;
+            var z = {
+                string: function (ea) {
+                    return ea;
                 },
-                bool: function (da) {
-                    return da ? (/^(?:true|1|yes|on)$/i).test(da) : undefined;
+                bool: function (ea) {
+                    return ea ? (/^(?:true|1|yes|on)$/i).test(ea) : undefined;
                 },
-                url: function (da) {
-                    return q(da);
+                url: function (ea) {
+                    return q(ea);
                 },
-                url_maybe: function (da) {
-                    return da ? q(da) : da;
+                url_maybe: function (ea) {
+                    return ea ? q(ea) : ea;
                 },
-                hostname: function (da) {
-                    return da || window.location.hostname;
+                hostname: function (ea) {
+                    return ea || window.location.hostname;
                 },
-                px: function (da) {
-                    return (/^(\d+)(?:px)?$/).test(da) ? parseInt(RegExp.$1, 10) : undefined;
+                px: function (ea) {
+                    return (/^(\d+)(?:px)?$/).test(ea) ? parseInt(RegExp.$1, 10) : undefined;
                 },
-                text: function (da) {
-                    return da;
+                text: function (ea) {
+                    return ea;
                 }
             };
 
-            function z(da, ea) {
-                var fa = da[ea] || da[ea.replace(/_/g, '-')] || da[ea.replace(/_/g, '')] || da['data-' + ea] || da['data-' + ea.replace(/_/g, '-')] || da['data-' + ea.replace(/_/g, '')] || undefined;
-                return fa;
+            function aa(ea, fa) {
+                var ga = ea[fa] || ea[fa.replace(/_/g, '-')] || ea[fa.replace(/_/g, '')] || ea['data-' + fa] || ea['data-' + fa.replace(/_/g, '-')] || ea['data-' + fa.replace(/_/g, '')] || undefined;
+                return ga;
             }
-            function aa(da, ea, fa, ga) {
-                ES5(ES5('Object', 'keys', false, da), 'forEach', true, function (ha) {
-                    if (da[ha] == 'text' && !fa[ha]) {
-                        fa[ha] = ea.textContent || ea.innerText || '';
-                        ea.setAttribute(ha, fa[ha]);
+            function ba(ea, fa, ga, ha) {
+                ES5(ES5('Object', 'keys', false, ea), 'forEach', true, function (ia) {
+                    if (ea[ia] == 'text' && !ga[ia]) {
+                        ga[ia] = fa.textContent || fa.innerText || '';
+                        fa.setAttribute(ia, ga[ia]);
                     }
-                    ga[ha] = y[da[ha]](z(fa, ha));
+                    ha[ia] = z[ea[ia]](aa(ga, ia));
                 });
             }
-            function ba(da) {
-                return da || da === '0' || da === 0 ? parseInt(da, 10) : undefined;
+            function ca(ea) {
+                return ea || ea === '0' || ea === 0 ? parseInt(ea, 10) : undefined;
             }
-            var ca = s.extend({
-                constructor: function (da, ea, fa, ga) {
+            var da = s.extend({
+                constructor: function (ea, fa, ga, ha) {
                     this.parent();
-                    fa = fa.replace(/-/g, '_');
-                    var ha = z(ga, 'plugin_id');
-                    this.subscribe('xd.resize', x(ha));
-                    this.subscribe('xd.resize.flow', x(ha));
-                    this.subscribe('xd.resize.flow', ES5(function (oa) {
+                    ga = ga.replace(/-/g, '_');
+                    var ia = aa(ha, 'plugin_id');
+                    this.subscribe('xd.resize', y(ia));
+                    this.subscribe('xd.resize.flow', y(ia));
+                    this.subscribe('xd.resize.flow', ES5(function (pa) {
                         this._config.root.style.verticalAlign = 'bottom';
-                        w(this._config.root, ba(oa.width), ba(oa.height));
+                        x(this._config.root, ca(pa.width), ca(pa.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
-                    this.subscribe('xd.resize', ES5(function (oa) {
+                    this.subscribe('xd.resize', ES5(function (pa) {
                         this._config.root.style.verticalAlign = 'bottom';
-                        w(this._config.root, ba(oa.width), ba(oa.height));
-                        w(this._iframe, ba(oa.width), ba(oa.height));
+                        x(this._config.root, ca(pa.width), ca(pa.height));
+                        x(this._iframe, ca(pa.width), ca(pa.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
-                    this.subscribe('xd.resize.iframe', ES5(function (oa) {
-                        w(this._iframe, ba(oa.width), ba(oa.height));
+                    this.subscribe('xd.resize.iframe', ES5(function (pa) {
+                        x(this._iframe, ca(pa.width), ca(pa.height));
                         this.updateLift();
                         clearTimeout(this._timeoutID);
                     }, 'bind', true, this));
-                    this.subscribe('xd.sdk_event', function (oa) {
-                        var pa = ES5('JSON', 'parse', false, oa.data);
-                        pa.pluginID = ha;
-                        k.fire(oa.event, pa, da);
+                    this.subscribe('xd.sdk_event', function (pa) {
+                        var qa = ES5('JSON', 'parse', false, pa.data);
+                        qa.pluginID = ia;
+                        k.fire(pa.event, qa, ea);
                     });
-                    var ia = r.getSecure() || window.location.protocol == 'https:',
-                        ja = t.resolve('www', ia) + '/plugins/' + fa + '.php?',
-                        ka = {};
-                    aa(this.getParams(), da, ga, ka);
-                    aa(v, da, ga, ka);
-                    ka.app_id = r.getClientID();
-                    ka.locale = r.getLocale();
-                    ka.sdk = 'joey';
-                    ka.kid_directed_site = r.getKidDirectedSite();
-                    var la = ES5(function (oa) {
-                        this.inform('xd.' + oa.type, oa);
+                    var ja = r.getSecure() || window.location.protocol == 'https:',
+                        ka = t.resolve('www', ja) + '/plugins/' + ga + '.php?',
+                        la = {};
+                    ba(this.getParams(), ea, ha, la);
+                    ba(w, ea, ha, la);
+                    la.app_id = r.getClientID();
+                    la.locale = r.getLocale();
+                    la.sdk = 'joey';
+                    la.kid_directed_site = r.getKidDirectedSite();
+                    var ma = ES5(function (pa) {
+                        this.inform('xd.' + pa.type, pa);
                     }, 'bind', true, this);
-                    ka.channel = u.handler(la, 'parent.parent', true);
-                    j.addCss(da, 'fb_iframe_widget');
-                    var ma = l();
-                    this.subscribe('xd.verify', function (oa) {
-                        u.sendToFacebook(ma, {
+                    la.channel = v.handler(ma, 'parent.parent', true);
+                    j.addCss(ea, 'fb_iframe_widget');
+                    var na = l();
+                    this.subscribe('xd.verify', function (pa) {
+                        v.sendToFacebook(na, {
                             method: 'xd/verify',
-                            params: ES5('JSON', 'stringify', false, oa.token)
+                            params: ES5('JSON', 'stringify', false, pa.token)
                         });
                     });
                     this.subscribe('xd.refreshLoginStatus', ES5(g.getLoginStatus, 'bind', true, g, ES5(this.inform, 'bind', true, this, 'login.status'), true));
-                    var na = document.createElement('span');
-                    na.style.verticalAlign = 'top';
-                    na.style.width = '0px';
-                    na.style.height = '0px';
-                    this._element = da;
-                    this._ns = ea;
-                    this._tag = fa;
-                    this._params = ka;
+                    var oa = document.createElement('span');
+                    oa.style.verticalAlign = 'top';
+                    oa.style.width = '0px';
+                    oa.style.height = '0px';
+                    this._element = ea;
+                    this._ns = fa;
+                    this._tag = ga;
+                    this._params = la;
                     this._config = {
-                        root: na,
-                        url: ja + p.encode(ka),
-                        name: ma,
-                        width: ka.width || 1000,
-                        height: ka.height || 1000,
+                        root: oa,
+                        url: ka + p.encode(la),
+                        name: na,
+                        width: la.width || 1000,
+                        height: la.height || 1000,
                         style: {
                             border: 'none',
                             visibility: 'hidden'
@@ -5638,40 +5639,41 @@ try {
                     };
                 },
                 process: function () {
-                    var da = i({}, this._params);
-                    delete da.channel;
-                    var ea = p.encode(da);
-                    if (this._element.getAttribute('fb-iframe-plugin-query') == ea) {
-                        m.info('Skipping render: %s:%s %s', this._ns, this._tag, ea);
+                    var ea = i({}, this._params);
+                    delete ea.channel;
+                    var fa = p.encode(ea);
+                    if (this._element.getAttribute('fb-iframe-plugin-query') == fa) {
+                        m.info('Skipping render: %s:%s %s', this._ns, this._tag, fa);
                         this.inform('render');
                         return;
                     }
-                    this._element.setAttribute('fb-iframe-plugin-query', ea);
+                    this._element.setAttribute('fb-iframe-plugin-query', fa);
                     this.subscribe('render', function () {
                         this._iframe.style.visibility = 'visible';
                     });
                     while (this._element.firstChild) this._element.removeChild(this._element.firstChild);
                     this._element.appendChild(this._config.root);
+                    var ga = u.mobile() ? 120 : 45;
                     this._timeoutID = setTimeout(ES5(function () {
-                        this._iframe && w(this._iframe, 0, 0);
-                        m.warn('%s:%s failed to resize in 45s', this._ns, this._tag);
-                    }, 'bind', true, this), 45 * 1000);
+                        this._iframe && x(this._iframe, 0, 0);
+                        m.warn('%s:%s failed to resize in %ss', this._ns, this._tag, ga);
+                    }, 'bind', true, this), ga * 1000);
                     if (!o.add(this)) this._iframe = h(this._config);
                 },
                 updateLift: function () {
-                    var da = this._iframe.style.width === this._config.root.style.width && this._iframe.style.height === this._config.root.style.height;
-                    j[da ? 'removeCss' : 'addCss'](this._iframe, 'fb_iframe_widget_lift');
+                    var ea = this._iframe.style.width === this._config.root.style.width && this._iframe.style.height === this._config.root.style.height;
+                    j[ea ? 'removeCss' : 'addCss'](this._iframe, 'fb_iframe_widget_lift');
                 }
             }, n);
-            ca.getVal = z;
-            ca.withParams = function (da) {
-                return ca.extend({
+            da.getVal = aa;
+            da.withParams = function (ea) {
+                return da.extend({
                     getParams: function () {
-                        return da;
+                        return ea;
                     }
                 });
             };
-            e.exports = ca;
+            e.exports = da;
         });
         __d("PluginTags", [], function (a, b, c, d, e, f) {
             var g = {
