@@ -1,4 +1,4 @@
-/*1378294912,168592721,JIT Construction: v926640,fr_FR*/
+/*1378893692,168615195,JIT Construction: v933619,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -58,7 +58,7 @@ try {
                         j = null;
                         break;
                     default:
-                        j = require(h[l]);
+                        j = require.call(null, h[l]);
                     }
                     k.push(j);
                 }
@@ -74,7 +74,7 @@ try {
                         deps: d.concat(f),
                         exports: {}
                     };
-                    if (h === 3) require(e);
+                    if (h === 3) require.call(null, e);
                     break;
                 case 'object':
                     c[e] = g;
@@ -614,9 +614,9 @@ try {
             "rtl": false
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=26",
+            "XdUrl": "connect\/xd_arbiter.php?version=27",
             "Flash": {
-                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yY\/r\/tkKkN2MZL-q.swf"
+                "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yb\/r\/e3FGq1GkcH5.swf"
             },
             "useCdn": true
         });
@@ -3932,7 +3932,7 @@ try {
                                 r.error('FB.login() called before FB.init().');
                                 return;
                             }
-                            if (g.getAuthResponse() && !ea.params.scope) {
+                            if (g.getAuthResponse() && !ea.params.scope && !ea.params.auth_type) {
                                 r.error('FB.login() called when user is already connected.');
                                 ea.cb && ea.cb({
                                     status: w.getLoginStatus(),
