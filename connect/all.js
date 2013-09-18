@@ -1,4 +1,4 @@
-/*1378893692,168615195,JIT Construction: v933619,fr_FR*/
+/*1379491211,180780119,JIT Construction: v940130,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -785,9 +785,9 @@ try {
             e.exports = h;
         });
         __d("sprintf", [], function (a, b, c, d, e, f) {
-            function g(h, i) {
-                i = Array.prototype.slice.call(arguments, 1);
-                var j = 0;
+            function g(h) {
+                var i = Array.prototype.slice.call(arguments, 1),
+                    j = 0;
                 return h.replace(/%s/g, function (k) {
                     return i[j++];
                 });
