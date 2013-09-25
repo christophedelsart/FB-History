@@ -1,4 +1,4 @@
-/*1379491211,180780119,JIT Construction: v940130,fr_FR*/
+/*1380085172,180642597,JIT Construction: v947269,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -5066,41 +5066,47 @@ try {
                 m = b('QueryString'),
                 n = b('sdk.Runtime');
 
-            function o(p) {
+            function o(q) {
+                var r = (typeof q == 'number' && q > 0) || (typeof q == 'string' && /^[0-9a-f]{21,}$|^[0-9]{1,21}$/.test(q));
+                if (r) return q.toString();
+                l.warn('Invalid App Id: Must be a number or numeric string representing ' + 'the application id.');
+                return null;
+            }
+            function p(q) {
                 if (n.getInitialized()) l.warn('FB.init has already been called - this could indicate a problem');
-                if (/number|string/.test(typeof p)) {
+                if (/number|string/.test(typeof q)) {
                     l.warn('FB.init called with invalid parameters');
-                    p = {
-                        apiKey: p
+                    q = {
+                        apiKey: q
                     };
                 }
-                p = h({
+                q = h({
                     logging: true,
                     status: true
-                }, p || {});
-                var q = p.appId || p.apiKey;
-                if (/number|string/.test(typeof q)) n.setClientID(q.toString());
-                if ('scope' in p) n.setScope(p.scope);
-                if (p.cookie) {
+                }, q || {});
+                var r = o(q.appId || q.apiKey);
+                if (r !== null) n.setClientID(r);
+                if ('scope' in q) n.setScope(q.scope);
+                if (q.cookie) {
                     n.setUseCookie(true);
-                    if (typeof p.cookie === 'string') g.setDomain(p.cookie);
+                    if (typeof q.cookie === 'string') g.setDomain(q.cookie);
                 }
-                if (p.kidDirectedSite) n.setKidDirectedSite(true);
+                if (q.kidDirectedSite) n.setKidDirectedSite(true);
                 n.setInitialized(true);
-                k.fire('init:post', p);
+                k.fire('init:post', q);
             }
             setTimeout(function () {
-                var p = /(connect\.facebook\.net|\.facebook\.com\/assets.php).*?#(.*)/;
-                ES5(i(document.getElementsByTagName('script')), 'forEach', true, function (q) {
-                    if (q.src) {
-                        var r = p.exec(q.src);
-                        if (r) {
-                            var s = m.decode(r[2]);
-                            for (var t in s) if (s.hasOwnProperty(t)) {
-                                var u = s[t];
-                                if (u == '0') s[t] = 0;
+                var q = /(connect\.facebook\.net|\.facebook\.com\/assets.php).*?#(.*)/;
+                ES5(i(document.getElementsByTagName('script')), 'forEach', true, function (r) {
+                    if (r.src) {
+                        var s = q.exec(r.src);
+                        if (s) {
+                            var t = m.decode(s[2]);
+                            for (var u in t) if (t.hasOwnProperty(u)) {
+                                var v = t[u];
+                                if (v == '0') t[u] = 0;
                             }
-                            o(s);
+                            p(t);
                         }
                     }
                 });
@@ -5109,7 +5115,7 @@ try {
                     j.unguard(window.fbAsyncInit)();
                 }
             }, 0);
-            e.exports = o;
+            e.exports = p;
         });
         __d("legacy:fb.init", ["FB", "sdk.init"], function (a, b, c, d) {
             var e = b('FB'),
