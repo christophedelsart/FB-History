@@ -1,4 +1,4 @@
-/*1381305290,168628821,JIT Construction: v961716,fr_FR*/
+/*1381910397,179359003,JIT Construction: v968731,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -624,6 +624,7 @@ try {
             "www": "www.facebook.com",
             "m": "m.facebook.com",
             "connect": "connect.facebook.net",
+            "business": "business.facebook.com",
             "api_https": "api.facebook.com",
             "api_read_https": "api-read.facebook.com",
             "graph_https": "graph.facebook.com",
@@ -5667,8 +5668,14 @@ try {
                     if (u.mobile()) {
                         j.addCss(this._element, 'fb_iframe_widget_fluid');
                         if (!this._config.width) {
-                            this._iframe.style.width = '100%';
+                            this._element.style.display = 'block';
+                            this._element.style.width = '100%';
+                            this._element.style.height = 'auto';
                             this._config.root.style.width = '100%';
+                            this._config.root.style.height = 'auto';
+                            this._iframe.style.width = '100%';
+                            this._iframe.style.height = 'auto';
+                            this._iframe.style.position = 'static';
                         } else {
                             this._iframe.style.width = this._config.width + 'px';
                             this._config.root.style.width = this._config.width + 'px';
@@ -5785,6 +5792,10 @@ try {
                 story: {
                     href: 'url',
                     show_border: 'bool'
+                },
+                topic: {
+                    topic_name: 'string',
+                    topic_id: 'string'
                 },
                 want: {
                     href: 'url',
