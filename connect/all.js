@@ -1,4 +1,4 @@
-/*1382519210,178595929,JIT Construction: v976458,fr_FR*/
+/*1383124492,179336241,JIT Construction: v986478,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -614,7 +614,7 @@ try {
             "rtl": false
         });
         __d("XDConfig", [], {
-            "XdUrl": "connect\/xd_arbiter.php?version=27",
+            "XdUrl": "connect\/xd_arbiter.php?version=28",
             "Flash": {
                 "path": "https:\/\/connect.facebook.net\/rsrc.php\/v1\/yb\/r\/e3FGq1GkcH5.swf"
             },
@@ -5632,7 +5632,7 @@ try {
                         root: oa,
                         url: ka + p.encode(la),
                         name: na,
-                        width: la.width || (u.mobile() ? undefined : 1000),
+                        width: (u.mobile() ? undefined : (la.width || 1000)),
                         height: la.height || 1000,
                         style: {
                             border: 'none',
@@ -5667,19 +5667,14 @@ try {
                     if (!o.add(this)) this._iframe = h(this._config);
                     if (u.mobile()) {
                         j.addCss(this._element, 'fb_iframe_widget_fluid');
-                        if (!this._config.width) {
-                            this._element.style.display = 'block';
-                            this._element.style.width = '100%';
-                            this._element.style.height = 'auto';
-                            this._config.root.style.width = '100%';
-                            this._config.root.style.height = 'auto';
-                            this._iframe.style.width = '100%';
-                            this._iframe.style.height = 'auto';
-                            this._iframe.style.position = 'static';
-                        } else {
-                            this._iframe.style.width = this._config.width + 'px';
-                            this._config.root.style.width = this._config.width + 'px';
-                        }
+                        this._element.style.display = 'block';
+                        this._element.style.width = '100%';
+                        this._element.style.height = 'auto';
+                        this._config.root.style.width = '100%';
+                        this._config.root.style.height = 'auto';
+                        this._iframe.style.width = '100%';
+                        this._iframe.style.height = 'auto';
+                        this._iframe.style.position = 'static';
                     }
                 },
                 updateLift: function () {
@@ -6149,6 +6144,7 @@ try {
                         var o = {
                             channel_url: this.getChannelUrl(),
                             colorscheme: this.getAttribute('colorscheme'),
+                            skin: this.getAttribute('skin'),
                             numposts: this.getAttribute('num-posts', 10),
                             width: this._getPxAttribute('width', 550),
                             href: this.getAttribute('href'),
@@ -6161,6 +6157,7 @@ try {
                             o.mobile = true;
                             delete o.width;
                         }
+                        if (!o.skin) o.skin = o.colorscheme;
                         if (!o.href) {
                             o.migrated = this.getAttribute('migrated');
                             o.xid = this.getAttribute('xid');
