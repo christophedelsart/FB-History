@@ -1,4 +1,4 @@
-/*1385553945,182131491,JIT Construction: v1024226,fr_FR*/
+/*1386152491,173054269,JIT Construction: v1031666,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -2627,21 +2627,47 @@ try {
             });
             e.exports = y;
         });
-        __d("createArrayFrom", [], function (a, b, c, d, e, f) {
-            function g(i) {
-                return ( !! i && (typeof i == 'object' || typeof i == 'function') && ('length' in i) && !('setInterval' in i) && (typeof i.nodeType != 'number') && (ES5('Array', 'isArray', false, i) || ('callee' in i) || ('item' in i)));
-            }
-            function h(i) {
-                if (!g(i)) return [i];
-                if (i.item) {
-                    var j = i.length,
-                        k = new Array(j);
-                    while (j--) k[j] = i[j];
-                    return k;
+        __d("invariant", [], function (a, b, c, d, e, f) {
+            function g(h) {
+                if (!h) {
+                    var i = new Error('Invariant Violation');
+                    i.framesToPop = 1;
+                    throw i;
                 }
-                return Array.prototype.slice.call(i);
+            }
+            e.exports = g;
+        });
+        __d("toArray", ["invariant"], function (a, b, c, d, e, f) {
+            var g = b('invariant');
+
+            function h(i) {
+                var j = i.length;
+                g(!ES5('Array', 'isArray', false, i) && (typeof i === 'object' || typeof i === 'function'));
+                g(typeof j === 'number');
+                g(j === 0 || (j - 1) in i);
+                if (i.hasOwnProperty) try {
+                    return Array.prototype.slice.call(i);
+                } catch (k) {}
+                var l = Array(j);
+                for (var m = 0; m < j; m++) l[m] = i[m];
+                return l;
             }
             e.exports = h;
+        });
+        __d("createArrayFrom", ["toArray"], function (a, b, c, d, e, f) {
+            var g = b('toArray');
+
+            function h(j) {
+                return ( !! j && (typeof j == 'object' || typeof j == 'function') && ('length' in j) && !('setInterval' in j) && (typeof j.nodeType != 'number') && (ES5('Array', 'isArray', false, j) || ('callee' in j) || ('item' in j)));
+            }
+            function i(j) {
+                if (!h(j)) {
+                    return [j];
+                } else if (ES5('Array', 'isArray', false, j)) {
+                    return j.slice();
+                } else return g(j);
+            }
+            e.exports = i;
         });
         __d("sdk.DOM", ["Assert", "createArrayFrom", "sdk.domReady", "UserAgent"], function (a, b, c, d, e, f) {
             var g = b('Assert'),
@@ -6944,7 +6970,8 @@ try {
                             show_login_face: 'bool',
                             registration_url: 'url_maybe',
                             auto_logout_link: 'bool',
-                            one_click: 'bool'
+                            one_click: 'bool',
+                            show_banner: 'bool'
                         };
                     }
                 });
