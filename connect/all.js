@@ -1,4 +1,4 @@
-/*1386152491,173054269,JIT Construction: v1031666,fr_FR*/
+/*1386756673,171997242,JIT Construction: v1042055,fr_FR*/
 
 /**
  * Copyright Facebook Inc.
@@ -67,21 +67,14 @@ try {
                 return g.exports;
             };
             __d = function (e, f, g, h) {
-                switch (typeof g) {
-                case 'function':
+                if (typeof g == 'function') {
                     b[e] = {
                         factory: g,
                         deps: d.concat(f),
                         exports: {}
                     };
                     if (h === 3) require.call(null, e);
-                    break;
-                case 'object':
-                    c[e] = g;
-                    break;
-                default:
-                    throw new TypeError('Wrong type for factory object');
-                }
+                } else c[e] = g;
             };
         })(this);
         var ES5 = function () {
@@ -662,7 +655,7 @@ try {
             },
             "usePluginPipe": true,
             "features": {
-                "kill_fragment": true,
+                "kill_fragment": false,
                 "xfbml_profile_pic_server": true,
                 "error_handling": {
                     "rate": 4
@@ -1948,80 +1941,97 @@ try {
             });
             e.exports = i;
         });
-        __d("Flash", ["DOMWrapper", "QueryString", "UserAgent", "copyProperties", "guid"], function (a, b, c, d, e, f) {
+        __d("htmlSpecialChars", [], function (a, b, c, d, e, f) {
+            var g = /&/g,
+                h = /</g,
+                i = />/g,
+                j = /"/g,
+                k = /'/g;
+
+            function l(m) {
+                if (typeof m == 'undefined' || m === null || !m.toString) return '';
+                if (m === false) {
+                    return '0';
+                } else if (m === true) return '1';
+                return m.toString().replace(g, '&amp;').replace(j, '&quot;').replace(k, '&#039;').replace(h, '&lt;').replace(i, '&gt;');
+            }
+            e.exports = l;
+        });
+        __d("Flash", ["DOMWrapper", "QueryString", "UserAgent", "copyProperties", "guid", "htmlSpecialChars"], function (a, b, c, d, e, f) {
             var g = b('DOMWrapper'),
                 h = b('QueryString'),
                 i = b('UserAgent'),
                 j = b('copyProperties'),
                 k = b('guid'),
-                l = {},
-                m, n = g.getWindow().document;
+                l = b('htmlSpecialChars'),
+                m = {},
+                n, o = g.getWindow().document;
 
-            function o(t) {
-                var u = n.getElementById(t);
-                if (u) u.parentNode.removeChild(u);
-                delete l[t];
+            function p(u) {
+                var v = o.getElementById(u);
+                if (v) v.parentNode.removeChild(v);
+                delete m[u];
             }
-            function p() {
-                for (var t in l) if (l.hasOwnProperty(t)) o(t);
+            function q() {
+                for (var u in m) if (m.hasOwnProperty(u)) p(u);
             }
-            function q(t) {
-                return t.replace(/\d+/g, function (u) {
-                    return '000'.substring(u.length) + u;
+            function r(u) {
+                return u.replace(/\d+/g, function (v) {
+                    return '000'.substring(v.length) + v;
                 });
             }
-            function r(t) {
-                if (!m) {
-                    if (i.ie() >= 9) window.attachEvent('onunload', p);
-                    m = true;
+            function s(u) {
+                if (!n) {
+                    if (i.ie() >= 9) window.attachEvent('onunload', q);
+                    n = true;
                 }
-                l[t] = t;
+                m[u] = u;
             }
-            var s = {
-                embed: function (t, u, v, w) {
-                    var x = k();
-                    t = encodeURI(t);
-                    v = j({
+            var t = {
+                embed: function (u, v, w, x) {
+                    var y = k();
+                    u = l(u).replace(/&amp;/g, '&');
+                    w = j({
                         allowscriptaccess: 'always',
-                        flashvars: w,
-                        movie: t
-                    }, v || {});
-                    if (typeof v.flashvars == 'object') v.flashvars = h.encode(v.flashvars);
-                    var y = [];
-                    for (var z in v) if (v.hasOwnProperty(z) && v[z]) y.push('<param name="' + encodeURI(z) + '" value="' + encodeURI(v[z]) + '">');
-                    var aa = u.appendChild(n.createElement('span')),
-                        ba = '<object ' + (i.ie() ? 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" ' : 'type="application/x-shockwave-flash"') + 'data="' + t + '" ' + (v.height ? 'height="' + v.height + '" ' : '') + (v.width ? 'width="' + v.width + '" ' : '') + 'id="' + x + '">' + y.join('') + '</object>';
-                    aa.innerHTML = ba;
-                    var ca = aa.firstChild;
-                    r(x);
-                    return ca;
+                        flashvars: x,
+                        movie: u
+                    }, w || {});
+                    if (typeof w.flashvars == 'object') w.flashvars = h.encode(w.flashvars);
+                    var z = [];
+                    for (var aa in w) if (w.hasOwnProperty(aa) && w[aa]) z.push('<param name="' + l(aa) + '" value="' + l(w[aa]) + '">');
+                    var ba = v.appendChild(o.createElement('span')),
+                        ca = '<object ' + (i.ie() ? 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" ' : 'type="application/x-shockwave-flash"') + 'data="' + u + '" ' + (w.height ? 'height="' + w.height + '" ' : '') + (w.width ? 'width="' + w.width + '" ' : '') + 'id="' + y + '">' + z.join('') + '</object>';
+                    ba.innerHTML = ca;
+                    var da = ba.firstChild;
+                    s(y);
+                    return da;
                 },
-                remove: o,
+                remove: p,
                 getVersion: function () {
-                    var t = 'Shockwave Flash',
-                        u = 'application/x-shockwave-flash',
-                        v = 'ShockwaveFlash.ShockwaveFlash',
-                        w;
-                    if (navigator.plugins && typeof navigator.plugins[t] == 'object') {
-                        var x = navigator.plugins[t].description;
-                        if (x && navigator.mimeTypes && navigator.mimeTypes[u] && navigator.mimeTypes[u].enabledPlugin) w = x.match(/\d+/g);
+                    var u = 'Shockwave Flash',
+                        v = 'application/x-shockwave-flash',
+                        w = 'ShockwaveFlash.ShockwaveFlash',
+                        x;
+                    if (navigator.plugins && typeof navigator.plugins[u] == 'object') {
+                        var y = navigator.plugins[u].description;
+                        if (y && navigator.mimeTypes && navigator.mimeTypes[v] && navigator.mimeTypes[v].enabledPlugin) x = y.match(/\d+/g);
                     }
-                    if (!w) try {
-                        w = (new ActiveXObject(v)).GetVariable('$version').match(/(\d+),(\d+),(\d+),(\d+)/);
-                        w = Array.prototype.slice.call(w, 1);
-                    } catch (y) {}
-                    return w;
+                    if (!x) try {
+                        x = (new ActiveXObject(w)).GetVariable('$version').match(/(\d+),(\d+),(\d+),(\d+)/);
+                        x = Array.prototype.slice.call(x, 1);
+                    } catch (z) {}
+                    return x;
                 },
-                checkMinVersion: function (t) {
-                    var u = s.getVersion();
-                    if (!u) return false;
-                    return q(u.join('.')) >= q(t);
+                checkMinVersion: function (u) {
+                    var v = t.getVersion();
+                    if (!v) return false;
+                    return r(v.join('.')) >= r(u);
                 },
                 isAvailable: function () {
-                    return !!s.getVersion();
+                    return !!t.getVersion();
                 }
             };
-            e.exports = s;
+            e.exports = t;
         });
         __d("dotAccess", [], function (a, b, c, d, e, f) {
             function g(h, i, j) {
@@ -3271,7 +3281,87 @@ try {
             };
             e.exports = k;
         });
-        __d("ApiClient", ["ArgumentError", "Assert", "copyProperties", "CORSRequest", "FlashRequest", "flattenObject", "JSONPRequest", "Log", "ObservableMixin", "sprintf", "UrlMap", "URL", "ApiClientConfig"], function (a, b, c, d, e, f) {
+        __d("keyMirror", ["invariant"], function (a, b, c, d, e, f) {
+            "use strict";
+            var g = b('invariant'),
+                h = function (i) {
+                    var j = {},
+                        k;
+                    g(i instanceof Object && !ES5('Array', 'isArray', false, i));
+                    for (k in i) {
+                        if (!i.hasOwnProperty(k)) continue;
+                        j[k] = k;
+                    }
+                    return j;
+                };
+            e.exports = h;
+        });
+        __d("mergeHelpers", ["invariant", "keyMirror"], function (a, b, c, d, e, f) {
+            "use strict";
+            var g = b('invariant'),
+                h = b('keyMirror'),
+                i = 36,
+                j = function (l) {
+                    return typeof l !== 'object' || l === null;
+                },
+                k = {
+                    MAX_MERGE_DEPTH: i,
+                    isTerminal: j,
+                    normalizeMergeArg: function (l) {
+                        return l === undefined || l === null ? {} : l;
+                    },
+                    checkMergeArrayArgs: function (l, m) {
+                        g(ES5('Array', 'isArray', false, l) && ES5('Array', 'isArray', false, m));
+                    },
+                    checkMergeObjectArgs: function (l, m) {
+                        k.checkMergeObjectArg(l);
+                        k.checkMergeObjectArg(m);
+                    },
+                    checkMergeObjectArg: function (l) {
+                        g(!j(l) && !ES5('Array', 'isArray', false, l));
+                    },
+                    checkMergeLevel: function (l) {
+                        g(l < i);
+                    },
+                    checkArrayStrategy: function (l) {
+                        g(l === undefined || l in k.ArrayStrategies);
+                    },
+                    ArrayStrategies: h({
+                        Clobber: true,
+                        IndexByIndex: true
+                    })
+                };
+            e.exports = k;
+        });
+        __d("mergeInto", ["mergeHelpers"], function (a, b, c, d, e, f) {
+            "use strict";
+            var g = b('mergeHelpers'),
+                h = g.checkMergeObjectArg;
+
+            function i(j, k) {
+                h(j);
+                if (k != null) {
+                    h(k);
+                    for (var l in k) {
+                        if (!k.hasOwnProperty(l)) continue;
+                        j[l] = k[l];
+                    }
+                }
+            }
+            e.exports = i;
+        });
+        __d("merge", ["mergeInto"], function (a, b, c, d, e, f) {
+            "use strict";
+            var g = b('mergeInto'),
+                h = function (i, j) {
+                    var k = {};
+                    g(k, i);
+                    g(k, j);
+                    return k;
+                };
+            e.exports = h;
+        });
+        __d("ApiClient", ["ArgumentError", "Assert", "copyProperties", "CORSRequest", "FlashRequest", "flattenObject", "JSONPRequest", "Log", "merge", "ObservableMixin", "sprintf", "URL", "UrlMap", "ApiClientConfig"], function (a, b, c, d, e, f) {
             var g = b('ArgumentError'),
                 h = b('Assert'),
                 i = b('copyProperties'),
@@ -3280,18 +3370,19 @@ try {
                 l = b('flattenObject'),
                 m = b('JSONPRequest'),
                 n = b('Log'),
-                o = b('ObservableMixin'),
-                p = b('sprintf'),
-                q = b('UrlMap'),
+                o = b('merge'),
+                p = b('ObservableMixin'),
+                q = b('sprintf'),
                 r = b('URL'),
-                s = b('ApiClientConfig'),
-                t, u, v, w = {
+                s = b('UrlMap'),
+                t = b('ApiClientConfig'),
+                u, v, w, x = {
                     get: true,
                     post: true,
                     'delete': true,
                     put: true
                 },
-                x = {
+                y = {
                     fql_query: true,
                     fql_multiquery: true,
                     friends_get: true,
@@ -3300,85 +3391,85 @@ try {
                     users_getinfo: true
                 };
 
-            function y(da, ea, fa, ga) {
-                if (v) fa = i({}, v, fa);
-                fa.access_token = fa.access_token || t;
-                fa.pretty = fa.pretty || 0;
-                fa = l(fa);
-                var ha = {
+            function z(ea, fa, ga, ha) {
+                if (w) ga = i({}, w, ga);
+                ga.access_token = ga.access_token || u;
+                ga.pretty = ga.pretty || 0;
+                ga = l(ga);
+                var ia = {
                     jsonp: m,
                     cors: j,
                     flash: k
                 },
-                    ia;
-                if (fa.transport) {
-                    ia = [fa.transport];
-                    delete fa.transport;
-                } else ia = ['jsonp', 'cors', 'flash'];
-                for (var ja = 0; ja < ia.length; ja++) {
-                    var ka = ha[ia[ja]],
-                        la = i({}, fa);
-                    if (ka.execute(da, ea, la, ga)) return;
+                    ja;
+                if (ga.transport) {
+                    ja = [ga.transport];
+                    delete ga.transport;
+                } else ja = ['jsonp', 'cors', 'flash'];
+                for (var ka = 0; ka < ja.length; ka++) {
+                    var la = ia[ja[ka]],
+                        ma = i({}, ga);
+                    if (la.execute(ea, fa, ma, ha)) return;
                 }
-                ga({
+                ha({
                     error: {
                         type: 'no-transport',
                         message: 'Could not find a usable transport for request'
                     }
                 });
             }
-            function z(da, ea, fa, ga, ha) {
-                ca.inform('request.complete', ea, fa, ga, ha);
-                if (da) da(ha);
+            function aa(ea, fa, ga, ha, ia) {
+                da.inform('request.complete', fa, ga, ha, ia);
+                if (ea) ea(ia);
             }
-            function aa(da) {
-                h.isString(da, 'Invalid path');
-                var ea, fa = {};
+            function ba(ea) {
+                h.isString(ea, 'Invalid path');
+                var fa, ga = {};
                 try {
-                    ea = new r(da);
-                } catch (ga) {
-                    throw new g(ga.message, ga);
+                    fa = new r(ea);
+                } catch (ha) {
+                    throw new g(ha.message, ha);
                 }
-                ES5(Array.prototype.slice.call(arguments, 1), 'forEach', true, function (la) {
-                    fa[typeof la] = la;
+                ES5(Array.prototype.slice.call(arguments, 1), 'forEach', true, function (ma) {
+                    ga[typeof ma] = ma;
                 });
-                var ha = (fa.string || 'get').toLowerCase(),
-                    ia = i(fa.object || {}, ea.getParsedSearch()),
-                    ja = fa['function'];
-                if (!ja) n.warn('No callback passed to the ApiClient');
-                var ka = ES5(z, 'bind', true, null, ja, ea.getPath(), ha, ia);
-                h.isTrue(ha in w, p('Invalid method passed to ApiClient: %s', ha));
-                ia.method = ha;
-                ea = q.resolve('graph') + ea.getPath();
-                y(ea, ha == 'get' ? 'get' : 'post', ia, ka);
+                var ia = (ga.string || 'get').toLowerCase(),
+                    ja = o(ga.object || {}, fa.getParsedSearch()),
+                    ka = ga['function'];
+                if (!ka) n.warn('No callback passed to the ApiClient');
+                var la = ES5(aa, 'bind', true, null, ka, fa.getPath(), ia, ja);
+                h.isTrue(ia in x, q('Invalid method passed to ApiClient: %s', ia));
+                ja.method = ia;
+                fa = s.resolve('graph') + fa.getPath();
+                z(fa, ia == 'get' ? 'get' : 'post', ja, la);
             }
-            function ba(da, ea) {
-                h.isObject(da);
-                h.isString(da.method, 'method missing');
-                if (!ea) n.warn('No callback passed to the ApiClient');
-                var fa = da.method.toLowerCase().replace('.', '_');
-                da.format = 'json-strings';
-                da.api_key = u;
-                var ga = fa in x ? 'api_read' : 'api',
-                    ha = q.resolve(ga) + '/restserver.php',
-                    ia = ES5(z, 'bind', true, null, ea, '/restserver.php', 'get', da);
-                y(ha, 'get', da, ia);
+            function ca(ea, fa) {
+                h.isObject(ea);
+                h.isString(ea.method, 'method missing');
+                if (!fa) n.warn('No callback passed to the ApiClient');
+                var ga = ea.method.toLowerCase().replace('.', '_');
+                ea.format = 'json-strings';
+                ea.api_key = v;
+                var ha = ga in y ? 'api_read' : 'api',
+                    ia = s.resolve(ha) + '/restserver.php',
+                    ja = ES5(aa, 'bind', true, null, fa, '/restserver.php', 'get', ea);
+                z(ia, 'get', ea, ja);
             }
-            var ca = i(new o(), {
-                setAccessToken: function (da) {
-                    t = da;
+            var da = i(new p(), {
+                setAccessToken: function (ea) {
+                    u = ea;
                 },
-                setClientID: function (da) {
-                    u = da;
+                setClientID: function (ea) {
+                    v = ea;
                 },
-                setDefaultParams: function (da) {
-                    v = da;
+                setDefaultParams: function (ea) {
+                    w = ea;
                 },
-                rest: ba,
-                graph: aa
+                rest: ca,
+                graph: ba
             });
-            k.setSwfUrl(s.FlashRequest.swfUrl);
-            e.exports = ca;
+            k.setSwfUrl(t.FlashRequest.swfUrl);
+            e.exports = da;
         });
         __d("sdk.api", ["ApiClient", "sdk.Runtime"], function (a, b, c, d, e, f) {
             var g = b('ApiClient'),
